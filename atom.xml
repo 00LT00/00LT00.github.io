@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://00LT00.github.io</id>
     <title>Zer0kiriN</title>
-    <updated>2021-02-28T14:57:17.669Z</updated>
+    <updated>2021-02-28T15:02:13.019Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://00LT00.github.io"/>
     <link rel="self" href="https://00LT00.github.io/atom.xml"/>
@@ -10,13 +10,4 @@
     <logo>https://00LT00.github.io/images/avatar.png</logo>
     <icon>https://00LT00.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, Zer0kiriN</rights>
-    <entry>
-        <title type="html"><![CDATA[第一个文章]]></title>
-        <id>https://00LT00.github.io/post/di-yi-ge-wen-zhang/</id>
-        <link href="https://00LT00.github.io/post/di-yi-ge-wen-zhang/">
-        </link>
-        <updated>2021-02-28T14:30:10.000Z</updated>
-        <content type="html"><![CDATA[<p>第一个</p>
-]]></content>
-    </entry>
 </feed>
