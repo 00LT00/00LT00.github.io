@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-    <id>https://00LT00.github.io</id>
+    <id>http://blog.zerokirin.online</id>
     <title>Zer0kiriN</title>
-    <updated>2021-03-09T16:17:09.592Z</updated>
+    <updated>2021-03-09T16:26:25.791Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
-    <link rel="alternate" href="https://00LT00.github.io"/>
-    <link rel="self" href="https://00LT00.github.io/atom.xml"/>
+    <link rel="alternate" href="http://blog.zerokirin.online"/>
+    <link rel="self" href="http://blog.zerokirin.online/atom.xml"/>
     <subtitle>记录</subtitle>
-    <logo>https://00LT00.github.io/images/avatar.png</logo>
-    <icon>https://00LT00.github.io/favicon.ico</icon>
+    <logo>http://blog.zerokirin.online/images/avatar.png</logo>
+    <icon>http://blog.zerokirin.online/favicon.ico</icon>
     <rights>All rights reserved 2021, Zer0kiriN</rights>
 </feed>
