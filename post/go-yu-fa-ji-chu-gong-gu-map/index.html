@@ -5,19 +5,16 @@
   <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="
-Go语法、Go并发思想、Go与web开发、Go微服务设施等 学习路线
+map - 《Go 语言问题集(Go Questions)》 - 书栈网 · BookStack
 
-
-通用后端问题 每日10道
-golang面试题集合 每日2道
-刷题笔记
-leetcode 尽力而为
-
-..." />
+map遍历是无序的
+参考大佬的文章,本文仅仅是用我个人语言总结了一遍，仅作个人笔记使用
+map的结构
+type hmap struct {..." />
 <link rel="preload" as="script" href="https://cdn.ampproject.org/v0.js">
 <link rel="preconnect dns-prefetch" href="https://cdn.jsdelivr.net/" crossorigin>
 <script async src="https://cdn.ampproject.org/v0.js"></script>
-<title>Every Day | Zer0kiriN</title>
+<title>go语法基础巩固（map） | Zer0kiriN</title>
 
 
   
@@ -2210,58 +2207,49 @@ leetcode 尽力而为
 
 <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style>
 <noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
-<link rel="canonical" href="http://blog.zerokirin.online/post/every-day/" />
+<link rel="canonical" href="http://blog.zerokirin.online/post/go-yu-fa-ji-chu-gong-gu-map/" />
 <link rel="shortcut icon" href="http://blog.zerokirin.online/favicon.ico?v=1616063742911">
 
 <meta name="author" content="破庙主任">
 
-<meta itemprop="name" content="Every Day | Zer0kiriN">
+<meta itemprop="name" content="go语法基础巩固（map） | Zer0kiriN">
 <meta itemprop="description" content="
-Go语法、Go并发思想、Go与web开发、Go微服务设施等 学习路线
+map - 《Go 语言问题集(Go Questions)》 - 书栈网 · BookStack
 
-
-通用后端问题 每日10道
-golang面试题集合 每日2道
-刷题笔记
-leetcode 尽力而为
-
-...">
+map遍历是无序的
+参考大佬的文章,本文仅仅是用我个人语言总结了一遍，仅作个人笔记使用
+map的结构
+type hmap struct {...">
 <meta itemprop="image" content="">
 
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Every Day | Zer0kiriN">
+<meta name="twitter:title" content="go语法基础巩固（map） | Zer0kiriN">
 <meta name="twitter:description" content="
-Go语法、Go并发思想、Go与web开发、Go微服务设施等 学习路线
+map - 《Go 语言问题集(Go Questions)》 - 书栈网 · BookStack
 
-
-通用后端问题 每日10道
-golang面试题集合 每日2道
-刷题笔记
-leetcode 尽力而为
-
-...">
+map遍历是无序的
+参考大佬的文章,本文仅仅是用我个人语言总结了一遍，仅作个人笔记使用
+map的结构
+type hmap struct {...">
 <meta name="twitter:image" content="" />
-<meta name="twitter:image:alt" content="Every Day | Zer0kiriN" />
+<meta name="twitter:image:alt" content="go语法基础巩固（map） | Zer0kiriN" />
 
 
 <meta property="og:type" content="website">
-<meta property="og:url" content="http://blog.zerokirin.online/post/every-day/">
-<meta property="og:title" content="Every Day | Zer0kiriN">
+<meta property="og:url" content="http://blog.zerokirin.online/post/go-yu-fa-ji-chu-gong-gu-map/">
+<meta property="og:title" content="go语法基础巩固（map） | Zer0kiriN">
 <meta property="og:description" content="
-Go语法、Go并发思想、Go与web开发、Go微服务设施等 学习路线
+map - 《Go 语言问题集(Go Questions)》 - 书栈网 · BookStack
 
-
-通用后端问题 每日10道
-golang面试题集合 每日2道
-刷题笔记
-leetcode 尽力而为
-
-...">
+map遍历是无序的
+参考大佬的文章,本文仅仅是用我个人语言总结了一遍，仅作个人笔记使用
+map的结构
+type hmap struct {...">
 <meta property="og:image" content="">
-<meta property="og:image:alt" content="Every Day | Zer0kiriN" />
+<meta property="og:image:alt" content="go语法基础巩固（map） | Zer0kiriN" />
 <meta property="og:site_name" content="Zer0kiriN">
 <meta property="og:locale" content="zh_CN">
-<meta property="tag" content="Every Day | Zer0kiriN" />
+<meta property="tag" content="go语法基础巩固（map） | Zer0kiriN" />
 
 
 <script type="application/ld+json">
@@ -2270,11 +2258,11 @@ leetcode 尽力而为
 "@type": "BlogPosting",
 "mainEntityOfPage": {
   "@type": "WebPage",
-  "@id": "http://blog.zerokirin.online/post/every-day/"
+  "@id": "http://blog.zerokirin.online/post/go-yu-fa-ji-chu-gong-gu-map/"
 },
-"headline": "Every Day | Zer0kiriN",
-"datePublished": "Thu Mar 04 2021 19:36:53 GMT+0800",
-"dateModified": "Thu Mar 04 2021 19:36:53 GMT+0800",
+"headline": "go语法基础巩固（map） | Zer0kiriN",
+"datePublished": "Thu Mar 18 2021 18:34:15 GMT+0800",
+"dateModified": "Thu Mar 18 2021 18:34:15 GMT+0800",
 "author": {
   "@type": "Person",
   "name": "破庙主任"
@@ -2291,15 +2279,12 @@ leetcode 尽力而为
 ""
 ],
 "description": "
-Go语法、Go并发思想、Go与web开发、Go微服务设施等 学习路线
+map - 《Go 语言问题集(Go Questions)》 - 书栈网 · BookStack
 
-
-通用后端问题 每日10道
-golang面试题集合 每日2道
-刷题笔记
-leetcode 尽力而为
-
-..."
+map遍历是无序的
+参考大佬的文章,本文仅仅是用我个人语言总结了一遍，仅作个人笔记使用
+map的结构
+type hmap struct {..."
  }
 
 </script>
@@ -2315,8 +2300,8 @@ leetcode 尽力而为
     },{
       "@type": "ListItem", 
       "position": 2, 
-      "name": "Every Day | Zer0kiriN",
-      "item": "http://blog.zerokirin.online/post/every-day/"  
+      "name": "go语法基础巩固（map） | Zer0kiriN",
+      "item": "http://blog.zerokirin.online/post/go-yu-fa-ji-chu-gong-gu-map/"  
     }]
   }
   </script>
@@ -2338,7 +2323,7 @@ leetcode 尽力而为
 
 <script async custom-element="amp-gist" src="https://cdn.ampproject.org/v0/amp-gist-0.1.js"></script>
 
-<link rel="alternate" type="application/atom+xml" title="Every Day | Zer0kiriN - Atom Feed" href="http://blog.zerokirin.online/atom.xml">
+<link rel="alternate" type="application/atom+xml" title="go语法基础巩固（map） | Zer0kiriN - Atom Feed" href="http://blog.zerokirin.online/atom.xml">
 
 
 
@@ -2394,16 +2379,16 @@ leetcode 尽力而为
       <div class="article-info">
         
           <div class="flex-box meta-category">
-            <a class="post-cate" href="http://blog.zerokirin.online/tag/_1938IQJM/">后端</a></div>
+            <a class="post-cate" href="http://blog.zerokirin.online/tag/2n3c2auIY/">golang</a></div>
           
         <h2 class="article-title">
-          <a href="http://blog.zerokirin.online/post/every-day/">Every Day</a>
+          <a href="http://blog.zerokirin.online/post/go-yu-fa-ji-chu-gong-gu-map/">go语法基础巩固（map）</a>
         </h2>
         <div class="flex-box">
           <div class="flex-box post-meta-box">
             <a class="post-meta" href="http://blog.zerokirin.online"><span
                 class="iconfont icon-mr-postmeta"></span>破庙主任</a>
-            <span class="post-meta"><span class="iconfont icon-mr-postmeta"></span>2021 年 03	月 4日</span>
+            <span class="post-meta"><span class="iconfont icon-mr-postmeta"></span>2021 年 03	月 18日</span>
             
 
 
@@ -2412,13 +2397,89 @@ leetcode 尽力而为
       </div>
       <div class="content">
         <blockquote>
-<p><a href="https://github.com/overnote/over-golang">Go语法、Go并发思想、Go与web开发、Go微服务设施等 学习路线</a></p>
+<p><a href="https://www.bookstack.cn/read/qcrao-Go-Questions/map.md">map - 《Go 语言问题集(Go Questions)》 - 书栈网 · BookStack</a></p>
 </blockquote>
+<h2 id="map遍历是无序的">map遍历是无序的</h2>
+<p>参考大佬的文章,本文仅仅是用我个人语言总结了一遍，仅作个人笔记使用</p>
+<h3 id="map的结构">map的结构</h3>
+<pre><code class="language-go">type hmap struct {
+    // 元素个数，调用 len(map) 时，直接返回此值
+    count     int
+    flags     uint8
+    // buckets 的对数 log_2
+    B         uint8
+    // overflow 的 bucket 近似数
+    noverflow uint16
+    // 计算 key 的哈希的时候会传入哈希函数
+    hash0     uint32
+    // 指向 buckets 数组，大小为 2^B
+    // 如果元素个数为0，就为 nil
+    buckets    unsafe.Pointer
+    // 扩容的时候，buckets 长度会是 oldbuckets 的两倍
+    oldbuckets unsafe.Pointer
+    // 指示扩容进度，小于此地址的 buckets 迁移完成
+    nevacuate  uintptr
+    extra *mapextra // optional fields
+}
+</code></pre>
+<p>首先是经过hash函数（由编译阶段确定是什么hash函数）获得了key，将k-v存在一个bucket（实际上是一个指向bmap的指针）中，bucket个数是2^B</p>
+<pre><code>hmap[hash(key)]-&gt; bucket[2^B]-&gt; bmap[0:8]
+</code></pre>
+<p>每个bmap最多可以存储8对hash后结果相同的数据，因此还要再bmap中查找一边key，才能找到真正对应的值，属于时间换空间，经过编译器处理后bmap结构如下，当8个不够用时，overflow会指向新的一个bmap</p>
+<pre><code class="language-go">type bmap struct {
+    topbits  [8]uint8
+    keys     [8]keytype
+    values   [8]valuetype
+    pad      uintptr
+    overflow uintptr
+}
+</code></pre>
+<p>一般来说好的hash算法会尽量让每个bucket被平均分配，而不是一个超过太多，另一个是空的，但是当数据太多一样会发生拥挤，因此有一个指标叫做装载因子</p>
+<pre><code class="language-go">loadFactor := count / (2^B)
+</code></pre>
+<p>两个条件都会触发</p>
+<ol>
+<li>
+<p>装载因子大于6.5的时候</p>
+</li>
+<li>
+<p>当overflow的bucket过多（bmap并不真正拥有overflow，overflow实际上是hmap中的结构）</p>
 <ul>
-<li><a href="https://github.com/monklof/Back-End-Developer-Interview-Questions#toc">通用后端问题</a> 每日10道</li>
-<li><a href="https://github.com/lifei6671/interview-go">golang面试题集合</a> 每日2道</li>
-<li><a href="https://labuladong.gitee.io/algo/">刷题笔记</a></li>
-<li>leetcode 尽力而为</li>
+<li>
+<p>B&lt;15时，overflow的bucket数量大于2^B</p>
+</li>
+<li>
+<p>B&gt;=15时，overflow的bucket数量大于2^15</p>
+</li>
+</ul>
+</li>
+</ol>
+<p>此时会触发map的扩容，两种情况不一样</p>
+<ol>
+<li>
+<p>条件一说明虽然很均匀，但是大家都快装满了，因此直接B+1解决问题</p>
+</li>
+<li>
+<p>有两种可能</p>
+<ul>
+<li>
+<p>不停的插入删除大量数据导致创建了过多的bucket，导致每个bucket都很空，但是都指向了一堆新的bucket，这时候就创建一个新的bucket将旧的bucket全部集中起来</p>
+</li>
+<li>
+<p>极端情况：hash(key)都一样，怎么移动都没用，此时大家都集中在同一个bmap里面，就会创建很多bucket，但此时hash表已经退化为链表了</p>
+</li>
+</ul>
+</li>
+</ol>
+<p>由于扩容的时候是不停的key-value的搬迁，因此非常影响性能，所以go是渐进式搬迁，每次插入修改删除key的时候移动两个，旧的bucket并没有真正被搬迁，而是挂载到了hmap的oldbuckets字段，直到完全迁移结束</p>
+<p>如果是条件一则bucket变为两倍，如果条件二则不增加</p>
+<h3 id="为什么无序">为什么无序？</h3>
+<p>因为每次遍历map的时候实际上是遍历bucket，当B加一后，原来后B位的key变化了，多了一位，因此会分配到两个不一样的bucket中（但是同样可能不变），所以无法控制具体情况，自然就是无序的</p>
+<ul>
+<li>
+<p>特殊情况：硬编码map</p>
+<p>对于固定的map，不修改则完全不变，但是会给不熟悉的人带来疑惑，所以从go1.0 开始，遍历的时候是随机选择一个bucket中的cell（8个之一）开始，完全杜绝有序情况。</p>
+</li>
 </ul>
 
       </div>
@@ -2458,11 +2519,9 @@ leetcode 尽力而为
 
       <div class="post-tags">
         
-        <a href="http://blog.zerokirin.online/tag/_1938IQJM/" rel="tag">后端</a>        
+        <a href="http://blog.zerokirin.online/tag/2n3c2auIY/" rel="tag">golang</a>        
         
-        <a href="http://blog.zerokirin.online/tag/ieznrVSNB/" rel="tag">面经</a>        
-        
-        <a href="http://blog.zerokirin.online/tag/KIp5hERYy/" rel="tag">刷题</a>        
+        <a href="http://blog.zerokirin.online/tag/-Ep2xEDPKR/" rel="tag">笔记</a>        
                
       </div>
 
