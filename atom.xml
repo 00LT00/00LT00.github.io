@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>http://blog.zerokirin.online</id>
     <title>Zer0kiriN</title>
-    <updated>2021-03-18T10:44:47.673Z</updated>
+    <updated>2021-03-18T13:31:10.722Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="http://blog.zerokirin.online"/>
     <link rel="self" href="http://blog.zerokirin.online/atom.xml"/>
@@ -10,6 +10,48 @@
     <logo>http://blog.zerokirin.online/images/avatar.png</logo>
     <icon>http://blog.zerokirin.online/favicon.ico</icon>
     <rights>All rights reserved 2021, Zer0kiriN</rights>
+    <entry>
+        <title type="html"><![CDATA[go语法基础巩固（string）]]></title>
+        <id>http://blog.zerokirin.online/post/go-yu-fa-ji-chu-gong-gu-string/</id>
+        <link href="http://blog.zerokirin.online/post/go-yu-fa-ji-chu-gong-gu-string/">
+        </link>
+        <updated>2021-03-18T11:39:34.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="字符串不能用下标访问">字符串不能用下标访问</h2>
+<pre><code class="language-go">var str = &quot;Hello, 世界&quot;
+</code></pre>
+<p>在<code>golang</code>中，字符串几乎一定是<code>utf-8</code>编码的，而在<code>utf-8</code>中，中文有些是3个字节，有些是4个字节，英文是一个字节，而字符串这个类型的本质其实是一个字符slice，对str遍历可得</p>
+<pre><code class="language-go">func main() {
+
+	var str = &quot;Hello, 世界&quot;
+	for i := 0; i &lt; len(str); i++ {
+		fmt.Printf(&quot;%c &quot;, str[i])
+	}
+	fmt.Println()
+	for i := 0; i &lt; len(str); i++ {
+		fmt.Printf(&quot;%q &quot;, str[i])
+	}
+	fmt.Println()
+	for i := 0; i &lt; len(str); i++ {
+		fmt.Printf(&quot;%v &quot;, str[i])
+	}
+}
+</code></pre>
+<p>结果是</p>
+<pre><code>H e l l o ,   ä ¸  ç   
+'H' 'e' 'l' 'l' 'o' ',' ' ' 'ä' '¸' '\u0096' 'ç' '\u0095' '\u008c' 
+72 101 108 108 111 44 32 228 184 150 231 149 140 
+</code></pre>
+<p>根据v和q的值可以看到，对于能解析的会被q解析为字符，解析不了的直接输出<code>utf-8</code>编码过后的结果，因此无法直接通过下标访问，但是可以将字符串转为rune数组</p>
+<pre><code class="language-go">var str = &quot;Hello, 世界&quot;
+fmt.Println(string([]rune(str[7:])))
+//结果是 世界
+</code></pre>
+<p>go中对rune的定义是</p>
+<pre><code class="language-go">type rune = int32
+</code></pre>
+<p>在转位rune数组的过程中，会将单个字符的全部字节放入（32位正好是<code>utf-8</code>的可变字符范围)</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[go语法基础巩固（map）]]></title>
         <id>http://blog.zerokirin.online/post/go-yu-fa-ji-chu-gong-gu-map/</id>
