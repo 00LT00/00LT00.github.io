@@ -2209,7 +2209,7 @@ close(c2)
 <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style>
 <noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
 <link rel="canonical" href="http://blog.zerokirin.online/post/go-yu-fa-ji-chu-gong-gu-channel/" />
-<link rel="shortcut icon" href="http://blog.zerokirin.online/favicon.ico?v=1616276261592">
+<link rel="shortcut icon" href="http://blog.zerokirin.online/favicon.ico?v=1616276529468">
 
 <meta name="author" content="破庙主任">
 
@@ -2528,7 +2528,7 @@ func main(){
 
 </code></pre>
 <p>上面go出去了两个读取ch的goroutine，所以此时接收队列应该是两个，结构如下（图源参考文章）</p>
-<figure data-type="image" tabindex="1"><img src="https://segmentfault.com/img/remote/1460000019839562" alt="recvq structure" loading="lazy"></figure>
+<figure data-type="image" tabindex="1"><img src="https://image-static.segmentfault.com/311/648/3116484337-5d35b2f0069a8_article732" alt="recvq" loading="lazy"></figure>
 <p>可以看到G1，G2其实就是个sudog结构的双向循环列表，recvq分别通过first和last指向了头尾</p>
 <p>发送队列也是个wait结构，因此和接收队列几乎一致</p>
 <h3 id="写入">写入</h3>
@@ -2546,9 +2546,15 @@ func main(){
 </ol>
 <h3 id="读取">读取</h3>
 <ol>
-<li>先判断是否有缓冲，若无缓冲则直接从发送者的栈拷贝到接收者的栈，发送者是通过遍历sendq找到的</li>
-<li>若有缓冲则从buf所指的空间拷贝数据（只要不为空就会一直有数据写入，不会有主动寻找sendq的时机）</li>
-<li>若没有数据则将自己挂起到接收队列等待被发送进程找到，也是创建一个sudog</li>
+<li>
+<p>先判断是否有缓冲，若无缓冲则直接从发送者的栈拷贝到接收者的栈，发送者是通过遍历sendq找到的</p>
+</li>
+<li>
+<p>若有缓冲则从buf所指的空间拷贝数据（只要不为空就会一直有数据写入，不会有主动寻找sendq的时机）</p>
+</li>
+<li>
+<p>若没有数据则将自己挂起到接收队列等待被发送进程找到，也是创建一个sudog</p>
+</li>
 </ol>
 
       </div>
@@ -2615,7 +2621,7 @@ func main(){
   <aside id="profile-2" class="widget widget_profile">
     <div class="profile-box">
       <div class="profile-avatar">
-        <amp-img src="http://blog.zerokirin.online/images/avatar.png?v=1616276261592" alt="avatar"
+        <amp-img src="http://blog.zerokirin.online/images/avatar.png?v=1616276529468" alt="avatar"
           layout="fill"></amp-img>
       </div>
       <div class="profile-content">
