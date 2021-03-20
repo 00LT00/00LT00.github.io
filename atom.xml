@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>http://blog.zerokirin.online</id>
     <title>Zer0kiriN</title>
-    <updated>2021-03-18T13:57:34.565Z</updated>
+    <updated>2021-03-20T21:37:46.013Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="http://blog.zerokirin.online"/>
     <link rel="self" href="http://blog.zerokirin.online/atom.xml"/>
@@ -10,6 +10,163 @@
     <logo>http://blog.zerokirin.online/images/avatar.png</logo>
     <icon>http://blog.zerokirin.online/favicon.ico</icon>
     <rights>All rights reserved 2021, Zer0kiriN</rights>
+    <entry>
+        <title type="html"><![CDATA[go语法基础巩固（channel）]]></title>
+        <id>http://blog.zerokirin.online/post/go-yu-fa-ji-chu-gong-gu-channel/</id>
+        <link href="http://blog.zerokirin.online/post/go-yu-fa-ji-chu-gong-gu-channel/">
+        </link>
+        <updated>2021-03-20T21:37:01.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="channel分为有缓冲和无缓冲">channel分为有缓冲和无缓冲</h2>
+<p>channel有两种定义方式</p>
+<pre><code class="language-go">var c1 = make(chan int) //无缓冲
+var c2 = make(chan int,n) //有缓冲
+close(c2)
+</code></pre>
+<ul>
+<li>对无缓冲的c1的操作是同步的
+<ul>
+<li>必须同时存在接收者和发送者才会执行，否则会阻塞</li>
+</ul>
+</li>
+<li>对有缓冲的c2是存在异步操作的
+<ul>
+<li>缓冲区满了则无法继续写入，进入阻塞，未满之前不阻塞程序</li>
+<li>缓冲区空了则无法读取，进入阻塞，没有空之前不阻塞</li>
+</ul>
+</li>
+</ul>
+<h2 id="close关闭一个channel">close关闭一个channel</h2>
+<ul>
+<li>不能对一个关闭了的，或者本来就未通过make()初始化的channel执行关闭操作，会panic</li>
+<li>关闭channel在某种角度上讲只是不允许继续写入，对于已经存入缓冲的数据还是可以读取的</li>
+</ul>
+<pre><code class="language-go">func main() {
+	c1 := make(chan int, 5)
+	for i := 0; i &lt; 5; i++ {
+		c1 &lt;- i
+	}
+	close(c1)
+	for i := 0; i &lt; 6; i++ {
+		m, ok := &lt;-c1
+		fmt.Println(m, ok)
+	}
+}
+//结果：
+//0 true
+//1 true
+//2 true
+//3 true
+//4 true
+//0 false， 只有到这一步才因为没有数据而返回了默认的零值
+</code></pre>
+<p>总结一下：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">操作\对象</th>
+<th style="text-align:center">nil channel</th>
+<th style="text-align:center">closed channel</th>
+<th style="text-align:center">not nil, not closed channel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">close</td>
+<td style="text-align:center">panic</td>
+<td style="text-align:center">panic</td>
+<td style="text-align:center">正常关闭</td>
+</tr>
+<tr>
+<td style="text-align:center">读 &lt;- ch</td>
+<td style="text-align:center">阻塞</td>
+<td style="text-align:center">读到对应类型的零值</td>
+<td style="text-align:center">阻塞或正常读取数据。缓冲型 channel 为空或非缓冲型 channel 没有等待发送者时会阻塞</td>
+</tr>
+<tr>
+<td style="text-align:center">写 ch &lt;-</td>
+<td style="text-align:center">阻塞</td>
+<td style="text-align:center">panic</td>
+<td style="text-align:center">阻塞或正常写入数据。非缓冲型 channel 没有等待接收者或缓冲型 channel buf 满时会被阻塞</td>
+</tr>
+</tbody>
+</table>
+<h2 id="channel的实现原理">channel的实现原理</h2>
+<blockquote>
+<p><a href="https://segmentfault.com/a/1190000019839546">深度解密Go语言之channel - SegmentFault 思否</a></p>
+</blockquote>
+<p>以下内容均为个人转述总结，仅作笔记使用，参考出处如上</p>
+<h3 id="channel结构">channel结构</h3>
+<pre><code class="language-go">type hchan struct {
+    // chan 里元素数量
+    qcount   uint
+    // chan 底层循环数组的长度
+    dataqsiz uint
+    // 指向底层循环数组的指针
+    // 只针对有缓冲的 channel
+    buf      unsafe.Pointer
+    // chan 中元素大小
+    elemsize uint16
+    // chan 是否被关闭的标志
+    closed   uint32
+    // chan 中元素类型
+    elemtype *_type // element type
+    // 已发送元素在循环数组中的索引
+    sendx    uint   // send index
+    // 已接收元素在循环数组中的索引
+    recvx    uint   // receive index
+    // 等待接收的 goroutine 队列
+    recvq    waitq  // list of recv waiters
+    // 等待发送的 goroutine 队列
+    sendq    waitq  // list of send waiters
+
+    // 保护 hchan 中所有字段
+    lock mutex
+}
+
+type waitq struct {
+    first *sudog //对goroutine的封装
+    last  *sudog //对goroutine的封装
+}
+</code></pre>
+<p>和map一样，底层实际上是一个hchan结构体，调用了makechan()来创建channel，根据创建的时候是否有缓冲决定了buf指针是否有意义，sendx和recvx均为缓冲数组服务</p>
+<pre><code class="language-go">func goroutine(a &lt;-chan int) {
+    val := &lt;- a
+    fmt.Println(&quot;received data: &quot;, val)
+    return
+}
+func main(){
+	var ch = make(chan int, 10)
+    go goroutine(ch) //隐式转换为只读channel
+    go goroutine(ch) //隐式转换为只读channel
+    time.Sleep(time.Second)
+}
+
+</code></pre>
+<p>上面go出去了两个读取ch的goroutine，所以此时接收队列应该是两个，结构如下（图源参考文章）</p>
+<figure data-type="image" tabindex="1"><img src="https://segmentfault.com/img/remote/1460000019839562" alt="recvq structure" loading="lazy"></figure>
+<p>可以看到G1，G2其实就是个sudog结构的双向循环列表，recvq分别通过first和last指向了头尾</p>
+<p>发送队列也是个wait结构，因此和接收队列几乎一致</p>
+<h3 id="写入">写入</h3>
+<ol>
+<li>
+<p>先判断是否有接收队列，如果有则直接拷贝到接收队列中，不复制到buf</p>
+</li>
+<li>
+<p>对于有缓冲的channel，若还有空间，则将数据拷贝到buf中，同时更改相应的index</p>
+</li>
+<li>
+<p>若没有空间或非缓冲则阻塞，然后创建一个sudog（sudog实际上是goroutine的封装，因此新的sudog实际就是包括了执行函数的这个goroutine</p>
+<p>将新的sudog加入发送队列，当前goroutine被系统挂起，等待接受进程唤醒</p>
+</li>
+</ol>
+<h3 id="读取">读取</h3>
+<ol>
+<li>先判断是否有缓冲，若无缓冲则直接从发送者的栈拷贝到接收者的栈，发送者是通过遍历sendq找到的</li>
+<li>若有缓冲则从buf所指的空间拷贝数据（只要不为空就会一直有数据写入，不会有主动寻找sendq的时机）</li>
+<li>若没有数据则将自己挂起到接收队列等待被发送进程找到，也是创建一个sudog</li>
+</ol>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[go语法基础巩固（string）]]></title>
         <id>http://blog.zerokirin.online/post/go-yu-fa-ji-chu-gong-gu-string/</id>
@@ -49,7 +206,7 @@ fmt.Println(string([]rune(str[7:])))
 <p>go中对rune的定义是</p>
 <pre><code class="language-go">type rune = int32
 </code></pre>
-<p>在转位rune数组的过程中，会将单个字符的全部字节放入（32位正好是<code>utf-8</code>的可变字符范围)</p>
+<p>在转为rune数组的过程中，会将单个字符的全部字节放入（32位正好是<code>utf-8</code>的可变字符范围)</p>
 ]]></content>
     </entry>
     <entry>

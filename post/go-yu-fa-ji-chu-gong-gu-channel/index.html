@@ -4,14 +4,18 @@
 <head>
   <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="字符串不能用下标访问
-var str = &quot;Hello, 世界&quot;
+<meta name="description" content="channel分为有缓冲和无缓冲
+channel有两种定义方式
+var c1 = make(chan int) //无缓冲
+var c2 = make(chan int,n) //有缓冲
+close(c2)
 
-在golang中，字符串几乎一定是utf-8编码的，而在utf-8中，中文有些是3个字节，有些是4个字节，英文是一个字节，而字符串这个类型的本质其实是一..." />
+
+对无缓冲的c1的操作是同步的..." />
 <link rel="preload" as="script" href="https://cdn.ampproject.org/v0.js">
 <link rel="preconnect dns-prefetch" href="https://cdn.jsdelivr.net/" crossorigin>
 <script async src="https://cdn.ampproject.org/v0.js"></script>
-<title>go语法基础巩固（string） | Zer0kiriN</title>
+<title>go语法基础巩固（channel） | Zer0kiriN</title>
 
 
   
@@ -2204,40 +2208,52 @@ var str = &quot;Hello, 世界&quot;
 
 <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style>
 <noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
-<link rel="canonical" href="http://blog.zerokirin.online/post/go-yu-fa-ji-chu-gong-gu-string/" />
+<link rel="canonical" href="http://blog.zerokirin.online/post/go-yu-fa-ji-chu-gong-gu-channel/" />
 <link rel="shortcut icon" href="http://blog.zerokirin.online/favicon.ico?v=1616276261592">
 
 <meta name="author" content="破庙主任">
 
-<meta itemprop="name" content="go语法基础巩固（string） | Zer0kiriN">
-<meta itemprop="description" content="字符串不能用下标访问
-var str = &quot;Hello, 世界&quot;
+<meta itemprop="name" content="go语法基础巩固（channel） | Zer0kiriN">
+<meta itemprop="description" content="channel分为有缓冲和无缓冲
+channel有两种定义方式
+var c1 = make(chan int) //无缓冲
+var c2 = make(chan int,n) //有缓冲
+close(c2)
 
-在golang中，字符串几乎一定是utf-8编码的，而在utf-8中，中文有些是3个字节，有些是4个字节，英文是一个字节，而字符串这个类型的本质其实是一...">
+
+对无缓冲的c1的操作是同步的...">
 <meta itemprop="image" content="">
 
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="go语法基础巩固（string） | Zer0kiriN">
-<meta name="twitter:description" content="字符串不能用下标访问
-var str = &quot;Hello, 世界&quot;
+<meta name="twitter:title" content="go语法基础巩固（channel） | Zer0kiriN">
+<meta name="twitter:description" content="channel分为有缓冲和无缓冲
+channel有两种定义方式
+var c1 = make(chan int) //无缓冲
+var c2 = make(chan int,n) //有缓冲
+close(c2)
 
-在golang中，字符串几乎一定是utf-8编码的，而在utf-8中，中文有些是3个字节，有些是4个字节，英文是一个字节，而字符串这个类型的本质其实是一...">
+
+对无缓冲的c1的操作是同步的...">
 <meta name="twitter:image" content="" />
-<meta name="twitter:image:alt" content="go语法基础巩固（string） | Zer0kiriN" />
+<meta name="twitter:image:alt" content="go语法基础巩固（channel） | Zer0kiriN" />
 
 
 <meta property="og:type" content="website">
-<meta property="og:url" content="http://blog.zerokirin.online/post/go-yu-fa-ji-chu-gong-gu-string/">
-<meta property="og:title" content="go语法基础巩固（string） | Zer0kiriN">
-<meta property="og:description" content="字符串不能用下标访问
-var str = &quot;Hello, 世界&quot;
+<meta property="og:url" content="http://blog.zerokirin.online/post/go-yu-fa-ji-chu-gong-gu-channel/">
+<meta property="og:title" content="go语法基础巩固（channel） | Zer0kiriN">
+<meta property="og:description" content="channel分为有缓冲和无缓冲
+channel有两种定义方式
+var c1 = make(chan int) //无缓冲
+var c2 = make(chan int,n) //有缓冲
+close(c2)
 
-在golang中，字符串几乎一定是utf-8编码的，而在utf-8中，中文有些是3个字节，有些是4个字节，英文是一个字节，而字符串这个类型的本质其实是一...">
+
+对无缓冲的c1的操作是同步的...">
 <meta property="og:image" content="">
-<meta property="og:image:alt" content="go语法基础巩固（string） | Zer0kiriN" />
+<meta property="og:image:alt" content="go语法基础巩固（channel） | Zer0kiriN" />
 <meta property="og:site_name" content="Zer0kiriN">
 <meta property="og:locale" content="zh_CN">
-<meta property="tag" content="go语法基础巩固（string） | Zer0kiriN" />
+<meta property="tag" content="go语法基础巩固（channel） | Zer0kiriN" />
 
 
 <script type="application/ld+json">
@@ -2246,11 +2262,11 @@ var str = &quot;Hello, 世界&quot;
 "@type": "BlogPosting",
 "mainEntityOfPage": {
   "@type": "WebPage",
-  "@id": "http://blog.zerokirin.online/post/go-yu-fa-ji-chu-gong-gu-string/"
+  "@id": "http://blog.zerokirin.online/post/go-yu-fa-ji-chu-gong-gu-channel/"
 },
-"headline": "go语法基础巩固（string） | Zer0kiriN",
-"datePublished": "Thu Mar 18 2021 19:39:34 GMT+0800",
-"dateModified": "Thu Mar 18 2021 19:39:34 GMT+0800",
+"headline": "go语法基础巩固（channel） | Zer0kiriN",
+"datePublished": "Sun Mar 21 2021 05:37:01 GMT+0800",
+"dateModified": "Sun Mar 21 2021 05:37:01 GMT+0800",
 "author": {
   "@type": "Person",
   "name": "破庙主任"
@@ -2266,10 +2282,14 @@ var str = &quot;Hello, 世界&quot;
 "image": [
 ""
 ],
-"description": "字符串不能用下标访问
-var str = &quot;Hello, 世界&quot;
+"description": "channel分为有缓冲和无缓冲
+channel有两种定义方式
+var c1 = make(chan int) //无缓冲
+var c2 = make(chan int,n) //有缓冲
+close(c2)
 
-在golang中，字符串几乎一定是utf-8编码的，而在utf-8中，中文有些是3个字节，有些是4个字节，英文是一个字节，而字符串这个类型的本质其实是一..."
+
+对无缓冲的c1的操作是同步的..."
  }
 
 </script>
@@ -2285,8 +2305,8 @@ var str = &quot;Hello, 世界&quot;
     },{
       "@type": "ListItem", 
       "position": 2, 
-      "name": "go语法基础巩固（string） | Zer0kiriN",
-      "item": "http://blog.zerokirin.online/post/go-yu-fa-ji-chu-gong-gu-string/"  
+      "name": "go语法基础巩固（channel） | Zer0kiriN",
+      "item": "http://blog.zerokirin.online/post/go-yu-fa-ji-chu-gong-gu-channel/"  
     }]
   }
   </script>
@@ -2308,7 +2328,7 @@ var str = &quot;Hello, 世界&quot;
 
 <script async custom-element="amp-gist" src="https://cdn.ampproject.org/v0/amp-gist-0.1.js"></script>
 
-<link rel="alternate" type="application/atom+xml" title="go语法基础巩固（string） | Zer0kiriN - Atom Feed" href="http://blog.zerokirin.online/atom.xml">
+<link rel="alternate" type="application/atom+xml" title="go语法基础巩固（channel） | Zer0kiriN - Atom Feed" href="http://blog.zerokirin.online/atom.xml">
 
 
 
@@ -2364,16 +2384,16 @@ var str = &quot;Hello, 世界&quot;
       <div class="article-info">
         
           <div class="flex-box meta-category">
-            <a class="post-cate" href="http://blog.zerokirin.online/tag/EwjLvEpmk/">string</a></div>
+            <a class="post-cate" href="http://blog.zerokirin.online/tag/nRa6ExP4g/">channel</a></div>
           
         <h2 class="article-title">
-          <a href="http://blog.zerokirin.online/post/go-yu-fa-ji-chu-gong-gu-string/">go语法基础巩固（string）</a>
+          <a href="http://blog.zerokirin.online/post/go-yu-fa-ji-chu-gong-gu-channel/">go语法基础巩固（channel）</a>
         </h2>
         <div class="flex-box">
           <div class="flex-box post-meta-box">
             <a class="post-meta" href="http://blog.zerokirin.online"><span
                 class="iconfont icon-mr-postmeta"></span>破庙主任</a>
-            <span class="post-meta"><span class="iconfont icon-mr-postmeta"></span>2021 年 03	月 18日</span>
+            <span class="post-meta"><span class="iconfont icon-mr-postmeta"></span>2021 年 03	月 21日</span>
             
 
 
@@ -2381,53 +2401,164 @@ var str = &quot;Hello, 世界&quot;
         </div>
       </div>
       <div class="content">
-        <h2 id="字符串不能用下标访问">字符串不能用下标访问</h2>
-<pre><code class="language-go">var str = &quot;Hello, 世界&quot;
+        <h2 id="channel分为有缓冲和无缓冲">channel分为有缓冲和无缓冲</h2>
+<p>channel有两种定义方式</p>
+<pre><code class="language-go">var c1 = make(chan int) //无缓冲
+var c2 = make(chan int,n) //有缓冲
+close(c2)
 </code></pre>
-<p>在<code>golang</code>中，字符串几乎一定是<code>utf-8</code>编码的，而在<code>utf-8</code>中，中文有些是3个字节，有些是4个字节，英文是一个字节，而字符串这个类型的本质其实是一个字符slice，对str遍历可得</p>
+<ul>
+<li>对无缓冲的c1的操作是同步的
+<ul>
+<li>必须同时存在接收者和发送者才会执行，否则会阻塞</li>
+</ul>
+</li>
+<li>对有缓冲的c2是存在异步操作的
+<ul>
+<li>缓冲区满了则无法继续写入，进入阻塞，未满之前不阻塞程序</li>
+<li>缓冲区空了则无法读取，进入阻塞，没有空之前不阻塞</li>
+</ul>
+</li>
+</ul>
+<h2 id="close关闭一个channel">close关闭一个channel</h2>
+<ul>
+<li>不能对一个关闭了的，或者本来就未通过make()初始化的channel执行关闭操作，会panic</li>
+<li>关闭channel在某种角度上讲只是不允许继续写入，对于已经存入缓冲的数据还是可以读取的</li>
+</ul>
 <pre><code class="language-go">func main() {
-
-	var str = &quot;Hello, 世界&quot;
-	for i := 0; i &lt; len(str); i++ {
-		fmt.Printf(&quot;%c &quot;, str[i])
+	c1 := make(chan int, 5)
+	for i := 0; i &lt; 5; i++ {
+		c1 &lt;- i
 	}
-	fmt.Println()
-	for i := 0; i &lt; len(str); i++ {
-		fmt.Printf(&quot;%q &quot;, str[i])
-	}
-	fmt.Println()
-	for i := 0; i &lt; len(str); i++ {
-		fmt.Printf(&quot;%v &quot;, str[i])
+	close(c1)
+	for i := 0; i &lt; 6; i++ {
+		m, ok := &lt;-c1
+		fmt.Println(m, ok)
 	}
 }
+//结果：
+//0 true
+//1 true
+//2 true
+//3 true
+//4 true
+//0 false， 只有到这一步才因为没有数据而返回了默认的零值
 </code></pre>
-<p>结果是</p>
-<pre><code>H e l l o ,   ä ¸  ç   
-'H' 'e' 'l' 'l' 'o' ',' ' ' 'ä' '¸' '\u0096' 'ç' '\u0095' '\u008c' 
-72 101 108 108 111 44 32 228 184 150 231 149 140 
+<p>总结一下：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">操作\对象</th>
+<th style="text-align:center">nil channel</th>
+<th style="text-align:center">closed channel</th>
+<th style="text-align:center">not nil, not closed channel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">close</td>
+<td style="text-align:center">panic</td>
+<td style="text-align:center">panic</td>
+<td style="text-align:center">正常关闭</td>
+</tr>
+<tr>
+<td style="text-align:center">读 &lt;- ch</td>
+<td style="text-align:center">阻塞</td>
+<td style="text-align:center">读到对应类型的零值</td>
+<td style="text-align:center">阻塞或正常读取数据。缓冲型 channel 为空或非缓冲型 channel 没有等待发送者时会阻塞</td>
+</tr>
+<tr>
+<td style="text-align:center">写 ch &lt;-</td>
+<td style="text-align:center">阻塞</td>
+<td style="text-align:center">panic</td>
+<td style="text-align:center">阻塞或正常写入数据。非缓冲型 channel 没有等待接收者或缓冲型 channel buf 满时会被阻塞</td>
+</tr>
+</tbody>
+</table>
+<h2 id="channel的实现原理">channel的实现原理</h2>
+<blockquote>
+<p><a href="https://segmentfault.com/a/1190000019839546">深度解密Go语言之channel - SegmentFault 思否</a></p>
+</blockquote>
+<p>以下内容均为个人转述总结，仅作笔记使用，参考出处如上</p>
+<h3 id="channel结构">channel结构</h3>
+<pre><code class="language-go">type hchan struct {
+    // chan 里元素数量
+    qcount   uint
+    // chan 底层循环数组的长度
+    dataqsiz uint
+    // 指向底层循环数组的指针
+    // 只针对有缓冲的 channel
+    buf      unsafe.Pointer
+    // chan 中元素大小
+    elemsize uint16
+    // chan 是否被关闭的标志
+    closed   uint32
+    // chan 中元素类型
+    elemtype *_type // element type
+    // 已发送元素在循环数组中的索引
+    sendx    uint   // send index
+    // 已接收元素在循环数组中的索引
+    recvx    uint   // receive index
+    // 等待接收的 goroutine 队列
+    recvq    waitq  // list of recv waiters
+    // 等待发送的 goroutine 队列
+    sendq    waitq  // list of send waiters
+
+    // 保护 hchan 中所有字段
+    lock mutex
+}
+
+type waitq struct {
+    first *sudog //对goroutine的封装
+    last  *sudog //对goroutine的封装
+}
 </code></pre>
-<p>根据v和q的值可以看到，对于能解析的会被q解析为字符，解析不了的直接输出<code>utf-8</code>编码过后的结果，因此无法直接通过下标访问，但是可以将字符串转为rune数组</p>
-<pre><code class="language-go">var str = &quot;Hello, 世界&quot;
-fmt.Println(string([]rune(str[7:])))
-//结果是 世界
+<p>和map一样，底层实际上是一个hchan结构体，调用了makechan()来创建channel，根据创建的时候是否有缓冲决定了buf指针是否有意义，sendx和recvx均为缓冲数组服务</p>
+<pre><code class="language-go">func goroutine(a &lt;-chan int) {
+    val := &lt;- a
+    fmt.Println(&quot;received data: &quot;, val)
+    return
+}
+func main(){
+	var ch = make(chan int, 10)
+    go goroutine(ch) //隐式转换为只读channel
+    go goroutine(ch) //隐式转换为只读channel
+    time.Sleep(time.Second)
+}
+
 </code></pre>
-<p>go中对rune的定义是</p>
-<pre><code class="language-go">type rune = int32
-</code></pre>
-<p>在转为rune数组的过程中，会将单个字符的全部字节放入（32位正好是<code>utf-8</code>的可变字符范围)</p>
+<p>上面go出去了两个读取ch的goroutine，所以此时接收队列应该是两个，结构如下（图源参考文章）</p>
+<figure data-type="image" tabindex="1"><img src="https://segmentfault.com/img/remote/1460000019839562" alt="recvq structure" loading="lazy"></figure>
+<p>可以看到G1，G2其实就是个sudog结构的双向循环列表，recvq分别通过first和last指向了头尾</p>
+<p>发送队列也是个wait结构，因此和接收队列几乎一致</p>
+<h3 id="写入">写入</h3>
+<ol>
+<li>
+<p>先判断是否有接收队列，如果有则直接拷贝到接收队列中，不复制到buf</p>
+</li>
+<li>
+<p>对于有缓冲的channel，若还有空间，则将数据拷贝到buf中，同时更改相应的index</p>
+</li>
+<li>
+<p>若没有空间或非缓冲则阻塞，然后创建一个sudog（sudog实际上是goroutine的封装，因此新的sudog实际就是包括了执行函数的这个goroutine</p>
+<p>将新的sudog加入发送队列，当前goroutine被系统挂起，等待接受进程唤醒</p>
+</li>
+</ol>
+<h3 id="读取">读取</h3>
+<ol>
+<li>先判断是否有缓冲，若无缓冲则直接从发送者的栈拷贝到接收者的栈，发送者是通过遍历sendq找到的</li>
+<li>若有缓冲则从buf所指的空间拷贝数据（只要不为空就会一直有数据写入，不会有主动寻找sendq的时机）</li>
+<li>若没有数据则将自己挂起到接收队列等待被发送进程找到，也是创建一个sudog</li>
+</ol>
 
       </div>
 
       
       <nav class="post-nav">
         
-        <div class="nav-previous">
-          <a class="post-nav-link-active" title="go语法基础巩固（channel）" href="http://blog.zerokirin.online/post/go-yu-fa-ji-chu-gong-gu-channel/">上一篇文章</a>
-        </div>
-        
         
         <div class="nav-next">
-          <a class="post-nav-link-active" title="go语法基础巩固（map）" href="http://blog.zerokirin.online/post/go-yu-fa-ji-chu-gong-gu-map/">下一篇文章</a>
+          <a class="post-nav-link-active" title="go语法基础巩固（string）" href="http://blog.zerokirin.online/post/go-yu-fa-ji-chu-gong-gu-string/">下一篇文章</a>
           
 
         </div>
@@ -2467,9 +2598,7 @@ fmt.Println(string([]rune(str[7:])))
 
       <div class="post-tags">
         
-        <a href="http://blog.zerokirin.online/tag/EwjLvEpmk/" rel="tag">string</a>        
-        
-        <a href="http://blog.zerokirin.online/tag/PM-CMPlRec/" rel="tag">rune</a>        
+        <a href="http://blog.zerokirin.online/tag/nRa6ExP4g/" rel="tag">channel</a>        
         
         <a href="http://blog.zerokirin.online/tag/2n3c2auIY/" rel="tag">golang</a>        
         
