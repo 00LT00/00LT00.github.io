@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>http://blog.zerokirin.online</id>
     <title>Zer0kiriN</title>
-    <updated>2021-03-20T21:42:12.482Z</updated>
+    <updated>2021-03-24T07:30:31.035Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="http://blog.zerokirin.online"/>
     <link rel="self" href="http://blog.zerokirin.online/atom.xml"/>
@@ -10,6 +10,213 @@
     <logo>http://blog.zerokirin.online/images/avatar.png</logo>
     <icon>http://blog.zerokirin.online/favicon.ico</icon>
     <rights>All rights reserved 2021, Zer0kiriN</rights>
+    <entry>
+        <title type="html"><![CDATA[GMP模型简介]]></title>
+        <id>http://blog.zerokirin.online/post/gmp-mo-xing-jian-jie/</id>
+        <link href="http://blog.zerokirin.online/post/gmp-mo-xing-jian-jie/">
+        </link>
+        <updated>2021-03-21T09:53:13.000Z</updated>
+        <content type="html"><![CDATA[<blockquote>
+<p>[<a href="https://learnku.com/articles/41728">典藏版] Golang 调度器 GMP 原理与调度全分析 | Go 技术论坛 (learnku.com)</a></p>
+<p>大量文字和图片来源于上文，以下仅为个人理解转述，仅作笔记使用</p>
+</blockquote>
+<h2 id="进程线程">进程&amp;线程</h2>
+<ul>
+<li>
+<p>根本区别：</p>
+<ul>
+<li>进程是操作系统资源分配的基本单位</li>
+<li>线程是处理器<strong>任务调度和执行的基本单位</strong></li>
+</ul>
+</li>
+<li>
+<p>资源开销：</p>
+<ul>
+<li>每个进程都有独立的代码和数据空间（程序上下文），程序之间的切换会有较大的开销</li>
+<li>线程可以看做轻量级的进程，同一类线程共享代码和数据空间，每个线程都有自己独立的运行栈和程序计数器（PC），线程之间切换的开销小</li>
+</ul>
+</li>
+<li>
+<p>包含关系：</p>
+<ul>
+<li>线程是进程的一部分，所以线程也被称为轻权进程或者轻量级进程。</li>
+</ul>
+</li>
+<li>
+<p>内存分配：</p>
+<ul>
+<li>同一进程的线程共享本进程的地址空间和资源</li>
+<li>而进程之间的地址空间和资源是相互独立的</li>
+</ul>
+</li>
+<li>
+<p>影响关系：</p>
+<ul>
+<li>一个进程崩溃后，在保护模式下不会对其他进程产生影响</li>
+<li>一个线程崩溃整个进程都死掉，所以多进程要比多线程健壮</li>
+</ul>
+</li>
+</ul>
+<h2 id="内核态用户态">内核态&amp;用户态</h2>
+<p>简单的说，用户的应用程序运行在用户态，内核程序运行在内核态，<strong>任何资源调度都需要进入内核态执行</strong></p>
+<p>详细一点，以32位linux操作系统为例，2^32 = 4G，所以每个进程最多可以访问4G的内存空间（虚拟内存），操作系统将高地址的1G空间分配给了内核态，低地址的3G分配给用户态，又由于内核操作是唯一的，不随用户程序的不同而改变，因此可以说内核态的空间是所有进程共享的，而用户态的空间属于进程独有（实际上大家都是访问的虚拟地址，只不过对于内核态的代码始终映射到了同一空间，用户态就完全随机了）</p>
+<p>再详细一点，intel提供了R0-R3一共四个等级的权限，而linux使用了R0和R3两个等级作为区分，R3最低，应用程序运行在3级的时候就是用户态，运行在0级的时候就是内核态，用户态到内核态一共有三种转换方式：</p>
+<ul>
+<li>
+<p>系统调用（主动）</p>
+<ul>
+<li>使用系统提供的服务，比如请求键盘输入，这时会从用户态切换到内核态，因为用户态的程序无法调用系统资源，任何资源调用都是由内核态程序完成的</li>
+<li>本质就是用户程序向系统发出了一个中断信号<code>int 80h</code>，通过中断信号告诉操作系统来将应用程序调入内核态</li>
+</ul>
+</li>
+<li>
+<p>异常（被动）</p>
+<ul>
+<li>当CPU在执行运行在用户态下的程序时，发生了某些事先不可知的异常，这时会触发由当前运行进程切换到处理此异常的内核相关程序中，也就转到了内核态，比如缺页异常。</li>
+</ul>
+</li>
+<li>
+<p>外围设备中断（被动）</p>
+<ul>
+<li>当外围设备完成用户请求的操作后，会向CPU发出相应的中断信号，这时CPU会暂停执行下一条即将要执行的指令转而去执行与中断信号对应的处理程序，如果先前执行的指令是用户态下的程序，那么这个转换的过程自然也就发生了由用户态到内核态的切换。比如硬盘读写操作完成，系统会切换到硬盘读写的中断处理程序中执行后续操作等。</li>
+</ul>
+</li>
+</ul>
+<h2 id="协程">协程</h2>
+<h3 id="线程的优缺点">线程的优缺点</h3>
+<ul>
+<li>
+<p>缺点</p>
+<ul>
+<li>即便他的资源依赖进程，上下文切换的时候无需切换内存空间，但上文提到过，线程是操作系统任务调度的最小资源，也就意味着线程的切换仍然是内核操作，<strong>这就会使应用程序频繁的处于用户态内核态的切换中</strong>，这中间无疑是对cpu的浪费</li>
+<li>创建一个线程需要8MB大小的空间（ubuntu18.04默认的线程栈大小），一千个线程就是8g的空间，非常夸张</li>
+</ul>
+</li>
+<li>
+<p>优点</p>
+<ul>
+<li>系统调度的最小单元，意味着它是<strong>真正的并行执行</strong>，可以同时运行在多个不同的cpu核心上</li>
+</ul>
+</li>
+</ul>
+<h3 id="协程的概念">协程的概念</h3>
+<p>根据上文可以看到多线程模型在运算效率上很高，因为它可以充分利用多核优势，但是每次线程的切换都需要内核介入，就导致在某些场景下大量的资源被浪费在程序状态的转换上，有没有可能让内核不介入线程的切换呢？</p>
+<p>协程应运而生，也可以说它是用户态的线程，将线程调度这一概念放到了用户态去做，让用户态的程序自己控制调度程序，避免频繁切换。</p>
+<p>协程的执行则是通过绑定到不同的线程去执行，因为只有线程才是执行的最小单位，因此<strong>怎么将线程和协程绑定能最大化利用资源则是重中之重</strong></p>
+<figure data-type="image" tabindex="1"><img src="https://cdn.learnku.com/uploads/images/202003/12/58489/ANDQLx3g9U.png!large" alt="协程" loading="lazy"></figure>
+<p>golang中通过提出了goroutine来实现协程这个概念，用go scheduler在用户态做调度。</p>
+<p>协程和线程主要区别：</p>
+<ul>
+<li>线程是由操作系统调度的，是抢占式的</li>
+<li>协程是协作式的，执行完毕由调度器控制自动让出资源</li>
+<li>协程说到底还是绑定到线程执行的，因此绑定到同一个线程下的协程只能是串行，无法做到并行处理</li>
+</ul>
+<h2 id="gmp模型">GMP模型</h2>
+<p>提出三个概念</p>
+<figure data-type="image" tabindex="2"><img src="https://cdn.learnku.com/uploads/images/202003/11/58489/zaZ4nQYcZe.png!large" alt="GMP" loading="lazy"></figure>
+<ul>
+<li>G goroutine 协程</li>
+<li>M thread 线程</li>
+<li>P processor <strong>它包含了运行 goroutine 的资源</strong>，如果线程想运行 goroutine，必须先获取 P，P 中还包含了可运行的 G 队列。</li>
+</ul>
+<figure data-type="image" tabindex="3"><img src="https://cdn.learnku.com/uploads/images/202003/11/58489/Ugu3C2WSpM.jpeg!large" alt="GMP" loading="lazy"></figure>
+<p><s>（这图做的是真好，一目了然，都不需要讲什么了）</s></p>
+<h5 id="p的数量">P的数量</h5>
+<p>通过<code>GOMAXPROCS</code>这个变量来控制整个程序中P的数量，这是在调度器初始化的时候就确定好的，P不随程序运行改变，默认值是cpu核心数，因为整个模型中，P通过绑定M去执行操作，而M也就是线程，最多可以并行执行的数量就是cpu核心数，因此这样可以最大化利用资源，减少浪费</p>
+<h5 id="m的数量">M的数量</h5>
+<p>由于每个P都必须绑定一个M，通过绑定的M去执行P上的G，因此M的数量至少等于P（休眠状态另算）</p>
+<p>当M被阻塞时，P上的G就无法继续执行，此时就会创造一个新的M，因此通常来说M的数量要大于P</p>
+<h3 id="调度器初始化的过程">调度器初始化的过程</h3>
+<figure data-type="image" tabindex="4"><img src="https://cdn.learnku.com/uploads/images/202003/11/58489/j37FX8nek9.png!large" alt="调度器初始化" loading="lazy"></figure>
+<p>特殊的 M0 和 G0</p>
+<h5 id="m0">M0</h5>
+<p>M0 是启动程序后的编号为 0 的主线程，相当于程序的起点，企业的创始人，在这里初始化了调度器，然后启动第一个G（也就是主函数main），在这后M0就和其他的M一样了，从创始人沦为打工仔</p>
+<h5 id="g0">G0</h5>
+<p>G0 是每次启动一个 M 都会第一个创建的 gourtine，G0 仅用于负责调度的 G，相当于一个总经理把任务G指派给M执行，G0 不指向任何可执行的函数，他自己不干活，每个 M 都会有一个自己的 G0。在调度或系统调用时会使用 G0 的栈空间，全局变量的 G0 是 M0 的 G0。</p>
+<h3 id="一个程序运行的全过程">一个程序运行的全过程</h3>
+<ol>
+<li>runtime 创建最初的线程 m0 和 goroutine g0，并把 2 者关联。</li>
+<li>调度器初始化：初始化 m0、栈、垃圾回收，以及创建和初始化由 GOMAXPROCS 个 P 构成的 P 列表。</li>
+<li>示例代码中的 main 函数是 main.main，runtime 中也有 1 个 main 函数 ——runtime.main，代码经过编译后，runtime.main 会调用 main.main，程序启动时会为 runtime.main 创建 goroutine，称它为 main goroutine 吧，然后把 main goroutine 加入到 P 的本地队列。</li>
+<li>启动 m0，m0 已经绑定了 P，会从 P 的本地队列获取 G，获取到 main goroutine。</li>
+<li>G 拥有栈，M 根据 G 中的栈信息和调度信息设置运行环境</li>
+<li>M 运行 G</li>
+<li>G 退出，再次回到 M 获取可运行的 G，这样重复下去，直到 main.main 退出，runtime.main 执行 Defer 和 Panic 处理，或调用 runtime.exit 退出程序。</li>
+</ol>
+<h3 id="一个goroutine的执行顺序">一个goroutine的执行顺序</h3>
+<figure data-type="image" tabindex="5"><img src="https://cdn.learnku.com/uploads/images/202003/11/58489/a4vWtvRWGQ.jpeg!large" alt="调度执行顺序" loading="lazy"></figure>
+<p>从上图我们可以分析出几个结论：</p>
+<ol>
+<li>有两个存储 G 的队列，一个是局部调度器 P 的本地队列、一个是全局 G 队列。新创建的 G 会先保存在 P 的本地队列中，如果 P 的本地队列已经满了就会保存在全局的队列中；</li>
+<li>G 只能运行在 M 中，一个 M 必须持有一个 P，M 与 P 是 1：1 的关系。M 会从 P 的本地队列弹出一个可执行状态的 G 来执行，如果 P 的本地队列为空，就会想其他的 MP 组合偷取一个可执行的 G 来执行；</li>
+<li>一个 M 调度 G 执行的过程是一个循环机制；</li>
+<li>当 M 执行某一个 G 时候如果发生了 syscall 或则其余阻塞操作，M 会阻塞，如果当前有一些 G 在执行，runtime 会把这个线程 M 从 P 中摘除 (detach)，然后再创建一个新的操作系统的线程 (如果有空闲的线程可用就复用空闲线程) 来服务于这个 P；</li>
+<li>当 M 系统调用结束时候，这个 G 会尝试获取一个空闲的 P 执行，并放入到这个 P 的本地队列。如果获取不到 P，那么这个线程 M 变成休眠状态， 加入到空闲线程中，<strong>然后这个 G 会被放入全局队列中</strong>。</li>
+</ol>
+<h2 id="完整的调度过程全解析">完整的调度过程全解析</h2>
+<p><s>（这图画的真的绝了，看图说话吧）</s></p>
+<ol>
+<li>
+<p>P 拥有 G1，M1 获取 P 后开始运行 G1，G1 使用 <code>go func()</code> 创建了 G2，为了局部性 G2 优先加入到 P1 的本地队列。</p>
+<figure data-type="image" tabindex="6"><img src="https://cdn.learnku.com/uploads/images/202003/11/58489/Pm8LOYcsWQ.png!large" alt="1" loading="lazy"></figure>
+</li>
+<li>
+<p>G1 运行完成后 (函数：goexit)，M 上运行的 goroutine 切换为 G0，G0 负责调度时协程的切换（函数：schedule）。从 P 的本地队列取 G2（偷取其他队列的G直到没有G），从 G0 切换到 G2，并开始运行 G2 (函数：execute)。实现了线程 M1 的复用。</p>
+<figure data-type="image" tabindex="7"><img src="https://cdn.learnku.com/uploads/images/202003/12/58489/JWDtmKG3rK.png!large" alt="2" loading="lazy"></figure>
+</li>
+<li>
+<p>假设每个 P 的本地队列只能存 3 个 G。G2 要创建了 6 个 G，前 3 个 G（G3, G4, G5）已经加入 p1 的本地队列，p1 本地队列满了。</p>
+<figure data-type="image" tabindex="8"><img src="https://cdn.learnku.com/uploads/images/202003/12/58489/UpjRxzIBd3.png!large" alt="3" loading="lazy"></figure>
+</li>
+<li>
+<p>G2 在创建 G7 的时候，发现 P1 的本地队列已满，需要执行<strong>负载均衡</strong> (把 P1 中本地队列中前一半的 G，还有新创建 G <strong>转移</strong>到全局队列)</p>
+<p>这些 G 被转移到全局队列时，会被打乱顺序。所以 G3,G4,G7 被转移到全局队列。</p>
+<figure data-type="image" tabindex="9"><img src="https://cdn.learnku.com/uploads/images/202003/11/58489/chqTgsiuWi.png!large" alt="4" loading="lazy"></figure>
+</li>
+<li>
+<p>G2 创建 G8 时，P1 的本地队列未满（挪走了前一半去全局了），所以 G8 会被加入到 P1 的本地队列。</p>
+<figure data-type="image" tabindex="10"><img src="https://cdn.learnku.com/uploads/images/202003/12/58489/nukEY92G6D.png!large" alt="5" loading="lazy"></figure>
+</li>
+<li>
+<p>规定：<strong>在创建 G 时，运行的 G 会尝试唤醒其他空闲的 P 和 M 组合去执行</strong>。</p>
+<p>假定 G2 唤醒了 M2，M2 绑定了 P2，并运行 G0，但 P2 本地队列没有 G，M2 此时为自旋线程**（没有 G 但为运行状态的线程，不断寻找 G）**。</p>
+<figure data-type="image" tabindex="11"><img src="https://cdn.learnku.com/uploads/images/202003/11/58489/2FWNXSuHfX.png!large" alt="6" loading="lazy"></figure>
+</li>
+<li>
+<p>M2 尝试从全局队列 (简称 “GQ”) 取一批 G 放到 P2 的本地队列（函数：<code>findrunnable()</code>）。M2 从全局队列取的 G 数量符合下面的公式：</p>
+<pre><code class="language-go">n = min(len(GQ)/GOMAXPROCS + 1, len(GQ/2))
+</code></pre>
+<p>从全局队列取出差不多平均给每个M-P的数量的G，，不要拿太多，给其他M-P留一些</p>
+<figure data-type="image" tabindex="12"><img src="https://cdn.learnku.com/uploads/images/202003/12/58489/0fn8DGqI8N.jpeg!large" alt="7" loading="lazy"></figure>
+<p>假定我们场景中一共有 4 个 P（GOMAXPROCS 设置为 4，那么我们允许最多就能用 4 个 P 来供 M 使用）。所以 M2 只从能从全局队列取 1 个 G（即 G3）移动 P2 本地队列，然后完成从 G0 到 G3 的切换，运行 G3。</p>
+</li>
+<li>
+<p>假设 G2 一直在 M1 上运行，经过 2 轮后，M2 已经把 G7、G4 从全局队列获取到了 P2 的本地队列并完成运行，全局队列和 P2 的本地队列都空了，如场景 8 图的左半部分。</p>
+<p>全局队列已经没有 G，那 m 就要执行 work stealing (偷取)：<strong>从其他有 G 的 P 哪里偷取一半 G 过来，放到自己的 P 本地队列</strong>。P2 从 P1 的本地队列尾部取一半的 G，本例中一半则只有 1 个 G8，放到 P2 的本地队列并执行。</p>
+<figure data-type="image" tabindex="13"><img src="https://cdn.learnku.com/uploads/images/202003/12/58489/qn1NRMLqnp.png!large" alt="8" loading="lazy"></figure>
+</li>
+<li>
+<p>G1 本地队列 G5、G6 已经被其他 M 偷走并运行完成，当前 M1 和 M2 分别在运行 G2 和 G8，M3 和 M4 没有 goroutine 可以运行，M3 和 M4 处于自旋状态，它们不断寻找 goroutine。</p>
+<figure data-type="image" tabindex="14"><img src="https://cdn.learnku.com/uploads/images/202003/12/58489/1DjlseEGTT.png!large" alt="9" loading="lazy"></figure>
+<p>为什么要让 m3 和 m4 自旋，自旋本质是在运行，线程在运行却没有执行 G，就变成了浪费 CPU. 为什么不销毁现场，来节约 CPU 资源。因为创建和销毁 CPU 也会浪费时间，我们希望当有新 goroutine 创建时，立刻能有 M 运行它，如果销毁再新建就增加了时延，降低了效率。当然也考虑了过多的自旋线程是浪费 CPU，所以系统中最多有 <code>GOMAXPROCS</code> 个自旋的线程 (当前例子中的 GOMAXPROCS=4，所以一共 4 个 P)，多余的没事做线程会让他们休眠。</p>
+</li>
+<li>
+<p>假定当前除了 M3 和 M4 为自旋线程，还有 M5 和 M6 为空闲的线程 (没有得到 P 的绑定，注意我们这里最多就只能够存在 4 个 P，所以 P 的数量应该永远是 M&gt;=P, 大部分都是 M 在抢占需要运行的 P)，G8 创建了 G9，G8 进行了阻塞的系统调用，M2 和 P2 立即解绑，P2 会执行以下判断：</p>
+<ul>
+<li>如果 P2 本地队列有 G、全局队列有 G 或有空闲的 M，P2 都会立马唤醒 1 个 M 和它绑定</li>
+<li>否则 P2 则会加入到空闲 P 列表，等待 M 来获取可用的 p。</li>
+</ul>
+<p>本场景中，P2 本地队列有 G9，可以和其他空闲的线程 M5 绑定。</p>
+<figure data-type="image" tabindex="15"><img src="https://cdn.learnku.com/uploads/images/202003/12/58489/k3HKE9U21M.png!large" alt="10" loading="lazy"></figure>
+</li>
+<li>
+<p>G8 创建了 G9，假如 G8 进行了<strong>非阻塞系统调用</strong>。</p>
+<figure data-type="image" tabindex="16"><img src="https://cdn.learnku.com/uploads/images/202003/12/58489/zBvpl8ENSb.png!large" alt="11" loading="lazy"></figure>
+<p>M2 和 P2 会解绑，但 M2 会记住 P2，然后 G8 和 M2 进入系统调用状态。当 G8 和 M2 退出系统调用时，会尝试获取 P2，如果无法获取，则获取空闲的 P，如果依然没有，G8 会被记为可运行状态，并加入到全局队列，M2 因为没有 P 的绑定而变成休眠状态 (长时间休眠等待 GC 回收销毁)。</p>
+</li>
+</ol>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[go语法基础巩固（channel）]]></title>
         <id>http://blog.zerokirin.online/post/go-yu-fa-ji-chu-gong-gu-channel/</id>
