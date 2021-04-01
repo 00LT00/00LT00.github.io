@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>http://blog.zerokirin.online</id>
     <title>Zer0kiriN</title>
-    <updated>2021-03-24T08:32:37.177Z</updated>
+    <updated>2021-04-01T09:10:30.414Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="http://blog.zerokirin.online"/>
     <link rel="self" href="http://blog.zerokirin.online/atom.xml"/>
@@ -10,6 +10,218 @@
     <logo>http://blog.zerokirin.online/images/avatar.png</logo>
     <icon>http://blog.zerokirin.online/favicon.ico</icon>
     <rights>All rights reserved 2021, Zer0kiriN</rights>
+    <entry>
+        <title type="html"><![CDATA[网络层]]></title>
+        <id>http://blog.zerokirin.online/post/wang-luo-ceng/</id>
+        <link href="http://blog.zerokirin.online/post/wang-luo-ceng/">
+        </link>
+        <updated>2021-04-01T09:06:04.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="ip协议internet-protocol">IP协议（Internet Protocol）</h2>
+<h3 id="数据报格式">数据报格式</h3>
+<figure data-type="image" tabindex="1"><img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/85c05fb1-5546-4c50-9221-21f231cdc8c5.jpg" alt="img" loading="lazy"></figure>
+<ul>
+<li>
+<p>版本：ipv4和ipv6</p>
+</li>
+<li>
+<p>首部长度：一共4位，最多只有15，单位是4字节大小，数据报固定首部长度有20个字节，因此首部长度最短为5</p>
+</li>
+<li>
+<p>区分服务：一般不使用</p>
+</li>
+<li>
+<p>总长度：定义了报文的总长度，单位是字节，最短为固定首部长度（20）</p>
+</li>
+<li>
+<p>标识：唯一的标识一个报文的所有分片，因为分片不一定按顺序到达，重组的时候需要知道顺序</p>
+</li>
+<li>
+<p>标志：三个bit分别用于：</p>
+<ul>
+<li>位0：保留，必须为0；</li>
+<li>位1：禁止分片（Don’t Fragment，DF），当DF=0时才允许分片；</li>
+<li>位2：更多分片（More Fragment，MF），MF=1代表后面还有分片，MF=0 代表已经是最后一个分片。</li>
+</ul>
+<p>如果DF标志被设置为1，但路由要求必须分片报文，此报文会被丢弃。这个标志可被用于发往没有能力组装分片的主机。</p>
+</li>
+<li>
+<p>片偏移：单位为8字节，当有分片时，指示该分片相对于报文起始地址的偏移量（对于最后一个分片的报文，由于片偏移不为零，尽管MF字段是0，依然能够确定这是个分片的数据包，而不是不分片数据包(MF=0)）</p>
+<figure data-type="image" tabindex="2"><img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/23ba890e-e11c-45e2-a20c-64d217f83430.png" alt="img" loading="lazy"></figure>
+</li>
+<li>
+<p>生存时间：定义的是该数据包在互联网中存在的时长，以秒为单位，但后来被用作了跳数计算器，每经历一次转发就将该字段减一，当字段为0时，不在向下跳转，最大值255</p>
+</li>
+<li>
+<p>协议：IP协议也是有版本的，定义了报文正在使用的版本</p>
+</li>
+<li>
+<p>首部校验和：只检查首部，每一跳都要重新计算（最起码TTL发生了改变，偏移量和标志位也有可能变化），然后对比，不相同就丢弃</p>
+</li>
+<li>
+<p>源地址、目标地址：一共32位</p>
+</li>
+<li>
+<p>可选字段：不常用，1-40字节不等，参考维基百科上的表格</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">字段</th>
+<th style="text-align:center">长度（位）</th>
+<th style="text-align:center">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><strong>备份</strong></td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">当此选项需要被备份到所有分片中时，设为1。</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>类</strong></td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">常规的选项类别，0为“控制”，2为“查错和措施”，1和3保留。</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>数字</strong></td>
+<td style="text-align:center">5</td>
+<td style="text-align:center">指明一个选项。</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>长度</strong></td>
+<td style="text-align:center">8</td>
+<td style="text-align:center">指明整个选项的长度，对于简单的选项此字段可能不存在。</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>数据</strong></td>
+<td style="text-align:center">可变</td>
+<td style="text-align:center">选项相关数据，对于简单的选项此字段可能不存在。</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>填充：记得最上面的首部长度吗，当有可选字段的时候，首部长度就一定大于20字节了，而首部长度的单位是4字节，因此当可选字段不是4的整数倍的时候，需要填充为EOL（选项列表结束，0x00）</p>
+</li>
+</ul>
+<h2 id="ip地址编址方式">IP地址编址方式</h2>
+<p>IP 地址的编址方式经历了三个历史阶段：</p>
+<ul>
+<li>分类</li>
+<li>子网划分</li>
+<li>无分类</li>
+</ul>
+<h3 id="分类">分类</h3>
+<p>由两部分组成，网络号和主机号，其中不同分类具有不同的网络号长度，并且是固定的。</p>
+<p>IP 地址 ::= {&lt; 网络号 &gt;, &lt; 主机号 &gt;}</p>
+<figure data-type="image" tabindex="3"><img src="https://pic3.zhimg.com/80/v2-13c1daebb7b5706a847f4e727d9dacde_720w.jpg" alt="img" loading="lazy"></figure>
+<h3 id="子网划分">子网划分</h3>
+<p>可以看出，两级 IP 地址 不够灵活, 对 IP 地址空间的利用率比较低。如, C 类地址的局域网最多分配 254 个主机号, B 类地址的局域网最多分配 65534 个主机号。如果有个单位有 255 台主机，则只能为其分配一个 B 类地址的 网络号。这样就会浪费很多 IP 地址。</p>
+<p>通过在主机号字段中拿一部分作为子网号，把两级 IP 地址划分为三级 IP 地址。</p>
+<p>IP 地址 ::= {&lt; 网络号 &gt;, &lt; 子网号 &gt;, &lt; 主机号 &gt;}</p>
+<p>要使用子网，必须配置子网掩码。一个 B 类地址的默认子网掩码为 255.255.0.0，如果 B 类地址的子网占两个比特，那么子网掩码为 11111111 11111111 11000000 00000000，也就是 255.255.192.0。</p>
+<p>注意，外部网络看不到子网的存在。</p>
+<h3 id="无分类">无分类</h3>
+<p>无分类编址 CIDR 消除了传统 A 类、B 类和 C 类地址以及划分子网的概念，使用网络前缀和主机号来对 IP 地址进行编码，网络前缀的长度可以根据需要变化。</p>
+<p>IP 地址 ::= {&lt; 网络前缀号 &gt;, &lt; 主机号 &gt;}</p>
+<p>CIDR 的记法上采用在 IP 地址后面加上网络前缀长度的方法，例如 128.14.35.7/20 表示前 20 位为网络前缀。</p>
+<p>一个 CIDR 地址块中有很多地址，一个 CIDR 表示的网络就可以表示原来的很多个网络，并且在路由表中只需要一个路由就可以代替原来的多个路由，减少了路由表项的数量。把这种通过使用网络前缀来减少路由表项的方式称为路由聚合，也称为超网 。</p>
+<p>在路由表中的项目由“网络前缀”和“下一跳地址”组成，在查找时可能会得到不止一个匹配结果，应当采用最长前缀匹配来确定应该匹配哪一个。</p>
+<h3 id="网络地址和广播地址">网络地址和广播地址</h3>
+<p>其实就是特殊的主机地址，由于IP = 网络号+主机号</p>
+<ul>
+<li>主机号全为0的时候就是网络地址</li>
+<li>全为1的时候就是广播地址</li>
+</ul>
+<h4 id="举例">举例：</h4>
+<p>一个主机的IP地址是202.112.14.137，掩码是255.255.255.224，要求计算这个主机所在网络的网络地址和广播地址</p>
+<p><code>255.255.255.224</code> 转二进制：</p>
+<pre><code>11111111 11111111 11111111 11100000
+</code></pre>
+<p>则IP地址的前27位是网络号，后5位是主机号</p>
+<p><code>202.112.14.137</code>转二进制：</p>
+<table>
+<thead>
+<tr>
+<th>11001010 01110000 00001110 100</th>
+<th>01001</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>网络号</td>
+<td>主机号</td>
+</tr>
+</tbody>
+</table>
+<p>广播地址是<code>11001010 01110000 00001110 100</code> <code>11111</code> 即<code>202.112.14.159</code></p>
+<p>网络地址是<code>11001010 01110000 00001110 100</code> <code>00000</code> 即<code>202.112.14.128</code></p>
+<h2 id="地址解析协议arpaddress-resolution-protocol">地址解析协议ARP（Address Resolution Protocol）</h2>
+<p>将IP地址转换为MAC地址的协议</p>
+<p>每个主机都有一个 ARP 高速缓存，里面有本局域网上的各主机和路由器的 IP 地址到 MAC 地址的映射表。</p>
+<p>如果主机 A 知道主机 B 的 IP 地址，但是 ARP 高速缓存中没有该 IP 地址到 MAC 地址的映射，此时主机 A 通过广播的方式发送 ARP 请求分组，主机 B 收到该请求后会发送 ARP 响应分组给主机 A 告知其 MAC 地址，随后主机 A 向其高速缓存中写入主机 B 的 IP 地址到 MAC 地址的映射。</p>
+<figure data-type="image" tabindex="4"><img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/8006a450-6c2f-498c-a928-c927f758b1d0.png" alt="img" loading="lazy"></figure>
+<p>维基百科中说的更详细一些</p>
+<blockquote>
+<p>1.当发送数据时，主机A会在自己的ARP缓存表中寻找是否有目标IP地址。如果找到就知道目标MAC地址为（00-BB-00-62-C2-02），直接把目标MAC地址写入<a href="https://zh.wikipedia.org/wiki/%E8%A8%8A%E6%A1%86">帧</a>里面发送就可。</p>
+<p>2.如果在ARP缓存表中没有找到相对应的IP地址，主机A就会在网络上发送一个广播（ARP request），目标MAC地址是“FF.FF.FF.FF.FF.FF”，这表示向同一网段内的所有主机发出这样的询问：“192.168.38.11的<a href="https://zh.wikipedia.org/wiki/MAC%E5%9C%B0%E5%9D%80">MAC地址</a>是什么？”</p>
+<p>3.网络上其他主机并不响应ARP询问，只有主机B接收到这个帧时，才向主机A做出这样的回应（ARP response）：“192.168.38.11的MAC地址是00-BB-00-62-C2-02”，此回应以单播方式。这样，主机A就知道主机B的MAC地址，它就可以向主机B发送信息。同时它还更新自己的ARP高速缓存（ARP cache），下次再向主机B发送信息时，直接从ARP缓存表里查找就可。</p>
+</blockquote>
+<h2 id="网际控制报文协议icmpinternet-control-message-protocol">网际控制报文协议ICMP（Internet Control Message Protocol）</h2>
+<blockquote>
+<p>它用于<a href="https://zh.wikipedia.org/wiki/%E7%BD%91%E9%99%85%E5%8D%8F%E8%AE%AE">网际协议</a>（IP）中发送控制消息，提供可能发生在通信环境中的各种问题反馈。通过这些信息，使管理者可以对所发生的问题作出诊断，然后采取适当的措施解决。</p>
+<p>——维基百科</p>
+</blockquote>
+<p>ICMP 是为了更有效地转发 IP 数据报和提高交付成功的机会。它封装在 IP 数据报中，但是不属于高层协议。</p>
+<figure data-type="image" tabindex="5"><img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/e3124763-f75e-46c3-ba82-341e6c98d862.jpg" alt="img" loading="lazy"></figure>
+<p>ICMP 报文分为差错报告报文和询问报文。</p>
+<figure data-type="image" tabindex="6"><img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/aa29cc88-7256-4399-8c7f-3cf4a6489559.png" alt="img" loading="lazy"></figure>
+<h3 id="常见应用">常见应用</h3>
+<ul>
+<li>
+<p>Ping 是 ICMP 的一个重要应用，主要用来测试两台主机之间的连通性。</p>
+<p>Ping 的原理是通过向目的主机发送 ICMP Echo 请求报文，目的主机收到之后会发送 Echo 回答报文。Ping 会根据时间和成功响应的次数估算出数据包往返时间以及丢包率。</p>
+</li>
+<li>
+<p>Traceroute 是 ICMP 的另一个应用，用来跟踪一个分组从源点到终点的路径。Traceroute 发送的 IP 数据报封装的是无法交付的 UDP 用户数据报，并由目的主机发送终点不可达差错报告报文。</p>
+<ul>
+<li>源主机向目的主机发送一连串的 IP 数据报。第一个数据报 P1 的生存时间 TTL 设置为 1，当 P1 到达路径上的第一个路由器 R1 时，R1 收下它并把 TTL 减 1，此时 TTL 等于 0，R1 就把 P1 丢弃，并向源主机发送一个 ICMP 时间超过差错报告报文；</li>
+<li>源主机接着发送第二个数据报 P2，并把 TTL 设置为 2。P2 先到达 R1，R1 收下后把 TTL 减 1 再转发给 R2，R2 收下后也把 TTL 减 1，由于此时 TTL 等于 0，R2 就丢弃 P2，并向源主机发送一个 ICMP 时间超过差错报文。</li>
+<li>不断执行这样的步骤，直到最后一个数据报刚刚到达目的主机，主机不转发数据报，也不把 TTL 值减 1。但是因为数据报封装的是无法交付的 UDP，因此目的主机要向源主机发送 ICMP 终点不可达差错报告报文。</li>
+<li>之后源主机知道了到达目的主机所经过的路由器 IP 地址以及到达每个路由器的往返时间。</li>
+</ul>
+</li>
+</ul>
+<h2 id="路由器的结构">路由器的结构</h2>
+<p>路由器从功能上可以划分为：路由选择和分组转发。</p>
+<p>分组转发结构由三个部分组成：交换结构、一组输入端口和一组输出端口。</p>
+<figure data-type="image" tabindex="7"><img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/c3369072-c740-43b0-b276-202bd1d3960d.jpg" alt="img" loading="lazy"></figure>
+<h3 id="路由转发流程">路由转发流程</h3>
+<figure data-type="image" tabindex="8"><img src="https://files.catbox.moe/21o038.png" alt="路由转发" loading="lazy"></figure>
+<ul>
+<li>
+<p>提取出目的主机的IP地址D，然后得到网络地址N</p>
+</li>
+<li>
+<p>若N是此路由器直接连着的地址，直接解析，否则就是间接交付</p>
+</li>
+<li>
+<p>间接交付</p>
+<ul>
+<li>若路由表中有目的地址为 D 的特定主机路由，则把数据报传送给表中所指明的下一跳路由器；</li>
+<li>若路由表中有到达网络 N 的路由，则把数据报传送给路由表中所指明的下一跳路由器；</li>
+<li>若路由表中有一个默认路由，则把数据报传送给路由表中所指明的默认路由器；</li>
+</ul>
+</li>
+</ul>
+<figure data-type="image" tabindex="9"><img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/1ab49e39-012b-4383-8284-26570987e3c4.jpg" alt="img" loading="lazy"></figure>
+<h2 id="路由选择协议">路由选择协议</h2>
+<p>用于调整路由表的可以把路由选择协议划分为两大类：</p>
+<ul>
+<li>自治系统内部的路由选择：RIP 和 OSPF</li>
+<li>自治系统间的路由选择：BGP</li>
+</ul>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[GMP模型简介]]></title>
         <id>http://blog.zerokirin.online/post/gmp-mo-xing-jian-jie/</id>
