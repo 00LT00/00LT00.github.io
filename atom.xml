@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>http://blog.zerokirin.online</id>
     <title>Zer0kiriN</title>
-    <updated>2021-04-01T09:10:30.414Z</updated>
+    <updated>2021-04-01T11:15:07.870Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="http://blog.zerokirin.online"/>
     <link rel="self" href="http://blog.zerokirin.online/atom.xml"/>
@@ -52,7 +52,7 @@
 <p>生存时间：定义的是该数据包在互联网中存在的时长，以秒为单位，但后来被用作了跳数计算器，每经历一次转发就将该字段减一，当字段为0时，不在向下跳转，最大值255</p>
 </li>
 <li>
-<p>协议：IP协议也是有版本的，定义了报文正在使用的版本</p>
+<p>协议：指出数据应该交给哪个协议进行处理，例如ICMP，TCP，UDP</p>
 </li>
 <li>
 <p>首部校验和：只检查首部，每一跳都要重新计算（最起码TTL发生了改变，偏移量和标志位也有可能变化），然后对比，不相同就丢弃</p>
