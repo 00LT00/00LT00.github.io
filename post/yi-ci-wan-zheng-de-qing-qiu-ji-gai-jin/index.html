@@ -4,20 +4,16 @@
 <head>
   <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="
-Go语法、Go并发思想、Go与web开发、Go微服务设施等 学习路线
+<meta name="description" content="准备阶段
+当你通过网线或者是WIFI连接到宿舍路由器时，无论进行何种访问，首当其冲的都是要清楚的知道自己所处的网络位置，因此需要初始化IP地址，默认网关，子网掩码，这决定了最基础的，你在当前局域网内的网络位置
+DHCP
+发现服务
 
-
-通用后端问题 每日10道
-golang面试题集合 每日2道
-刷题笔记
-leetcode 尽力而为
-
-..." />
+笔记本A..." />
 <link rel="preload" as="script" href="https://cdn.ampproject.org/v0.js">
 <link rel="preconnect dns-prefetch" href="https://cdn.jsdelivr.net/" crossorigin>
 <script async src="https://cdn.ampproject.org/v0.js"></script>
-<title>Every Day | Zer0kiriN</title>
+<title>一次完整的请求及改进 | Zer0kiriN</title>
 
 
   
@@ -2210,58 +2206,46 @@ leetcode 尽力而为
 
 <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style>
 <noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
-<link rel="canonical" href="http://blog.zerokirin.online/post/every-day/" />
+<link rel="canonical" href="http://blog.zerokirin.online/post/yi-ci-wan-zheng-de-qing-qiu-ji-gai-jin/" />
 <link rel="shortcut icon" href="http://blog.zerokirin.online/favicon.ico?v=1618573807632">
 
 <meta name="author" content="破庙主任">
 
-<meta itemprop="name" content="Every Day | Zer0kiriN">
-<meta itemprop="description" content="
-Go语法、Go并发思想、Go与web开发、Go微服务设施等 学习路线
+<meta itemprop="name" content="一次完整的请求及改进 | Zer0kiriN">
+<meta itemprop="description" content="准备阶段
+当你通过网线或者是WIFI连接到宿舍路由器时，无论进行何种访问，首当其冲的都是要清楚的知道自己所处的网络位置，因此需要初始化IP地址，默认网关，子网掩码，这决定了最基础的，你在当前局域网内的网络位置
+DHCP
+发现服务
 
-
-通用后端问题 每日10道
-golang面试题集合 每日2道
-刷题笔记
-leetcode 尽力而为
-
-...">
+笔记本A...">
 <meta itemprop="image" content="">
 
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Every Day | Zer0kiriN">
-<meta name="twitter:description" content="
-Go语法、Go并发思想、Go与web开发、Go微服务设施等 学习路线
+<meta name="twitter:title" content="一次完整的请求及改进 | Zer0kiriN">
+<meta name="twitter:description" content="准备阶段
+当你通过网线或者是WIFI连接到宿舍路由器时，无论进行何种访问，首当其冲的都是要清楚的知道自己所处的网络位置，因此需要初始化IP地址，默认网关，子网掩码，这决定了最基础的，你在当前局域网内的网络位置
+DHCP
+发现服务
 
-
-通用后端问题 每日10道
-golang面试题集合 每日2道
-刷题笔记
-leetcode 尽力而为
-
-...">
+笔记本A...">
 <meta name="twitter:image" content="" />
-<meta name="twitter:image:alt" content="Every Day | Zer0kiriN" />
+<meta name="twitter:image:alt" content="一次完整的请求及改进 | Zer0kiriN" />
 
 
 <meta property="og:type" content="website">
-<meta property="og:url" content="http://blog.zerokirin.online/post/every-day/">
-<meta property="og:title" content="Every Day | Zer0kiriN">
-<meta property="og:description" content="
-Go语法、Go并发思想、Go与web开发、Go微服务设施等 学习路线
+<meta property="og:url" content="http://blog.zerokirin.online/post/yi-ci-wan-zheng-de-qing-qiu-ji-gai-jin/">
+<meta property="og:title" content="一次完整的请求及改进 | Zer0kiriN">
+<meta property="og:description" content="准备阶段
+当你通过网线或者是WIFI连接到宿舍路由器时，无论进行何种访问，首当其冲的都是要清楚的知道自己所处的网络位置，因此需要初始化IP地址，默认网关，子网掩码，这决定了最基础的，你在当前局域网内的网络位置
+DHCP
+发现服务
 
-
-通用后端问题 每日10道
-golang面试题集合 每日2道
-刷题笔记
-leetcode 尽力而为
-
-...">
+笔记本A...">
 <meta property="og:image" content="">
-<meta property="og:image:alt" content="Every Day | Zer0kiriN" />
+<meta property="og:image:alt" content="一次完整的请求及改进 | Zer0kiriN" />
 <meta property="og:site_name" content="Zer0kiriN">
 <meta property="og:locale" content="zh_CN">
-<meta property="tag" content="Every Day | Zer0kiriN" />
+<meta property="tag" content="一次完整的请求及改进 | Zer0kiriN" />
 
 
 <script type="application/ld+json">
@@ -2270,11 +2254,11 @@ leetcode 尽力而为
 "@type": "BlogPosting",
 "mainEntityOfPage": {
   "@type": "WebPage",
-  "@id": "http://blog.zerokirin.online/post/every-day/"
+  "@id": "http://blog.zerokirin.online/post/yi-ci-wan-zheng-de-qing-qiu-ji-gai-jin/"
 },
-"headline": "Every Day | Zer0kiriN",
-"datePublished": "Thu Mar 04 2021 19:36:53 GMT+0800",
-"dateModified": "Thu Mar 04 2021 19:36:53 GMT+0800",
+"headline": "一次完整的请求及改进 | Zer0kiriN",
+"datePublished": "Fri Apr 16 2021 19:48:55 GMT+0800",
+"dateModified": "Fri Apr 16 2021 19:48:55 GMT+0800",
 "author": {
   "@type": "Person",
   "name": "破庙主任"
@@ -2290,16 +2274,12 @@ leetcode 尽力而为
 "image": [
 ""
 ],
-"description": "
-Go语法、Go并发思想、Go与web开发、Go微服务设施等 学习路线
+"description": "准备阶段
+当你通过网线或者是WIFI连接到宿舍路由器时，无论进行何种访问，首当其冲的都是要清楚的知道自己所处的网络位置，因此需要初始化IP地址，默认网关，子网掩码，这决定了最基础的，你在当前局域网内的网络位置
+DHCP
+发现服务
 
-
-通用后端问题 每日10道
-golang面试题集合 每日2道
-刷题笔记
-leetcode 尽力而为
-
-..."
+笔记本A..."
  }
 
 </script>
@@ -2315,8 +2295,8 @@ leetcode 尽力而为
     },{
       "@type": "ListItem", 
       "position": 2, 
-      "name": "Every Day | Zer0kiriN",
-      "item": "http://blog.zerokirin.online/post/every-day/"  
+      "name": "一次完整的请求及改进 | Zer0kiriN",
+      "item": "http://blog.zerokirin.online/post/yi-ci-wan-zheng-de-qing-qiu-ji-gai-jin/"  
     }]
   }
   </script>
@@ -2338,7 +2318,7 @@ leetcode 尽力而为
 
 <script async custom-element="amp-gist" src="https://cdn.ampproject.org/v0/amp-gist-0.1.js"></script>
 
-<link rel="alternate" type="application/atom+xml" title="Every Day | Zer0kiriN - Atom Feed" href="http://blog.zerokirin.online/atom.xml">
+<link rel="alternate" type="application/atom+xml" title="一次完整的请求及改进 | Zer0kiriN - Atom Feed" href="http://blog.zerokirin.online/atom.xml">
 
 
 
@@ -2394,16 +2374,16 @@ leetcode 尽力而为
       <div class="article-info">
         
           <div class="flex-box meta-category">
-            <a class="post-cate" href="http://blog.zerokirin.online/tag/_1938IQJM/">后端</a></div>
+            <a class="post-cate" href="http://blog.zerokirin.online/tag/qzFUt7Z9q/">应用层</a></div>
           
         <h2 class="article-title">
-          <a href="http://blog.zerokirin.online/post/every-day/">Every Day</a>
+          <a href="http://blog.zerokirin.online/post/yi-ci-wan-zheng-de-qing-qiu-ji-gai-jin/">一次完整的请求及改进</a>
         </h2>
         <div class="flex-box">
           <div class="flex-box post-meta-box">
             <a class="post-meta" href="http://blog.zerokirin.online"><span
                 class="iconfont icon-mr-postmeta"></span>破庙主任</a>
-            <span class="post-meta"><span class="iconfont icon-mr-postmeta"></span>2021 年 03	月 4日</span>
+            <span class="post-meta"><span class="iconfont icon-mr-postmeta"></span>2021 年 04	月 16日</span>
             
 
 
@@ -2411,18 +2391,186 @@ leetcode 尽力而为
         </div>
       </div>
       <div class="content">
-        <blockquote>
-<p><a href="https://github.com/overnote/over-golang">Go语法、Go并发思想、Go与web开发、Go微服务设施等 学习路线</a></p>
-</blockquote>
+        <h2 id="准备阶段">准备阶段</h2>
+<p>当你通过网线或者是WIFI连接到宿舍路由器时，无论进行何种访问，首当其冲的都是要清楚的知道自己所处的网络位置，因此需要初始化<strong>IP地址，默认网关，子网掩码</strong>，这决定了最基础的，你在当前局域网内的网络位置</p>
+<h3 id="dhcp">DHCP</h3>
+<h4 id="发现服务">发现服务</h4>
+<ol>
+<li><strong>笔记本A</strong>的操作系统首先生成一个<strong>DHCP发现报文</strong></li>
+<li>放入一个UDP报文，目的端口67（DHCP服务器），源端口68（DHCP客户端）</li>
+<li>UDP报文被放入一个IP数据报，目的IP地址为<code>255.255.255.255</code>（广播地址），源IP地址为<code>0.0.0.0</code>，因为此时A还没有有效的IP地址，所以才要获取呀</li>
+<li>IP数据报被放入一个以太网帧，该帧的目的地址是<code>FF:FF:FF:FF:FF:FF</code>（广播地址），源地址是A自己的MAC地址，该帧会被广播到所有与交换机（在这里也就是寝室路由器，它充当了交换机的功能）相连的所有设备</li>
+<li>这个以太网帧是第一个由A发送到交换机的帧，该交换机将在所有的出端口把此帧广播出去，包括路由器（寝室路由器的另一个功能）连接的端口</li>
+<li>路由器收到该广播帧后进行解析，抽出IP数据报，一看目的地址是广播地址，因此进行处理，根据IP报头中的信息确定是UDP协议，然后抽出UDP，根据UDP端口67到达DHCP服务器，DHCP解析得到<strong>DHCP发现报文</strong></li>
+</ol>
+<h4 id="服务提供">服务提供</h4>
+<p>由于一个局域网下可能会有多个路由器，也会有多个提供DHCP服务的服务器，因此不能直接选定，需要由客户机自己选择DHCP服务器，因此返回的<strong>服务提供报文</strong>的</p>
 <ul>
-<li><a href="https://github.com/monklof/Back-End-Developer-Interview-Questions#toc">通用后端问题</a> 每日10道</li>
-<li><a href="https://github.com/lifei6671/interview-go">golang面试题集合</a> 每日2道</li>
-<li><a href="https://labuladong.gitee.io/algo/">刷题笔记</a></li>
-<li>leetcode 尽力而为</li>
+<li>目的地址是广播地址</li>
+<li>源地址是自身IP地址</li>
+<li>还有DHCP服务号，用于最终选择哪个DHCP服务器</li>
+<li>yiaddr（你的IP地址），指最终分给客户端的IP地址</li>
+<li>其他若干信息，包括租期时间等等</li>
 </ul>
+<h4 id="发起请求">发起请求</h4>
+<ol>
+<li>A生成一个<strong>DHCP请求报文</strong></li>
+<li>目的端口67，源端口68</li>
+<li>目的IP地址依然是广播地址，源地址是<code>0.0.0.0</code></li>
+<li>以太网帧的目的地址依然是广播地址，源地址是A自己的MAC地址</li>
+<li>以太网帧通过交换机广播到所有设备上</li>
+<li>路由器收到广播后解析，最终得到<strong>DHCP请求报文</strong></li>
+</ol>
+<p>以上和发现步骤相同，不同的是<strong>DHCP请求报文</strong>多带了一个DHCP服务号，这样即使由多个DHCP服务器，依然能确定选择哪个获取IP地址</p>
+<ol start="7">
+<li>对应的DHCP服务器将原来已经预分配的yiaddr作为IP地址，将<strong>IP地址，子网掩码，默认网关路由器，DNS服务器</strong>封装为一个DHCP ACK报文</li>
+</ol>
+<h4 id="处理返回">处理返回</h4>
+<p>和服务提供步骤相同，不一样的是<strong>服务提供报文</strong>没有子网掩码等，</p>
+<ol>
+<li>将<strong>DHCP ACK报文</strong>封装进UDP，目的端口是68（客户端）</li>
+<li>放入IP数据报，和服务提供步骤一样，源IP地址是自身IP地址，目的地址是广播地址</li>
+<li>最后放入一个以太网帧，源地址是路由器MAC，目的地址是电脑A</li>
+<li>由于交换机有自学习能力，在发现服务的时候就已经知道对应的MAC地址怎么转发了</li>
+<li>返回到A，A记录并更新自己的状态</li>
+</ol>
+<p>到这里一个设备已经完整的加入到我们的局域网了</p>
+<h2 id="dns和arp">DNS和ARP</h2>
+<p>踏出请求的第一步就是获取对应的IP地址，这就是DNS查询</p>
+<ol>
+<li>
+<p>将<code>google.com</code>放入一个UDP报文，目的端口53，源端口就是大于1024的随机一个</p>
+</li>
+<li>
+<p>包装到IP报文中，目的地址是<strong>DNS服务器的IP地址</strong>，源地址就是自身的IP地址</p>
+</li>
+<li>
+<p>由于路由表上没有直接对DNS服务的记录，因此会转发到默认网关路由器上</p>
+<p>然而A只是知道了默认网关的IP地址，但以太网帧又不知道转到哪，这就需要ARP协议</p>
+<ol>
+<li>A生成一个具有目的IP地址（默认网关）的<strong>ARP查询报文</strong></li>
+<li>把报文放到一个以太网帧中，该帧的目的地址是广播地址，把帧发送给交换机，交换机（一般情况下是路由器的交换部分）将转发给所有设备</li>
+<li>每个设备都会解析报文，如果目的地址和自己的地址符合，就准备一个<strong>ARP回答报文</strong>，包括自己的IP地址和MAC地址</li>
+<li>放到以太网帧中，目的地址是A的地址，通过交换机发送给A</li>
+<li>A收到<strong>回答报文</strong>后将IP地址和MAC地址保存到ARP表中，下次直接调用就好</li>
+</ol>
+<p>这样就有了默认网关的MAC地址</p>
+</li>
+<li>
+<p>将IP报文包装到以太网帧中，目标地址是<strong>默认网关的MAC</strong>，经过交换机转发给默认网关</p>
+</li>
+<li>
+<p>默认网关根据自身的路由表选择将报文转发给下一跳路由器，同时<strong>更新目的地址</strong>，源地址保持不变，最终<strong>目的地址应该就是DNS服务器的MAC地址</strong>，路由表的更新由RIP，OSPF等域内协议以及域间协议BGP维护</p>
+</li>
+<li>
+<p>经过重重转发到了DNS服务器，服务器收到查询报文后找到对应的IP地址，生成一个包括IP地址和<code>google.com</code>的UDP报文</p>
+</li>
+<li>
+<p>然后就是放入IP报文和以太网帧，一路转发回到最初的起点A</p>
+</li>
+</ol>
+<p>至此A终于知道了IP地址开始正式的访问</p>
+<h2 id="tcp和https">TCP和HTTPS</h2>
+<h3 id="建立http连接">建立HTTP连接</h3>
+<h4 id="tcp三次握手">TCP三次握手</h4>
+<ol>
+<li>A生成一个TCP请求报文，四元组（源地址，目的地址，源端口号，目的端口号）填写好，FLAG为SYN</li>
+<li>通过中间的路由器和交换机不断地转发到达目的地，然后被解析，服务端生成一个TCP报文，FLAG为SYN ACK</li>
+<li>A收到报文后就已经进入连接状态了，对于A来说已经建立连接完成了，下一步就是发送数据，但对于服务端来说还处于同步等待状态，不过它会在下一次收到ACK报文的时候进入连接状态，这个报文可能是已经带有数据的</li>
+</ol>
+<p>至此，几乎所有准备工作都已经做完了，终于可以开始请求网页了。</p>
+<h4 id="http请求">HTTP请求</h4>
+<h5 id="请求报文">请求报文</h5>
+<figure data-type="image" tabindex="1"><img src="https://www.runoob.com/wp-content/uploads/2013/11/2012072810301161.png" alt="img" loading="lazy"></figure>
+<ul>
+<li>请求行 回车符和换行符就是<CR><LF></li>
+<li>请求头 除了Host外都是可选的</li>
+<li>空行 除了回车符和换行符以外无其他空格</li>
+<li>数据</li>
+</ul>
+<pre><code class="language-http">GET / HTTP/1.1
+Host: www.google.com
+（注意这里是个空行）
+</code></pre>
+<p>将报文放入一个TCP报文，然后依据建立好的TCP连接发送出去</p>
+<h5 id="响应报文">响应报文</h5>
+<p><code>google.coom</code>服务器收到80端口的请求，生成响应报文，将请求的web页面内容放入响应体。</p>
+<figure data-type="image" tabindex="2"><img src="https://img-blog.csdn.net/20131107163544468" alt="img" loading="lazy"></figure>
+<ul>
+<li>状态行 请求成功的状态码就是200，描述 ok</li>
+<li>响应头</li>
+<li>空行</li>
+<li>响应数据，正文部分</li>
+</ul>
+<pre><code class="language-http">HTTP/1.1 200 OK
+Content-Length: 3059
+Server: GWS/2.0
+Date: Sat, 11 Jan 2003 02:44:04 GMT
+Content-Type: text/html
+Cache-control: private
+Set-Cookie: PREF=ID=73d4aef52e57bae9:TM=1042253044:LM=1042253044:S=SMCc_HRPCQiqy
+X9j; expires=Sun, 17-Jan-2038 19:14:07 GMT; path=/; domain=.google.com
+Connection: keep-alive
+
+&lt;html&gt;
+Hello Google
+&lt;/html&gt;
+</code></pre>
+<p>响应体经过路由器的重重转发，回到了A，A终于拿到了<code>google.com</code>的内容，浏览器将返回来的响应体进行渲染，渲染出了最终的页面。</p>
+<h4 id="tcp四次挥手">TCP四次挥手</h4>
+<p>连接完成后，当A已经不需要继续请求的时候就会开始回收步骤，结束连接</p>
+<ol>
+<li>A发送FIN</li>
+<li>服务器收到FIN，返回ACK，此时A已经不能向服务器发送消息了，服务器将继续把没发完的发掉</li>
+<li>服务器数据发送完毕后，发送FIN</li>
+<li>A收到后返回ACK，等待2MSL后如果没收到服务器的消息则释放连接资源，此次链接结束</li>
+<li>服务器收到ACK，确定A已经关闭，中断连接</li>
+</ol>
+<p>至此，从插入网线开始，一次完整的HTTP请求就结束了</p>
+<h3 id="http的改进">HTTP的改进</h3>
+<h4 id="http11">HTTP/1.1</h4>
+<p>上面讲述的是一次完整的HTTP/1.1请求，它相比1.0改进了几个部分</p>
+<ol>
+<li>长连接，增加了connection报头，通过设置<code>Keep-Alive</code>可以保持HTTP连接不断开，避免了每次请求结束后都要重复释放，重复建立，提高了效率，当客户端像关闭HTTP连接的时候可以再请求头中携带<code>Connction: false</code>来告知服务器关闭请求。</li>
+<li>增加了Host请求头，有时候同一个IP地址上会有不同的主机和或网站，因此可以通过携带不同的Host请求头来区分请求的主机。</li>
+<li>身份认证，状态管理和缓存机制</li>
+<li>断点续传，通过增加range头，请求资源的一部分，响应206</li>
+</ol>
+<h4 id="http20">HTTP/2.0</h4>
+<p>由于1.x版本都是基于文字的，健壮性和性能都受到了挑战，而且长连接并没有解决TCP阻塞问题，于是有了2.0。</p>
+<ol>
+<li>头部压缩 2.0版本是基于二进制的，类似于TCP报头一样，规定好了位数，这样只需要在服务端和客户端同时维护一份静态的数据字典，用来确定请求头，省去了大部分重复字段</li>
+<li>服务端推送，在1.x时代，当网页同时包含了<code>style.css</code>和<code>style.js</code>时，会再重复两次请求去获取两个文件，但是2.0中，服务端可以主动推送相关文件，客户端需要获取的时候就无需重复请求了</li>
+<li>引入了帧和流的概念，实现了多路复用，抽象一点理解：
+<ol>
+<li>每一个帧可看做是一个学生，流可以认为是组（流标识符为帧的属性值），一个班级（一个连接）内学生被分为若干个小组，每一个小组分配不同的具体任务。</li>
+<li>HTTP/1.* 一次请求-响应，建立一个连接，用完关闭；每一个小组任务都需要建立一个班级，多个小组任务多个班级，1:1比例</li>
+<li>HTTP/1.1 Pipeling解决方式为，若干个小组任务排队串行化单线程处理，后面小组任务等待前面小组任务完成才能获得执行机会，一旦有任务处理超时等，后续任务只能被阻塞，毫无办法，也就是人们常说的线头阻塞，因此并未实际使用</li>
+<li>HTTP/2多个小组任务可同时并行（严格意义上是并发）在班级内执行。一旦某个小组任务耗时严重，但不会影响到其它小组任务正常执行</li>
+<li>这样自始至终就只有一个TCP连接，控制权完全在HTTP手中，而且也能最大化利用每个TCP连接可以传输的带宽</li>
+</ol>
+</li>
+</ol>
+<p>HTTP2.0对以前的1.x版本也提供了兼容，只需要经过一个二进制分帧层就可以将文本信息转化为对应的二进制头</p>
+<h4 id="https">HTTPS</h4>
+<p>不管http怎么改进，他始终是明文加密的一种传输方式，因此提出了加密方案——SSL协议，TCP/IP四层协议模型中应该是处于应用层，在OSI七层模型中可以算会话层</p>
+<p>SSL的1.0版本有重大的安全缺陷，因此从未公开过，到3.0版本已经证明是成熟的方案了，于是在1999年，SSL3.0被更名成了TLS（传输层安全），TLS1.0实际上就是SSL3.1，这样，当HTTP经过了SSL/TLS协议加密后再传输的方式就被称为HTTPS</p>
+<p>注：很多教程里说HTTP2.0要求强制使用HTTPS，其实这并不是2.0的要求，它只是规定了HTTP的协议，真正要求HTTPS的是浏览器</p>
+<p>至此，我们的这次请求就由HTTP1.1更换为了HTTPS2.0</p>
+<p>对于TLS的详解，请见下章</p>
 
       </div>
 
+      
+      <nav class="post-nav">
+        
+        
+        <div class="nav-next">
+          <a class="post-nav-link-active" title="传输层" href="http://blog.zerokirin.online/post/chuan-shu-ceng/">下一篇文章</a>
+          
+
+        </div>
+      </nav>
       
 
       
@@ -2458,11 +2606,13 @@ leetcode 尽力而为
 
       <div class="post-tags">
         
-        <a href="http://blog.zerokirin.online/tag/_1938IQJM/" rel="tag">后端</a>        
+        <a href="http://blog.zerokirin.online/tag/qzFUt7Z9q/" rel="tag">应用层</a>        
         
-        <a href="http://blog.zerokirin.online/tag/ieznrVSNB/" rel="tag">面经</a>        
+        <a href="http://blog.zerokirin.online/tag/sfbQ61MwD9/" rel="tag">HTTPS</a>        
         
-        <a href="http://blog.zerokirin.online/tag/KIp5hERYy/" rel="tag">刷题</a>        
+        <a href="http://blog.zerokirin.online/tag/3r2C_nCspS/" rel="tag">HTTP2.0</a>        
+        
+        <a href="http://blog.zerokirin.online/tag/4qrh5mF4T5/" rel="tag">计算机网络</a>        
                
       </div>
 
