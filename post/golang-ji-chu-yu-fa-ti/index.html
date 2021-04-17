@@ -5,18 +5,17 @@
   <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="
-妈妈说坏人太多😈，不要跟陌生人讲话😣， 富婆除外😏
 
-
-🤜希望坏人没事🙏
-
-常做暴富梦
-脑子不好，记录下学的东西免得忘了
-..." />
+使用值为nil的slice、map会发生啥？
+slice可以正常添加内容，map会报错，需要通过make分配地址
+// map 错误示例
+func main() {
+    var m map[string]int
+    m[&quo..." />
 <link rel="preload" as="script" href="https://cdn.ampproject.org/v0.js">
 <link rel="preconnect dns-prefetch" href="https://cdn.jsdelivr.net/" crossorigin>
 <script async src="https://cdn.ampproject.org/v0.js"></script>
-<title>about | Zer0kiriN</title>
+<title>Golang基础语法题 | Zer0kiriN</title>
 
 
   
@@ -2209,55 +2208,52 @@
 
 <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style>
 <noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
-<link rel="canonical" href="http://blog.zerokirin.online/post/about/" />
+<link rel="canonical" href="http://blog.zerokirin.online/post/golang-ji-chu-yu-fa-ti/" />
 <link rel="shortcut icon" href="http://blog.zerokirin.online/favicon.ico?v=1618661507463">
 
 <meta name="author" content="破庙主任">
 
-<meta itemprop="name" content="about | Zer0kiriN">
+<meta itemprop="name" content="Golang基础语法题 | Zer0kiriN">
 <meta itemprop="description" content="
-妈妈说坏人太多😈，不要跟陌生人讲话😣， 富婆除外😏
 
-
-🤜希望坏人没事🙏
-
-常做暴富梦
-脑子不好，记录下学的东西免得忘了
-...">
+使用值为nil的slice、map会发生啥？
+slice可以正常添加内容，map会报错，需要通过make分配地址
+// map 错误示例
+func main() {
+    var m map[string]int
+    m[&quo...">
 <meta itemprop="image" content="">
 
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="about | Zer0kiriN">
+<meta name="twitter:title" content="Golang基础语法题 | Zer0kiriN">
 <meta name="twitter:description" content="
-妈妈说坏人太多😈，不要跟陌生人讲话😣， 富婆除外😏
 
-
-🤜希望坏人没事🙏
-
-常做暴富梦
-脑子不好，记录下学的东西免得忘了
-...">
+使用值为nil的slice、map会发生啥？
+slice可以正常添加内容，map会报错，需要通过make分配地址
+// map 错误示例
+func main() {
+    var m map[string]int
+    m[&quo...">
 <meta name="twitter:image" content="" />
-<meta name="twitter:image:alt" content="about | Zer0kiriN" />
+<meta name="twitter:image:alt" content="Golang基础语法题 | Zer0kiriN" />
 
 
 <meta property="og:type" content="website">
-<meta property="og:url" content="http://blog.zerokirin.online/post/about/">
-<meta property="og:title" content="about | Zer0kiriN">
+<meta property="og:url" content="http://blog.zerokirin.online/post/golang-ji-chu-yu-fa-ti/">
+<meta property="og:title" content="Golang基础语法题 | Zer0kiriN">
 <meta property="og:description" content="
-妈妈说坏人太多😈，不要跟陌生人讲话😣， 富婆除外😏
 
-
-🤜希望坏人没事🙏
-
-常做暴富梦
-脑子不好，记录下学的东西免得忘了
-...">
+使用值为nil的slice、map会发生啥？
+slice可以正常添加内容，map会报错，需要通过make分配地址
+// map 错误示例
+func main() {
+    var m map[string]int
+    m[&quo...">
 <meta property="og:image" content="">
-<meta property="og:image:alt" content="about | Zer0kiriN" />
+<meta property="og:image:alt" content="Golang基础语法题 | Zer0kiriN" />
 <meta property="og:site_name" content="Zer0kiriN">
 <meta property="og:locale" content="zh_CN">
-<meta property="tag" content="about | Zer0kiriN" />
+<meta property="tag" content="Golang基础语法题 | Zer0kiriN" />
 
 
 <script type="application/ld+json">
@@ -2266,11 +2262,11 @@
 "@type": "BlogPosting",
 "mainEntityOfPage": {
   "@type": "WebPage",
-  "@id": "http://blog.zerokirin.online/post/about/"
+  "@id": "http://blog.zerokirin.online/post/golang-ji-chu-yu-fa-ti/"
 },
-"headline": "about | Zer0kiriN",
-"datePublished": "Sun Feb 28 2021 00:00:00 GMT+0800",
-"dateModified": "Sun Feb 28 2021 00:00:00 GMT+0800",
+"headline": "Golang基础语法题 | Zer0kiriN",
+"datePublished": "Sat Apr 17 2021 20:10:32 GMT+0800",
+"dateModified": "Sat Apr 17 2021 20:10:32 GMT+0800",
 "author": {
   "@type": "Person",
   "name": "破庙主任"
@@ -2287,14 +2283,13 @@
 ""
 ],
 "description": "
-妈妈说坏人太多😈，不要跟陌生人讲话😣， 富婆除外😏
 
-
-🤜希望坏人没事🙏
-
-常做暴富梦
-脑子不好，记录下学的东西免得忘了
-..."
+使用值为nil的slice、map会发生啥？
+slice可以正常添加内容，map会报错，需要通过make分配地址
+// map 错误示例
+func main() {
+    var m map[string]int
+    m[&quo..."
  }
 
 </script>
@@ -2310,8 +2305,8 @@
     },{
       "@type": "ListItem", 
       "position": 2, 
-      "name": "about | Zer0kiriN",
-      "item": "http://blog.zerokirin.online/post/about/"  
+      "name": "Golang基础语法题 | Zer0kiriN",
+      "item": "http://blog.zerokirin.online/post/golang-ji-chu-yu-fa-ti/"  
     }]
   }
   </script>
@@ -2333,7 +2328,7 @@
 
 <script async custom-element="amp-gist" src="https://cdn.ampproject.org/v0/amp-gist-0.1.js"></script>
 
-<link rel="alternate" type="application/atom+xml" title="about | Zer0kiriN - Atom Feed" href="http://blog.zerokirin.online/atom.xml">
+<link rel="alternate" type="application/atom+xml" title="Golang基础语法题 | Zer0kiriN - Atom Feed" href="http://blog.zerokirin.online/atom.xml">
 
 
 
@@ -2388,14 +2383,17 @@
 
       <div class="article-info">
         
+          <div class="flex-box meta-category">
+            <a class="post-cate" href="http://blog.zerokirin.online/tag/2n3c2auIY/">golang</a></div>
+          
         <h2 class="article-title">
-          <a href="http://blog.zerokirin.online/post/about/">about</a>
+          <a href="http://blog.zerokirin.online/post/golang-ji-chu-yu-fa-ti/">Golang基础语法题</a>
         </h2>
         <div class="flex-box">
           <div class="flex-box post-meta-box">
             <a class="post-meta" href="http://blog.zerokirin.online"><span
                 class="iconfont icon-mr-postmeta"></span>破庙主任</a>
-            <span class="post-meta"><span class="iconfont icon-mr-postmeta"></span>2021 年 02	月 28日</span>
+            <span class="post-meta"><span class="iconfont icon-mr-postmeta"></span>2021 年 04	月 17日</span>
             
 
 
@@ -2403,17 +2401,362 @@
         </div>
       </div>
       <div class="content">
-        <blockquote>
-<p>妈妈说坏人太多😈，不要跟陌生人讲话😣， 富婆除外😏</p>
-</blockquote>
-<blockquote>
-<p>🤜希望坏人没事🙏</p>
-</blockquote>
-<p>常做暴富梦</p>
-<p>脑子不好，记录下学的东西免得忘了</p>
+        <ol>
+<li>
+<p>使用值为nil的slice、map会发生啥？</p>
+<p>slice可以正常添加内容，map会报错，需要通过make分配地址</p>
+<pre><code class="language-go">// map 错误示例
+func main() {
+    var m map[string]int
+    m[&quot;one&quot;] = 1  // error: panic: assignment to entry in nil map
+    // m := make(map[string]int)// map 的正确声明，分配了实际的内存
+}    
+ 
+// slice 正确示例
+func main() {
+ var s []int
+ s = append(s, 1)
+}
+</code></pre>
+<p>再往细了说，slice底层用指针维护了一个数组，无论是empty还是nil都可以通过append进行扩容，毕竟append强制返回一个原类型的结构，但是map的底层是一个叫做hmap的东西，非常复杂，需要通过makemap这个函数进行初始化才能进行使用（比如说最起码得给人一个hash函数不是）因此对着nil直接赋值是不现实的</p>
+</li>
+<li>
+<p>map中key是否存在？</p>
+<p>对于不存在的key，map一定会返回默认零值，因此需要通过第二个参数来判断</p>
+<pre><code class="language-go">// 错误的 key 检测方式
+func main() {
+ x := map[string]string{&quot;one&quot;: &quot;2&quot;, &quot;two&quot;: &quot;&quot;, &quot;three&quot;: &quot;3&quot;}
+ if v := x[&quot;two&quot;]; v == &quot;&quot; {
+  fmt.Println(&quot;key two is no entry&quot;) // 键 two 存不存在都会返回的空字符串
+ }
+}
+ 
+// 正确示例
+func main() {
+ x := map[string]string{&quot;one&quot;: &quot;2&quot;, &quot;two&quot;: &quot;&quot;, &quot;three&quot;: &quot;3&quot;}
+ if _, ok := x[&quot;two&quot;]; !ok {
+  fmt.Println(&quot;key two is no entry&quot;)
+ }
+}
+</code></pre>
+<p>两种取值方式调用的是不同的函数，但他们的区别也仅仅就是判断下key存不存在而已</p>
+</li>
+<li>
+<p>string类型可以修改吗</p>
+<p>不能，go中的string类型本质是一个slice，里面存储的是utf-8，但是utf-8是不固定长的（utf-8的意义就是为了压缩字节数）英文字母和数字是1个字节，但中文是3或4字节，这就导致如果直接对下标进行操作的话，会导致编码错乱。</p>
+<p>要修改可以转换成[]byte类型，此时实质上是把每个字符转换成了rune类型，rune也就是int32的别名，因此4字节可以存储下完整的utf-8中文字符了，不用担心结构错乱</p>
+</li>
+<li>
+<p>switch 默认带有break，如果想和其它语言一样继续执行下一个case，可以写上fallthrough</p>
+</li>
+<li>
+<p>解析json时的默认数据格式</p>
+<pre><code class="language-json">Bool                   对应JSON布尔类型
+float64                对应JSON数字类型
+string                 对应JSON字符串类型
+[]interface{}          对应JSON数组
+map[string]interface{} 对应JSON对象
+nil                    对应JSON的null
+</code></pre>
+</li>
+<li>
+<p>简短声明</p>
+<p>只能在函数内部进行简短声明，如果是函数外部则只能用var</p>
+<p>struct的变量不能用:=（别问我为什么，官方文档说的无法推断）</p>
+<p>不能重复申明，至少有一个新的变量名才行</p>
+</li>
+<li>
+<p>map迭代顺序</p>
+<p>完全无序，1.9版本以前，如果是对硬编码的map还可以说有序，但是1.10版本在迭代的时候已经纯随机了，详见<a href="http://blog.zerokirin.online/post/go-yu-fa-ji-chu-gong-gu-map/">go语法基础巩固（map）</a></p>
+</li>
+<li>
+<p>recover</p>
+<p>recover函数是用来捕捉祖父级调用时的异常，需要用在defer中</p>
+<pre><code class="language-go">func main(){
+    defer func(){
+        r:= recover()
+        log.Println(r)
+    }()
+    panic(&quot;error&quot;)
+}
+</code></pre>
+</li>
+<li>
+<p>闭包函数传参数</p>
+<p>如果不传参数进去，他们引用的都是同一个变量， 这样当迭代的时候，还没有执行到的goroutine打印出来的是已经变化了的i，不是调用时的i</p>
+<pre><code class="language-go">func main(){
+    for i:=0;i&lt;10;i++{
+        go func(i int){
+            fmt.Println(i)
+        }(i) //如果不传参会导致他们实际使用的是同一个变量
+    }
+    ......
+}
+</code></pre>
+</li>
+<li>
+<p>goroutine内存泄露</p>
+<p>本质上就是goroutine函数执行过程中没有正确的结束，因此就不会被释放，最终可能会导致内存越来越高</p>
+</li>
+<li>
+<p>for select 一起使用的时候break 标签跳出</p>
+<p>若无标签，直接break只是退出select语句而已</p>
+<pre><code class="language-go">func main() {
+	var ch chan int
+exit:
+	for {
+		select {
+		case v, ok := &lt;-ch:
+			if !ok {
+				break exit//跳出了整个exit循环，直接到最下方了
+			}
+			fmt.Println(v)
+		}
+	}
+	
+    fmt.Println(&quot;exit&quot;)
+}
+</code></pre>
+</li>
+<li>
+<p>sort包对slice进行快排及搜索操作</p>
+<p>注：当要找的目标不存在时，返回的值是其在排序后因该存在的位置</p>
+<pre><code class="language-go">func main() {
+	ints := []int{1, 2, 5, 4, 3, 7}
+	sort.Ints(ints)
+	fmt.Println(sort.SearchInts(ints, 6))
+	fmt.Println(sort.SearchInts(ints, 4))
+	fmt.Println(ints)
+}
+
+------------
+5 //没有6，但是6应该放在第5个位置（从0开始）
+3 //4在第3个位置
+[1 2 3 4 5 7]
+
+</code></pre>
+</li>
+<li>
+<p>数组和切片的区别</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">数组</th>
+<th style="text-align:center">切片</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">值类型</td>
+<td style="text-align:center">引用类型</td>
+</tr>
+<tr>
+<td style="text-align:center">var arr [5]int</td>
+<td style="text-align:center">var sli []int</td>
+</tr>
+<tr>
+<td style="text-align:center">固定长度</td>
+<td style="text-align:center">可变长度</td>
+</tr>
+<tr>
+<td style="text-align:center">作为函数参数时是值传递，复制一份</td>
+<td style="text-align:center">引用传递，相当于传了地址，本质上还是通一slice</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>new make 区别</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">new</th>
+<th style="text-align:center">make</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">初始化一个指向类型的指针</td>
+<td style="text-align:center">为slice，map，chan初始化出其需要的</td>
+</tr>
+<tr>
+<td style="text-align:center">返回值是指向分配的零值的指针，因此对引用类型的变量返回的就是nil</td>
+<td style="text-align:center">返回的是类型的一个经过初始化的实例</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>for 循环多变量赋值</p>
+<p>for循环中如果有多个变量，需要平行赋值</p>
+<pre><code class="language-go">for i, j := 0, 0; i &lt; j; i, j = j+1, i+1 { //最后一个 i++,j++是不被允许的，因为这本身就是两个语句
+	......
+}
+</code></pre>
+</li>
+<li>
+<p>go的接口是什么</p>
+<p>interface，方法的集合，不关心数据，只关心如何实现，只要实现了interface定义的方法，就可以说实现了该接口，也因此，一个空的interface{}可以说是被所有的数据类型所共有的一个父类，也可以说所有的数据类型都是的本质都是interface，其底层包括eface（无方法），iface（有方法）两种结构</p>
+<p>对于第一种，在动态赋值的时候，其内部的_type指针会随数据类型变化</p>
+<pre><code class="language-go">//不带函数的interface
+var e interface{}
+tty, err := os.OpenFile(&quot;/dev/tty&quot;, os.O_RDWR, 0)
+if err != nil {
+    return nil, err
+}
+
+e = tty
+</code></pre>
+<p>这里的e完全就是个工具人，赋值以后的结构就是<img src="https://i6448038.github.io/img/reflection/eface2.png" alt="img" loading="lazy"></p>
+<p>第二种除了其原本的静态类型指针以外，还有一个动态混合类型指针，eg.</p>
+<pre><code class="language-go">//带函数的interface
+var r io.Reader 
+
+tty, err := os.OpenFile(&quot;/dev/tty&quot;, os.O_RDWR, 0)
+if err != nil {
+    return nil, err
+}
+
+r = tty
+</code></pre>
+<p>这本来是一个静态类型的io.Reader，但是我们知道os.File类型一样实现了Reader方法，因此可以说os.File实现了io.Reader接口，因此<code>r = tty</code>是被允许的这时候，结构就变为了<img src="https://i6448038.github.io/img/reflection/iface2.png" alt="img" loading="lazy"></p>
+<p>可以看到，其依然是静态类型io.Reader，但是实际上他已经是动态混合类型了</p>
+<p>因此我们可以通过对interface的操作实现多态</p>
+</li>
+<li>
+<p>类型断言</p>
+<p>当想知道interface的具体类型时就需要断言</p>
+<pre><code class="language-go">var e interface{}
+tty, err := os.OpenFile(&quot;/dev/tty&quot;, os.O_RDWR, 0)
+if err != nil {
+    return err.Error()
+}
+
+e = tty
+//接上例
+_, ok := e.(*os.File) //断言是否是该类型
+if !ok {
+    return &quot;error&quot;
+}
+switch v := e.(type) { //根据e的不同类型选择不同的方法
+    case *os.File:
+    	return v.Name()
+    default:
+    	return &quot;error&quot;
+}
+</code></pre>
+</li>
+<li>
+<p>方法和函数是两个概念</p>
+<p>但是怎么看他们也都差不多。。。我更愿意把方法称作成员函数，方法只不过是在函数的基础上，写上了这是属于谁的函数而已</p>
+<pre><code class="language-go">func(s Service)Run(){//最奇怪的用法，这里的s是通过值传递调用的，因此这里无论做什么都不能影响原本的s，而且对于大型结构体还会导致频繁的复制。。暂时没用过。。。
+    
+}
+
+func(s *Service)Run(){//方法，大写开头，因此是公开函数，函数外部可以调用
+    foo() //同一个包内调用
+}
+
+func foo(){//函数,小写开头，所以是包内函数，其他package不能访问
+    
+}
+</code></pre>
+<pre><code class="language-go">type P struct {
+	val int
+}
+
+func main() {
+	p := new(P)
+	p.val = 1
+	fmt.Printf(&quot;%p,%p,%v\n&quot;, &amp;p, p, p)
+	p.addr()
+	p.addr2()
+	fmt.Printf(&quot;%p,%p,%v\n&quot;, &amp;p, p, p)
+}
+
+func (p P) addr() {
+	i := &amp;p
+	p.val = 2
+	fmt.Printf(&quot;%p,%p,%v\n&quot;, &amp;i, &amp;p, p)
+}
+func (p *P) addr2() {
+	fmt.Printf(&quot;%p,%p,%v\n&quot;, &amp;p, p, p)
+	p.val = 3
+}
+------------------------------
+0xc000006028,0xc0000120b0,&amp;{1}
+0xc000006038,0xc0000120e0,{2}
+0xc000006040,0xc0000120b0,&amp;{1}
+0xc000006028,0xc0000120b0,&amp;{3}
+</code></pre>
+<p>可以看到134行很明显是同一个地址，前面的是放p指针的地址，因此函数调用的时候只复制了地址过去，而第2行就明显的是值传递了</p>
+</li>
+<li>
+<p>slice的扩容机制</p>
+<ul>
+<li>如果申请容量长度大于2倍的旧容量，则最终容量就是新申请的容量</li>
+<li>如果旧其切片长度小于1024则新容量变为两倍</li>
+<li>如果是大于等于1024，则旧容量增加原来的4分之一，直到大于新容量为止，然后进行内存对齐操作，因此是大于等于</li>
+<li>如果容量计算溢出了，那新容量就是溢出之前的值</li>
+<li>一旦触发扩容，则扩容后的slice就指向了新的地址</li>
+</ul>
+</li>
+<li>
+<p>empty slice 和nil slice</p>
+<pre><code class="language-go">func main() {
+	s1 := make([]int, 0)
+	var s2 []int
+	str, _ := json.Marshal(struct {
+		S1 interface{} `json:&quot;s1&quot;`
+		S2 interface{} `json:&quot;s2&quot;`
+	}{
+		S1: s1,
+		S2: s2,
+	})
+	fmt.Printf(&quot;%+s&quot;, str)
+}
+-------------------
+{&quot;s1&quot;:[],&quot;s2&quot;:null}
+</code></pre>
+</li>
+<li>
+<p>Data Race问题</p>
+<p>互斥锁sync.Mutex或者是管道，管道的效率高一点</p>
+</li>
+<li>
+<p>range slice 遍历</p>
+<p>用range遍历slice得到的是要给值的拷贝，要对值修改需要用下标访问</p>
+</li>
+<li>
+<p>nil interface</p>
+<pre><code class="language-go">func main() {
+   var data *byte
+   var in interface{}
+
+   fmt.Println(data, data == nil) // &lt;nil&gt; true
+   fmt.Println(in, in == nil) // &lt;nil&gt; true
+
+   in = data
+   fmt.Println(in, in == nil) // &lt;nil&gt; false // data 值为 nil，但 in 值不为 nil
+}
+</code></pre>
+<p>in原本是一个nil，最后被赋值了一个nil，nil也是个类型，因此赋值过后in就不是nil了，但他指向的值还是nil（没有十年脑血栓写不出这种代码，少一天都不行）</p>
+</li>
+</ol>
+<p>本来以为是个什么考题，结果都是一些基础知识，就当再复习一遍吧</p>
 
       </div>
 
+      
+      <nav class="post-nav">
+        
+        
+        <div class="nav-next">
+          <a class="post-nav-link-active" title="一次完整的请求及改进" href="http://blog.zerokirin.online/post/yi-ci-wan-zheng-de-qing-qiu-ji-gai-jin/">下一篇文章</a>
+          
+
+        </div>
+      </nav>
       
 
       
@@ -2448,6 +2791,10 @@
       
 
       <div class="post-tags">
+        
+        <a href="http://blog.zerokirin.online/tag/2n3c2auIY/" rel="tag">golang</a>        
+        
+        <a href="http://blog.zerokirin.online/tag/-Ep2xEDPKR/" rel="tag">笔记</a>        
                
       </div>
 
