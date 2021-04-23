@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>http://blog.zerokirin.online</id>
     <title>Zer0kiriN</title>
-    <updated>2021-04-17T12:11:53.371Z</updated>
+    <updated>2021-04-23T16:38:32.165Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="http://blog.zerokirin.online"/>
     <link rel="self" href="http://blog.zerokirin.online/atom.xml"/>
@@ -10,6 +10,123 @@
     <logo>http://blog.zerokirin.online/images/avatar.png</logo>
     <icon>http://blog.zerokirin.online/favicon.ico</icon>
     <rights>All rights reserved 2021, Zer0kiriN</rights>
+    <entry>
+        <title type="html"><![CDATA[Golang 运行时（一）]]></title>
+        <id>http://blog.zerokirin.online/post/golang-yun-xing-shi-yi/</id>
+        <link href="http://blog.zerokirin.online/post/golang-yun-xing-shi-yi/">
+        </link>
+        <updated>2021-04-23T16:36:28.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="内存分区">内存分区</h2>
+<p>一个应用程序在运行的时候会分出对应的区域</p>
+<ol>
+<li>
+<p>text 代码区</p>
+<p>用于存放cpu执行的机器指令，只读</p>
+</li>
+<li>
+<p>data 数据区</p>
+<ul>
+<li>初始化后的全局变量</li>
+<li>初始化后的静态变量（包括全局和局部）</li>
+<li>常量</li>
+</ul>
+</li>
+<li>
+<p>bss 未初始化区</p>
+<ul>
+<li>未初始化的全局变量</li>
+<li>未初始化的静态变量</li>
+</ul>
+<p>尽管会被默认分配为零值，但仍属于未初始化区</p>
+</li>
+<li>
+<p>stack 栈区</p>
+<p>由编译器自动分配释放的，一般用于存储哈描述的参数值、返回值、局部变量等。一般只有1M，可自动扩充，基本上也就是函数运行的空间，所以无限递归会造成的是栈溢出</p>
+<p>分配的方式是从高地址向低地址</p>
+</li>
+<li>
+<p>heap 堆区</p>
+<p>由程序员手动分配，手动回收或者较高级语言有GC自动回收</p>
+<p>分配的地址是在栈区地址和.bss区之间</p>
+</li>
+</ol>
+<figure data-type="image" tabindex="1"><img src="https://github.com/overnote/over-golang/raw/master/images/go/runtime-02.svg" alt="img" loading="lazy"></figure>
+<h2 id="逃逸分析">逃逸分析</h2>
+<pre><code class="language-go">func toHeap() *int {
+	var x int
+	return &amp;x
+}
+
+func toStack() int {
+	y := new(int)
+	*y = 1
+	return *y
+}
+
+func main() {
+
+}
+</code></pre>
+<p>如果我们暂时忘记go，用C/C++语言的思维来看，上述的<code>toHeap()</code>函数就是一个典型的空指针错误，在函数内部创建了一个变量，调用结束后将指针返回，而该地址是随着函数的调用而被分配在函数栈上的，因此当调用结束后栈会被清空，该指针就成了一个野指针。而对于<code>toStack</code>函数来说，手动使用new从堆上分配了一块变量，直到使用对应的delete函数手动释放空间</p>
+<p>但是在go中，情况完全不同，go在一定程度上消除了堆栈的区别，在编译的时候会自动进行<strong>逃逸分析</strong>，将逃逸的对象放到堆上，不逃逸的对象放到栈上</p>
+<p>由于x是返回值，而这个指针会被函数外部进行操作，从外部是可以找到这个变量的，因此就可以说是变量逃逸</p>
+<p>第一种情况就可以说发生了逃逸，go会在编译阶段将x放到堆上，而y在函数结束后就无法访问了，因此分配到栈上，随着函数结束而消失</p>
+<p>Go的GC判断变量是否回收的实现思路：从每个包级的变量、每个当前运行的函数的局部变量开始，通过指针和引用的访问路径遍历，是否可以找到该变量，如果不存在这样的访问路径，那么说明该变量是不可达的，也就是说它是否存在并不会影响后续计算结果。</p>
+<h3 id="逃逸案例">逃逸案例</h3>
+<ol>
+<li>
+<p>指针逃逸</p>
+<pre><code class="language-go">func f() *int{
+    var i int
+    i = 1
+    return &amp;i
+}
+</code></pre>
+</li>
+<li>
+<p>局部变量大小过大</p>
+<pre><code class="language-go">s := make([]int, 0, 10000)//其实就是stack区不够分了，所以分到heap上
+</code></pre>
+</li>
+<li>
+<p>动态类型逃逸</p>
+<pre><code class="language-go">cap:= 20
+s := make([]int, 0, cap) //大小是动态的，不能确定，因此放入heap
+</code></pre>
+</li>
+<li>
+<p>闭包引用逃逸</p>
+<pre><code class="language-go">//闭包函数在这里声明了两个隐式变量a，b，当f()被多次调用的时候，其使用的是被Fibonacci()创建出来大的时候的a，b，因此a，b不会随着f()函数的结束而小时，因此会被分配到heap
+func Fibonacci() func() int { 
+    a, b := 0, 1
+	return func() int {
+		a, b = b, a+b
+		return a
+	}
+}
+
+f:= Fibonacci()
+</code></pre>
+</li>
+<li>
+<p>切片，map逃逸</p>
+<pre><code class="language-go">i := 1
+s := make([]*int, 0, 10) //m没有被转移给其他的函数调用，也没有分配过大的空间，也不是全局变量，因此没有必要分配到heap上
+s = append(s, &amp;i) //i被添加到m中，没有人知道什么时候会用到，因此无论有没有被用到，都会分配到heap上
+
+j := 1
+m := make(map[int]*int) //一个道理，也是分配在stack上
+m[1] = &amp;j //heap上
+</code></pre>
+</li>
+</ol>
+<h3 id="分配位置的原则">分配位置的原则</h3>
+<ul>
+<li>变量是否被取地址</li>
+<li>变量是否发生逃逸</li>
+</ul>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Golang基础语法题]]></title>
         <id>http://blog.zerokirin.online/post/golang-ji-chu-yu-fa-ti/</id>
