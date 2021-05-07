@@ -4,20 +4,14 @@
 <head>
   <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="
-Go语法、Go并发思想、Go与web开发、Go微服务设施等 学习路线
-
-
-通用后端问题 每日10道
-golang面试题集合 每日2道
-刷题笔记
-leetcode 尽力而为
-
-..." />
+<meta name="description" content="由于go没有自带的栈结构，因此我们手写了两种stack方便刷题及日后使用，顺便尝试下开源
+由于栈有切片和链表两种实现方式，因此仓库内有两个package，此时有两种发布方式
+1. 将两个package当作一个module发布
+此时只要在根目..." />
 <link rel="preload" as="script" href="https://cdn.ampproject.org/v0.js">
 <link rel="preconnect dns-prefetch" href="https://cdn.jsdelivr.net/" crossorigin>
 <script async src="https://cdn.ampproject.org/v0.js"></script>
-<title>Every Day | Zer0kiriN</title>
+<title>如何在github上开源自己的包 | Zer0kiriN</title>
 
 
   
@@ -2210,58 +2204,40 @@ leetcode 尽力而为
 
 <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style>
 <noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
-<link rel="canonical" href="http://blog.zerokirin.online/post/every-day/" />
+<link rel="canonical" href="http://blog.zerokirin.online/post/ru-he-zai-github-shang-kai-yuan-zi-ji-de-bao/" />
 <link rel="shortcut icon" href="http://blog.zerokirin.online/favicon.ico?v=1620406370951">
 
 <meta name="author" content="破庙主任">
 
-<meta itemprop="name" content="Every Day | Zer0kiriN">
-<meta itemprop="description" content="
-Go语法、Go并发思想、Go与web开发、Go微服务设施等 学习路线
-
-
-通用后端问题 每日10道
-golang面试题集合 每日2道
-刷题笔记
-leetcode 尽力而为
-
-...">
+<meta itemprop="name" content="如何在github上开源自己的包 | Zer0kiriN">
+<meta itemprop="description" content="由于go没有自带的栈结构，因此我们手写了两种stack方便刷题及日后使用，顺便尝试下开源
+由于栈有切片和链表两种实现方式，因此仓库内有两个package，此时有两种发布方式
+1. 将两个package当作一个module发布
+此时只要在根目...">
 <meta itemprop="image" content="">
 
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Every Day | Zer0kiriN">
-<meta name="twitter:description" content="
-Go语法、Go并发思想、Go与web开发、Go微服务设施等 学习路线
-
-
-通用后端问题 每日10道
-golang面试题集合 每日2道
-刷题笔记
-leetcode 尽力而为
-
-...">
+<meta name="twitter:title" content="如何在github上开源自己的包 | Zer0kiriN">
+<meta name="twitter:description" content="由于go没有自带的栈结构，因此我们手写了两种stack方便刷题及日后使用，顺便尝试下开源
+由于栈有切片和链表两种实现方式，因此仓库内有两个package，此时有两种发布方式
+1. 将两个package当作一个module发布
+此时只要在根目...">
 <meta name="twitter:image" content="" />
-<meta name="twitter:image:alt" content="Every Day | Zer0kiriN" />
+<meta name="twitter:image:alt" content="如何在github上开源自己的包 | Zer0kiriN" />
 
 
 <meta property="og:type" content="website">
-<meta property="og:url" content="http://blog.zerokirin.online/post/every-day/">
-<meta property="og:title" content="Every Day | Zer0kiriN">
-<meta property="og:description" content="
-Go语法、Go并发思想、Go与web开发、Go微服务设施等 学习路线
-
-
-通用后端问题 每日10道
-golang面试题集合 每日2道
-刷题笔记
-leetcode 尽力而为
-
-...">
+<meta property="og:url" content="http://blog.zerokirin.online/post/ru-he-zai-github-shang-kai-yuan-zi-ji-de-bao/">
+<meta property="og:title" content="如何在github上开源自己的包 | Zer0kiriN">
+<meta property="og:description" content="由于go没有自带的栈结构，因此我们手写了两种stack方便刷题及日后使用，顺便尝试下开源
+由于栈有切片和链表两种实现方式，因此仓库内有两个package，此时有两种发布方式
+1. 将两个package当作一个module发布
+此时只要在根目...">
 <meta property="og:image" content="">
-<meta property="og:image:alt" content="Every Day | Zer0kiriN" />
+<meta property="og:image:alt" content="如何在github上开源自己的包 | Zer0kiriN" />
 <meta property="og:site_name" content="Zer0kiriN">
 <meta property="og:locale" content="zh_CN">
-<meta property="tag" content="Every Day | Zer0kiriN" />
+<meta property="tag" content="如何在github上开源自己的包 | Zer0kiriN" />
 
 
 <script type="application/ld+json">
@@ -2270,11 +2246,11 @@ leetcode 尽力而为
 "@type": "BlogPosting",
 "mainEntityOfPage": {
   "@type": "WebPage",
-  "@id": "http://blog.zerokirin.online/post/every-day/"
+  "@id": "http://blog.zerokirin.online/post/ru-he-zai-github-shang-kai-yuan-zi-ji-de-bao/"
 },
-"headline": "Every Day | Zer0kiriN",
-"datePublished": "Thu Mar 04 2021 19:36:53 GMT+0800",
-"dateModified": "Thu Mar 04 2021 19:36:53 GMT+0800",
+"headline": "如何在github上开源自己的包 | Zer0kiriN",
+"datePublished": "Fri May 07 2021 22:46:53 GMT+0800",
+"dateModified": "Fri May 07 2021 22:46:53 GMT+0800",
 "author": {
   "@type": "Person",
   "name": "破庙主任"
@@ -2290,16 +2266,10 @@ leetcode 尽力而为
 "image": [
 ""
 ],
-"description": "
-Go语法、Go并发思想、Go与web开发、Go微服务设施等 学习路线
-
-
-通用后端问题 每日10道
-golang面试题集合 每日2道
-刷题笔记
-leetcode 尽力而为
-
-..."
+"description": "由于go没有自带的栈结构，因此我们手写了两种stack方便刷题及日后使用，顺便尝试下开源
+由于栈有切片和链表两种实现方式，因此仓库内有两个package，此时有两种发布方式
+1. 将两个package当作一个module发布
+此时只要在根目..."
  }
 
 </script>
@@ -2315,8 +2285,8 @@ leetcode 尽力而为
     },{
       "@type": "ListItem", 
       "position": 2, 
-      "name": "Every Day | Zer0kiriN",
-      "item": "http://blog.zerokirin.online/post/every-day/"  
+      "name": "如何在github上开源自己的包 | Zer0kiriN",
+      "item": "http://blog.zerokirin.online/post/ru-he-zai-github-shang-kai-yuan-zi-ji-de-bao/"  
     }]
   }
   </script>
@@ -2338,7 +2308,7 @@ leetcode 尽力而为
 
 <script async custom-element="amp-gist" src="https://cdn.ampproject.org/v0/amp-gist-0.1.js"></script>
 
-<link rel="alternate" type="application/atom+xml" title="Every Day | Zer0kiriN - Atom Feed" href="http://blog.zerokirin.online/atom.xml">
+<link rel="alternate" type="application/atom+xml" title="如何在github上开源自己的包 | Zer0kiriN - Atom Feed" href="http://blog.zerokirin.online/atom.xml">
 
 
 
@@ -2394,16 +2364,16 @@ leetcode 尽力而为
       <div class="article-info">
         
           <div class="flex-box meta-category">
-            <a class="post-cate" href="http://blog.zerokirin.online/tag/_1938IQJM/">后端</a></div>
+            <a class="post-cate" href="http://blog.zerokirin.online/tag/xeynZVmko/">go mod</a></div>
           
         <h2 class="article-title">
-          <a href="http://blog.zerokirin.online/post/every-day/">Every Day</a>
+          <a href="http://blog.zerokirin.online/post/ru-he-zai-github-shang-kai-yuan-zi-ji-de-bao/">如何在github上开源自己的包</a>
         </h2>
         <div class="flex-box">
           <div class="flex-box post-meta-box">
             <a class="post-meta" href="http://blog.zerokirin.online"><span
                 class="iconfont icon-mr-postmeta"></span>破庙主任</a>
-            <span class="post-meta"><span class="iconfont icon-mr-postmeta"></span>2021 年 03	月 4日</span>
+            <span class="post-meta"><span class="iconfont icon-mr-postmeta"></span>2021 年 05	月 7日</span>
             
 
 
@@ -2411,18 +2381,91 @@ leetcode 尽力而为
         </div>
       </div>
       <div class="content">
-        <blockquote>
-<p><a href="https://github.com/overnote/over-golang">Go语法、Go并发思想、Go与web开发、Go微服务设施等 学习路线</a></p>
-</blockquote>
-<ul>
-<li><a href="https://github.com/monklof/Back-End-Developer-Interview-Questions#toc">通用后端问题</a> 每日10道</li>
-<li><a href="https://github.com/lifei6671/interview-go">golang面试题集合</a> 每日2道</li>
-<li><a href="https://labuladong.gitee.io/algo/">刷题笔记</a></li>
-<li>leetcode 尽力而为</li>
-</ul>
+        <p>由于go没有自带的栈结构，因此我们手写了两种stack方便刷题及日后使用，顺便尝试下开源</p>
+<p>由于栈有切片和链表两种实现方式，因此仓库内有两个package，此时有两种发布方式</p>
+<h3 id="1-将两个package当作一个module发布">1. 将两个package当作一个module发布</h3>
+<p>此时只要在根目录上创建go.mod文件，文件内容如下</p>
+<pre><code>module github.com/00LT00/go-stack
+
+go 1.15
+</code></pre>
+<p>这样我们的module根目录地址就是<code>github.com/00LT00/go-stack</code></p>
+<p>此时总文件结构</p>
+<pre><code>│  go.mod
+│  README.md
+│
+├─nodelistStack
+│      stack.go
+│      stack_test.go
+│
+└─sliceStack
+        stack.go
+        stack_test.go
+</code></pre>
+<p>下属的nodelistStack和sliceStack作为go-stack这个module的子package存在</p>
+<pre><code class="language-go">import &quot;github.com/00LT00/go-stack&quot;
+</code></pre>
+<p>此时go.mod文件中会有版本号，和最后一次提交的时间与md5相关</p>
+<p>当然也可以打tag，或者通过github release发布一个新的版本，比如现在的最新版就是</p>
+<pre><code class="language-go">require github.com/00LT00/go-stack v0.4.0 // 根目录下没有package有可能会报错，应手动写入go.mod中
+</code></pre>
+<p>当然只是引入了go-stack是肯定不能用的，毕竟根目录下毛都没有，要想用肯定要引入两个package之一</p>
+<pre><code class="language-go">import (
+	stack1 &quot;github.com/00LT00/go-stack/sliceStack&quot;
+	stack2 &quot;github.com/00LT00/go-stack/nodelistStack&quot;
+)
+</code></pre>
+<p>这样的不足之处在于两者依赖同一个tag，如果对其中一个进行修改，打出来的新tag对两个都会生效，因此还有第二种方式</p>
+<h3 id="2-发布两个不一样的module">2. 发布两个不一样的module</h3>
+<p>文件结构如下</p>
+<pre><code>│  README.md
+│
+├─nodelistStack
+|	   go.mod
+│      stack.go
+│      stack_test.go
+│
+└─sliceStack
+		go.mod
+        stack.go
+        stack_test.go
+</code></pre>
+<p>两个go.mod文件开头就自由发挥</p>
+<pre><code>module github.com/00LT00/go-stack/nodelistStack
+
+go 1.15
+</code></pre>
+<pre><code>module github.com/00LT00/go-stack/sliceStack
+
+go 1.15
+</code></pre>
+<p>这时可以通过github release 发布不同的版本号解决问题</p>
+<figure data-type="image" tabindex="1"><img src="C:%5CUsers%5CZer0kiriN%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210508002249201.png" alt="image-20210508002249201" loading="lazy"></figure>
+<p>这里就给子目录单独创建了一个版本号 v0.1.3</p>
+<p>虽然引用方式和之前没有任何变化，仍然是</p>
+<pre><code class="language-go">import (
+	stack2 &quot;github.com/00LT00/go-stack/nodelistStack&quot;
+)
+</code></pre>
+<p>但是go.mod文件中已经发生了变化</p>
+<pre><code>require github.com/00LT00/go-stack/nodelistStack v0.1.3
+</code></pre>
+<p>此时这就是一个单独的module，自己管理自己的package，这样的好处是，可以单独对两个目录发布不一样的版本</p>
+<figure data-type="image" tabindex="2"><img src="C:%5CUsers%5CZer0kiriN%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210508003849181.png" alt="image-20210508003849181" loading="lazy"></figure>
+<p>可以看到多了个带目录的标签，但是这么干的原理我还真没搞懂，翻遍了google也只是看到有人这么干，至于为啥能这么写，可能要好好看看go get的实现原理了</p>
 
       </div>
 
+      
+      <nav class="post-nav">
+        
+        
+        <div class="nav-next">
+          <a class="post-nav-link-active" title="Golang 运行时（一）" href="http://blog.zerokirin.online/post/golang-yun-xing-shi-yi/">下一篇文章</a>
+          
+
+        </div>
+      </nav>
       
 
       
@@ -2458,11 +2501,13 @@ leetcode 尽力而为
 
       <div class="post-tags">
         
-        <a href="http://blog.zerokirin.online/tag/_1938IQJM/" rel="tag">后端</a>        
+        <a href="http://blog.zerokirin.online/tag/xeynZVmko/" rel="tag">go mod</a>        
         
-        <a href="http://blog.zerokirin.online/tag/ieznrVSNB/" rel="tag">面经</a>        
+        <a href="http://blog.zerokirin.online/tag/3OGqShz15j/" rel="tag">go package</a>        
         
-        <a href="http://blog.zerokirin.online/tag/KIp5hERYy/" rel="tag">刷题</a>        
+        <a href="http://blog.zerokirin.online/tag/iBI9azZkgJ/" rel="tag">go stack</a>        
+        
+        <a href="http://blog.zerokirin.online/tag/2n3c2auIY/" rel="tag">golang</a>        
                
       </div>
 
