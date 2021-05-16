@@ -1,0 +1,3420 @@
+<!doctype html>
+<html amp lang="zh-Hans">
+
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="ORM库用起来是真的爽，面试的时候被问sql也是真的爽，人自闭了重新复习吧
+增删改查
+select
+(8)SELECT (9)[ALL|DISTINCT|DISTINCTROW|TOP]
+(11){*|talbe.*|[table.]fie..." />
+<link rel="preload" as="script" href="https://cdn.ampproject.org/v0.js">
+<link rel="preconnect dns-prefetch" href="https://cdn.jsdelivr.net/" crossorigin>
+<script async src="https://cdn.ampproject.org/v0.js"></script>
+<title>Mysql基础回顾 | Zer0kiriN</title>
+
+
+  
+
+    
+        <style amp-custom>
+            body {
+                width: 100vw;
+                display: flex;
+                flex-direction: column;
+                font-family: 'PT Serif',-apple-system-font,"Helvetica Neue","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif, serif;
+                background: white;
+            }
+            *:focus{
+                outline: none;
+            }
+            @font-face {
+                font-family: 'iconfont';
+                src: url('https://cdn.jsdelivr.net/gh/jiansing/gridea-theme-inlineamp/inlineamp/assets/media/fonts/iconfont.eot?20200105#iefix') format('embedded-opentype'),
+                    url('https://cdn.jsdelivr.net/gh/jiansing/gridea-theme-inlineamp/inlineamp/assets/media/fonts/iconfont.woff2?20200105') format('woff2'),
+                    url('https://cdn.jsdelivr.net/gh/jiansing/gridea-theme-inlineamp/inlineamp/assets/media/fonts/iconfont.woff?20200105') format('woff'),
+                    url('https://cdn.jsdelivr.net/gh/jiansing/gridea-theme-inlineamp/inlineamp/assets/media/fonts/iconfont.ttf?20200105') format('truetype'),
+                    url('https://cdn.jsdelivr.net/gh/jiansing/gridea-theme-inlineamp/inlineamp/assets/media/fonts/iconfont.svg?20200105#iconfont') format('svg');
+            }
+            @font-face {
+              font-family: 'PT Serif';
+              font-style: normal;
+              font-weight: 400;
+              font-display: swap;
+              src: local('PT Serif'), local('PTSerif-Regular'), url('https://cdn.jsdelivr.net/gh/jiansing/gridea-theme-inlineamp/inlineamp/assets/media/fonts/ptserif.woff2') format('woff2');
+              unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+            }
+            .iconfont {
+                font-family: "iconfont";
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+            /* CSS reset */
+            textarea,
+            input[type="password"],
+            input[type="text"],
+            input[type="url"],
+            input[type="email"],
+            input[type="submit"]
+            {
+                -webkit-appearance: none;
+                border-radius: 0;
+            }
+            header {
+                width: 100vw;
+                background: #000000;
+                display: flex;
+                justify-content: center;
+            }
+            .top-container {
+                width: 71.4286vw;
+                height: 100%;
+            }
+            .title-menus-area {
+                display: flex;
+                width: 100%;
+                height: 5.8095vw;
+                justify-content: space-between;
+            }
+            .blog-title {
+                display: flex;
+                font-size: 1.6667vw;
+                font-weight: bold;
+                color: white;
+                margin-top: 1.2857vw;
+                white-space: nowrap;
+                text-decoration: none;
+                line-height: 1.6667vw;
+            }
+            .tagline {
+                display: flex;
+                width: 100%;
+                flex-direction: column;
+                align-items: center;
+            }
+            .tagline-main {
+                color: white;
+                font-size: 2.9286vw;
+                margin-bottom: 1.6667vw;
+                line-height: 2.9286vw;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            .tagline-main:after {
+                content: '';
+                display: flex;
+                background: #F6F8FA;
+                width: 4.7619vw;
+                height: 0.2381vw;
+                margin-top: 1.6667vw;
+            }
+            .tagline-sub {
+                color: #8A8A8A;
+                font-size: 0.9524vw;
+                line-height: 1.6667vw;
+                margin-bottom: 3.5119vw;
+            }
+            .tagline-sub a {
+                text-decoration: none;
+                color: unset;
+            }
+            .tagline-sub a:hover {
+                color: #004578;
+            }
+            /* go top button */
+            .scrolltop-wrap {
+                box-sizing: border-box;
+                position: absolute;
+                top: 11.6667vw;
+                right: -3.9048vw;
+                bottom: 0;
+            }
+            .go-top {
+                width: 2.9762vw;
+                height: 2.9762vw;
+                font-size: 1.1905vw;
+                text-decoration: none;
+                background: #004578;
+                border-radius: 100%;
+                color: white;
+                justify-content: center;
+                align-items: center;
+                display: flex;
+                cursor: pointer;
+                
+                position: fixed;
+                position: -webkit-sticky;
+                position: sticky;
+                top: -5.9524vw;
+                transform: translateY(100vh);
+                overflow: hidden;
+            }
+            @media only screen and (max-width: 640px){
+                .top-container {
+                    width: 100%;
+                }
+                .title-menus-area {
+                    padding-top: 4.6667vw;
+                    height: auto;
+                    position: relative;
+                }
+                .blog-title { 
+                    margin-top: 0;
+                    margin-left: 5.3333vw;
+                    font-size: 3.7333vw;
+                    line-height: 3.7333vw;
+                }
+                .tagline {
+                    margin: 6vw auto 0 auto;
+                    width:89.3333vw;
+                }
+                .tagline-main {
+                    font-size: 5.0667vw;
+                    line-height: 5.0667vw;
+                    margin-bottom: 2vw;
+                }
+                .tagline-main:after {
+                    width: 8.8vw;
+                    height: 0.44vw;
+                    margin-top: 3.0667vw;
+                }
+                .tagline-sub {
+                    font-size: 2.9333vw;
+                    line-height: 5.1333vw;
+                }
+                .scrolltop-wrap {
+                    display: none;      
+                }
+            }/* top menu */
+            .top-menus {
+                display: flex;
+                padding-right: 1.7619vw;
+                padding-top: 1.5833vw;
+                height: 0.9524vw;
+            }
+            .top-menus>nav>ul>li {
+                display: flex;
+                list-style: none;
+                margin-left: 2.393vw;
+                margin-bottom: 0.2976vw;
+                position: relative;
+                height: 1.9644vw;
+            }
+            .top-menus>nav>ul>li>a{
+                color: white;
+                font-size: 0.9524vw;
+                line-height: 0.9524vw;
+                text-decoration: none;
+            }
+            .top-menus .menu {
+                display: flex;
+                margin: 0;
+                padding: 0;
+                white-space: nowrap;
+                list-style: none;
+                justify-content: flex-end;
+                flex-wrap: wrap;
+            }
+            /* sub menu */
+            .top-menus>nav>ul>li.menu-item-has-children>a:after {
+                font-family: "iconfont";
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+                content: '\e62b';
+                margin-left: 0.5952vw;
+                font-size: 0.9524vw;
+            }
+            .top-menus>nav>ul>li:hover a {
+                color: #004578;
+            }
+            .top-menus>nav>ul>li:hover>ul {
+                opacity: 1;
+                visibility: visible;
+                transition: 0.2s all ease;
+            }
+            .top-menus>nav>ul>li>.sub-menu {
+                position: absolute;
+                left: 50%;
+                transform: translateX(-50%);
+                margin-top:1.9345vw;
+                display: flex;
+                flex-direction: column;
+                background: #2A2A2A;
+                border: #4A4A4A 0.0595vw solid;
+                padding-top: 0.4167vw;
+                padding-bottom: 0.4167vw;
+                padding-left: 1.2501vw;
+                padding-right: 1.2501vw;
+                z-index: 1;
+                overflow:hidden;   
+                opacity: 0;
+                visibility: hidden;
+                transition: 0.2s all ease; 
+            }
+            .top-menus>nav>ul>li>.sub-menu>li {
+                list-style:none;
+                border-bottom: #4A4A4A 0.0595vw solid;
+            }
+            .top-menus>nav>ul>li>.sub-menu>li:last-child {
+                border-bottom: 0
+            }
+            .top-menus ul>li>.sub-menu>li>a {
+                font-size: 0.8333vw;
+                line-height: 0.8333vw;
+                color: white;
+                text-decoration: none;
+                width: 100%;
+                min-height: 2.4405vw;
+                display: flex;
+                align-items: center;
+            }
+            /* third level menu */
+            .top-menus>nav>ul>li>.sub-menu>li ul {
+                padding-left: 0.893vw;
+            }
+            .top-menus>nav>ul>li>.sub-menu>li>ul li {
+                list-style:none;
+            }
+            .top-menus>nav>ul>li>.sub-menu>li ul li a{
+                color: rgba(255,255,255,0.4);
+                min-height: unset;
+                margin-bottom: 0.6548vw;
+            }
+            .top-menus>nav>ul>li>.sub-menu>li ul li a:before {
+                content: '-';
+                margin-right: 0.2976vw;
+            }
+            .top-menus>nav>ul>li>.sub-menu>li a:hover {
+                color: #004578;
+            }
+            #header-menu-button {
+                display: none;
+            }
+            @media only screen and (max-width: 640px){
+                /* expand menu */
+                #header-menu-button + header .top-menus {
+                    display: flex;
+                    position: absolute;
+                    width: 100%;
+                    padding: 0;
+                    height: auto;
+                    top: 0;
+                    z-index: 1;
+                    pointer-events: none;
+                }
+                #header-menu-button:checked + header .top-menus {
+                    pointer-events: auto;
+                }
+                #header-menu-button:checked + header .top-menus nav>ul{
+                    padding-left: 4vw;
+                    padding-right: 4vw;
+                    opacity: 1;
+                    visibility: visible;
+                    padding-bottom: 16vw;
+                }
+                #header-menu-button + header .top-menus nav>ul {
+                    min-height: 100vh;
+                    position:fixed;
+                    top: 0;
+                    bottom: 0;
+                    overflow: scroll;
+                    flex-wrap: nowrap;
+                    opacity: 0;
+                    transition: 0.6s all ease;
+                    visibility: hidden;
+                    display: flex;
+                    width: 100%;
+                    flex-direction: column;
+                    background: #000000;
+                    justify-content: start;
+                    padding-top: 0;
+                    padding-bottom: 4.1333vw;
+                    box-sizing: border-box;
+                }
+                #header-menu-button + header .top-menus nav>ul>li{
+                    margin: 0;
+                    height: auto;
+                    padding-left: 1.3333vw;
+                    padding-right: 1.3333vw;
+                    border-bottom: 0.1333vw #4A4A4A solid;
+                    flex-direction: column;
+                    padding-top: 4.0667vw;
+                    padding-bottom: 4.0667vw;
+                }
+                #header-menu-button + header .top-menus nav>ul>li:first-child>a {
+                    padding-top: 0;
+                }
+                #header-menu-button + header .top-menus nav>ul>li:last-child {
+                    border-bottom: none;
+                }
+                #header-menu-button + header .top-menus nav>ul>li>a {
+                    font-size: 3.7333vw;
+                    line-height: 3.7333vw;
+                }
+                .top-menus>nav>ul>li.menu-item-has-children>a:after {
+                    display: none;
+                }
+                ul#menu-top-menu li {
+                    display: inline-flex;
+                    white-space: normal;
+                }
+                .top-menus>nav>ul>li>.sub-menu {
+                    display: flex;
+                    transform: none;
+                    position: relative;
+                    left: 0;
+                    margin-top: 0;
+                    margin-bottom: 4vw;
+                    background: inherit;
+                    border: none;
+                    padding: 0;
+                    padding-left: 3vw;
+                    opacity: 1;
+                    visibility: visible;
+                }
+                .top-menus>nav>ul>li:hover a {
+                    color: white;
+                }
+                .top-menus>nav>ul li a:hover {
+                    color: #004578;
+                }
+                .top-menus>nav>ul>li>.sub-menu>li {
+                    border: none;
+                    margin-top: 3.7067vw;
+                    flex-direction: column;
+                }
+                .top-menus>nav>ul>li>.sub-menu>li>a:before {
+                    content: '-';
+                    margin-right: 0.8vw;
+                    color: rgba(255,255,255,0.4);
+                }
+                .top-menus>nav>ul>li>.sub-menu>li ul {
+                    padding-left: 3vw;
+                }
+                .top-menus>nav>ul>li>.sub-menu>li ul li a {
+                    margin-bottom: 0;
+                    margin-top: 3.7067vw;
+                }
+                .top-menus ul>li>.sub-menu>li>a {
+                    font-size: 3.7333vw;
+                    line-height: 3.7333vw;
+                    color: rgba(255,255,255,0.4);
+                }
+                #header-menu-button{
+                    display:flex;
+                    margin: 0;
+                    -webkit-appearance: none;
+                    appearance: none;
+                    line-height: 3.7333vw;
+                    width: 4vw;
+                    height: 4vw;
+                    z-index: 2;
+                    position: absolute;
+                    right: 4vw;
+                    top: 4vw;
+                    border: none;
+                    background: transparent;
+                }
+                /* hide for menu scroll */
+                #header-menu-button:checked + header + main {
+                    animation: mainhide 2s ease;
+                    animation-fill-mode: forwards; 
+                    -webkit-animation-fill-mode: forwards; 
+                    overflow: hidden;
+                }
+                @keyframes mainhide {
+                    from {
+                        max-height: auto;
+                    }
+                    to {
+                        overflow: hidden;
+                        max-height: 0;
+                    }
+                }
+                #header-menu-button:checked {
+                    position: fixed;
+                }
+                #header-menu-button:checked:after{
+                    display: flex;
+                    content: '\e63c';
+                    transform: scale(0.7);
+                }
+                #header-menu-button:after{
+                    content: '';  
+                    color: white;
+                    font-family: "iconfont";
+                    font-size: 5.3333vw;
+                    -webkit-font-smoothing: antialiased;
+                    -moz-osx-font-smoothing: grayscale;
+                    content: '\e63e';
+                }
+            }            
+            /* body content */
+            main {
+                width: 71.4286vw;
+                display: flex;
+                margin: 0 auto;
+                justify-content: space-between;
+                padding-top: 2.9762vw;
+                position: relative;
+            }
+            .main-container {
+                width: 48.2143vw;
+            }
+            .list-box {
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                margin-bottom: 2.9762vw;
+            }
+            .title-img {
+                width: 48.2143vw;
+                height: 17.8571vw;
+                position: relative;
+            }
+            .title-img amp-img.contain img {
+                object-fit: cover;
+                object-position: top;
+                transition: all .5s;
+            }
+            a.title-img:hover amp-img.contain img {
+                object-fit: cover;
+                transform: scale(1.08);
+                -webkit-transform: scale(1.08);
+                -moz-transform: scale(1.08);
+            }
+            .post-info {
+                position: relative;
+                padding-left: 1.7857vw;
+                padding-top: 1.5119vw;
+                padding-right: 1.7857vw;
+                padding-bottom: 1.7857vw;
+                width: 48.2143vw;
+                border: 0.0595vw solid #E6E6E6;
+                box-sizing: border-box;
+                display: flex;
+                flex-direction: column;
+            }
+            .post-cate {
+                font-size: 0.9524vw;
+                line-height: 1.5476vw;
+                color: #004578;
+                text-decoration: none;
+                margin-right: 0.9644vw;  
+                display: flex;
+                align-items: center;
+            }
+            .sticky-tag {
+                display: flex;
+                align-items: center;  
+                color: #004578;
+            }
+            .post-cate:before,
+            .sticky-tag:before {
+                display: flex;
+                content: '';
+                width:0.0595vw;
+                min-width: 1px;
+                height: 0.6548vw;
+                background: #004578; 
+                margin-right: 0.9524vw;       
+            }
+            .post-cate:first-child:before {
+                display: none;
+            }
+            .sticky-tag .sticky-text {
+                font-size: 0.9524vw;
+                text-transform: uppercase;
+            }
+            .sticky-tag .sticky-text:before {
+                font-family: "iconfont";
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+                content: '\e63f';
+                font-size: 0.9524vw;
+                margin-right: 0.4167vw;
+            }
+            .post-title {
+                font-size: 1.3613vw;
+                line-height: 2.381vw;
+                margin-top: 0.5952vw;
+                margin-bottom: 0;
+                width: 39.881vw;
+                word-break: break-all;
+            }
+            .post-title:after {
+                display: flex;
+                content: '';
+                width: 4.1667vw;
+                height: 0.2976vw;
+                background: #004578;
+                margin-top: 0.7321vw;
+            }
+            .post-title a {
+                text-decoration: none;
+                color: #000000;
+            }
+            .post-excerpt {
+                margin-top: 1.4286vw;
+                margin-bottom: 1.1905vw;
+                font-size: 0.9524vw;
+                line-height: 1.6667vw;
+                color: #8A8A8A;
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                -webkit-line-clamp: 3;
+                overflow: hidden;
+                visibility:visible;
+            }
+            .flex-box {
+                display: flex;
+                align-items: center;
+            }
+            .meta-category {
+                flex-wrap: wrap;
+                padding-right: 4.1667vw;
+            }
+            .justify-between {
+                justify-content: space-between;
+            }
+            .read-more {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-size: 0.8333vw;
+                line-height: 0.8333vw;
+                text-decoration: none;
+                min-width: 9.1667vw;
+                min-height: 2.1429vw;
+                box-sizing: border-box;
+                padding-left: 1.1905vw;
+                padding-right: 1.1905vw;
+                padding-top: 0.7143vw;
+                padding-bottom: 0.7143vw;
+                color: #004578;
+                border: 0.0595vw #004578 solid;
+                transition: all .2s;
+                text-transform: uppercase;
+            }
+            .read-more:hover {
+                background: #004578;
+                color: white;
+            }
+            .icon-ml-readmore {
+                margin-left: 0.625vw;
+                font-size: 1.1905vw;
+            }
+            .post-meta-box {
+                margin-top: 0.7143vw;
+                font-size: 0.8333vw;
+            }
+            .post-meta {
+                font-size: 0.8333vw;
+                color: #1A1A1A;
+                text-decoration: none;
+                margin-left: 1.4881vw;
+                display: inline-flex;
+                align-items: center;
+            }
+            .icon-mr-postmeta {
+                margin-right: 0.5952vw;
+                font-size: 1.4881vw;
+            }
+            .post-meta .icon-like-sp {
+                font-size: 1.1905vw;
+            }
+            .post-meta-box a.edit-link:after {
+                content: '';
+                display: flex;
+                background: #979797;
+                margin-left: 1.4881vw;
+                width: 0.0595vw;
+                height: 0.6548vw;
+            }
+            .post-publish-date {
+                width: 4.1667vw;
+                height: 4.7619vw;
+                background: #F6F6F7;
+                position: absolute;
+                right: 1.2501vw;
+                top: -0.8333vw;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+            .post-publish-date .post-date {
+                color: #004578;
+                font-size: 1.3095vw;
+                line-height: 2.2916vw;
+                font-weight: bold;
+            }
+            .post-publish-date .post-month {
+                color: #000000;
+                font-size: 0.8333vw;
+                line-height: 1.4583vw;
+                text-transform: uppercase;
+            }
+            .list-box:last-child {
+                margin-bottom: 2.381vw;
+            }
+            .pagination .screen-reader-text {
+                display: none;
+            }
+            .nav-links {
+                margin-top: 2.9762vw;
+                margin-bottom: 2.9762vw;
+                display: flex;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            .nav-links .page-numbers,.nav-links .post-page-numbers {
+                min-width: 2.1429vw;
+                height: 2.1429vw;
+                border: 0.0595vw #004578 solid;
+                color: #004578;
+                font-size: 1.0714vw;
+                line-height: 1.0714vw;
+                text-decoration: none;
+                display: inline-flex;
+                justify-content: center;
+                align-items: center;
+                margin-left: 0.4762vw;
+                margin-right: 0.4762vw;
+                margin-bottom: 0.4762vw;
+                box-sizing: border-box;
+            }
+            .nav-links .current, .nav-links a.page-numbers:hover,.nav-links a.post-page-numbers:hover {
+                background: #004578;
+                color: white;
+            }
+            .pagination>.nav-links>.dots {
+                border: none;
+                padding-bottom: 0.5714vw;
+            }
+            @media only screen and (max-width: 640px){
+                /* main body */
+                main {
+                    width: 100%;
+                    flex-direction: column;
+                    align-items: center;
+                    padding-top: 6.6667vw;
+                }
+                .main-container {
+                    width: 92vw;
+                }
+                .title-img {
+                    width: 92vw;
+                    height: 34.1333vw;
+                }
+                .post-info {
+                    width: 92vw;
+                    padding: 3.4667vw;
+                    border: 0.2667vw solid #E6E6E6;
+                }
+                .post-publish-date {
+                    width: 10.6667vw;
+                    height: 12.1333vw;
+                    top: -2vw;
+                    right: 2.8vw;
+                }
+                .post-publish-date .post-date {
+                    font-size: 3.4667vw;
+                    line-height: 6.0667vw;
+                }
+                .post-publish-date .post-month {
+                    font-size: 2.1333vw;
+                    line-height: 3.7333vw;
+                }
+                .post-cate {
+                    font-size: 3.4667vw;
+                    line-height: 4.8vw;
+                    margin-right: 2.2133vw;
+                }
+                .post-cate:before,
+                .sticky-tag:before {
+                    width: 0.1333vw;
+                    height: 1.8933vw;
+                    margin-right: 2.2vw;
+                }
+                .sticky-tag .sticky-text {
+                    font-size: 2.9333vw;
+                    line-height: 2.9333vw;
+                }
+                .sticky-tag .sticky-text:before {
+                    font-size: 2.8vw;
+                    margin-right: 2vw;
+                }
+                .post-title {
+                    margin-top: 2.5333vw;
+                    margin-bottom: 0;
+                    font-size: 4.8vw;
+                    line-height: 6.6667vw;
+                    width: 74.4vw;
+                }
+                .post-title:after {
+                    width: 9.3333vw;
+                    height: 0.8vw;
+                    margin-top: 2.2667vw;
+                }
+                .post-excerpt {
+                    margin-top:3.3333vw;
+                    margin-bottom: 3.3333vw;
+                    font-size: 4vw;
+                    line-height: 5.6vw;
+                }
+                .read-more {
+                    font-size: 2.4533vw;
+                    line-height: 2.4533vw;
+                    min-width: 26.4933vw;
+                    min-height: 6.1333vw;
+                    padding-left: 3.7333vw;
+                    padding-right: 3.7333vw;
+                    padding-top: 2vw;
+                    padding-bottom: 2vw;
+                    border: 0.1333vw #004578 solid;
+                }
+                .icon-ml-readmore {
+                    margin-left: 1.3333vw;
+                    font-size: 3.3333vw;
+                }
+                .post-meta {
+                    font-size: 2.1333vw;
+                    margin-left: 3.2vw;
+                }
+                .icon-mr-postmeta {
+                    margin-right: 1.8667vw;
+                    font-size: 3.4667vw;
+                }
+                .post-meta-box a.edit-link:after {
+                    margin-left: 3.2133vw;
+                    width: 0.1333vw;
+                    height: 1.68vw;
+                }
+                .post-meta .icon-like-sp {
+                    font-size: 2.4vw;
+                }
+                .list-box {
+                    margin-bottom: 5.3333vw;
+                }
+                .nav-links .page-numbers,.nav-links .post-page-numbers {
+                    min-width: 8vw;
+                    height: 8vw;
+                    border: 0.1333vw #004578 solid;
+                    font-size: 4vw;
+                    line-height: 4vw;
+                    margin-left: 1.7733vw;
+                    margin-right: 1.7733vw;
+                    margin-bottom: 1.7733vw;
+                }
+                .pagination>.nav-links>.dots {
+                    padding-bottom: 2.6667vw;
+                }
+                .list-box:last-child {
+                    margin-bottom: 5.3333vw;
+                }
+                .meta-category {
+                    flex-wrap: wrap;
+                    padding-right: 10.6667vw;
+                }
+            }  
+            .sidebar {
+                width: 19.6429vw;
+                min-height: 29.7619vw;
+            }
+            .sidebar>aside:first-child {
+                margin-top: 0;
+            }
+            .widget {
+                width: 100%;
+            }
+            .widget-title {
+                color: black;
+                font-size: 1.0714vw;
+                line-height: 1.0714vw;
+                margin-top: 0;
+                margin-bottom: 1.6667vw;
+                text-transform: uppercase;
+            }
+            .widget-title:after {
+                display: flex;
+                margin-top: 1.1131vw;
+                content: '';
+                width: 3.7501vw;
+                height: 0.119vw;
+                min-height: 1.5px;
+                background: #DEDEDE;
+            }
+            .widget {
+                border-bottom: 0.0595vw #EBEBEB solid;
+                padding-bottom: 2.1429vw;
+                margin-bottom: 2.9762vw;
+            }
+            .widget:last-child {
+                margin-bottom: 0;
+                border-bottom: none;
+            }
+            .widget>ul {
+                overflow-wrap: break-word;
+                margin: 0;
+                padding-left: 0;
+                
+            }
+            .widget_categories>ul>li>ul.children>li.cat-item {
+                color: black;
+                font-size: 0.9524vw;
+                margin-top: 1.1905vw;
+            }
+            .widget_categories>ul>li>ul.children>li.cat-item ul.children li {
+                color: black;
+                font-size: 0.9524vw;
+                margin-top: 0.9524vw;
+            }
+            .widget_categories>ul>li.cat-item:before {
+                content: '\e641';
+                font-family: "iconfont";
+                color: #004578;
+                font-size: 0.9524vw;
+                margin-right: 0.7143vw;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+            .widget_categories>ul>li>ul.children {
+                padding-left: 1.4286vw;
+            }
+            .widget_categories>ul>li>ul.children>li>ul.children {
+                padding-left: 2.619vw;
+            }
+            .widget_categories>ul>li>ul.children>li>ul.children>li ul {
+                padding-left: 1.3095vw;
+            }
+            .widget_categories ul.children {
+                padding-left: 0.2976vw;
+                display: flex;
+                flex-direction: column;
+            }
+            .widget_categories>ul>li>ul.children>li:before {
+                content: "\e642";
+                display: inline-flex;
+                font-family: "iconfont";
+                color: #004578;
+                font-size: 0.9524vw;
+                margin-right: 0.5952vw;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+            .widget_categories li.cat-item a {
+                color: black;
+                text-decoration: none;
+            }
+            .widget_categories ul{
+                list-style: none;
+            }
+            .widget_categories .screen-reader-text {
+                display: none;
+            }
+            /* common widgets */
+            .widget ul li{
+                font-size: 0.9524vw;
+                line-height: 1.5476vw;
+                margin-top: 1.25vw;
+                list-style: none;
+                position: relative;
+                padding-left: 1.6667vw;
+            }
+            .widget ul li:first-child {
+                margin-top: 0;
+            }
+            .widget ul li a {
+                color: black;
+                text-decoration: none;
+            }
+            .widget ul li a:hover {
+                color: #004578;
+            }
+            .widget>ul>li:before {
+                content: '\e62d';
+                font-family: "iconfont";
+                color: #004578;
+                font-size: 0.893vw;
+                margin-right: 0.7143vw;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+                position: absolute;
+                left: 0;
+            }
+            .widget .screen-reader-text {
+                display: none;
+            }
+            /* search widgets */
+            .widget_search form {
+                display: flex;
+                position: relative;
+                align-items: center;
+            }
+            .widget_search {
+                border-bottom: none;
+                padding-bottom: 0;
+            }
+            .widget_search form input[type='text'] {
+                width: 19.5833vw;
+                height: 2.6787vw;
+                border: 0.0595vw #E6E6E6 solid;
+                border-radius: 0.2381vw;
+                padding-left: 1.1905vw;
+                padding-right: 2.9762vw;
+                font-size: 0.8333vw;
+            }
+            .widget_search form input[type='text']::placeholder {
+                font-size: 0.8333vw;
+                color: #8A8A8A;
+            }
+            .widget_search form button[type='submit'] {
+                position: absolute;
+                right: 0;
+                padding: 0;
+                border: none;
+                background: unset;
+                z-index: 1;
+                cursor:pointer;
+            }
+            .widget_search form button[type='submit']:before {
+                content: '\e62c';
+                font-family: "iconfont";
+                color: #B0B0B0;
+                font-size: 1.7857vw;
+                margin-right: 0.7143vw;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+            /* profile widgets */
+            .widget_profile {
+                padding-bottom: 0;
+                border-bottom: 0;
+            }
+            .widget_profile .profile-box {
+                width:19.6429vw;
+                min-height:9.2262vw;
+                border:0.0595vw #E6E6E6 solid;
+                display: flex;
+                justify-content: center;
+                position: relative;
+                margin-top: 2.6787vw;
+            }
+            .widget_profile .profile-avatar {
+                width: 5.3571vw;
+                height: 5.3571vw;
+                position: absolute;
+                top: -2.6787vw;
+            }
+            .widget_profile .profile-avatar img {
+                border-radius: 100%;
+            }
+            .widget_profile .profile-content {
+                font-size: 0.9524vw;
+                padding: 2.9762vw 1.6667vw 1.9048vw 1.6667vw;
+                width: 100%;
+                box-sizing: border-box;
+                word-break: break-word;
+                line-height: 1.8;
+            }
+            .widget_profile .profile-content li {
+                margin-top: 0.5952vw;
+            }
+            .widget_profile  ol, .widget_profile ul {
+                padding-left: 0.9524vw;
+                margin-top: 0.5952vw;
+                margin-bottom: 0.5952vw;
+            }
+            .widget_profile  .profile-content p {
+                margin-block-start: auto;
+                margin-block-end: auto;
+                margin-top: 0.5952vw;
+            }
+            .widget_profile img {
+                max-width: 100%;
+                height: auto;
+            }
+            .widget_profile .wp-video, .widget_profile .wp-video video{
+                max-width: 100%;
+                height: auto;
+            }
+            .widget_profile a {
+                font-size: 0.9524vw;
+                color: #004578;
+                text-decoration: none;
+            }
+            .widget ul li span, .widget ul li a {
+                color: black;
+            }
+            .widget ul li span.post-date {
+                color: #888888;
+                font-style: italic;
+            }
+            li.recentcomments {
+                color: #888888;
+            }
+            @media only screen and (max-width: 640px){
+                /* side bar */
+                .sidebar {
+                    width: 92vw;
+                    margin-top: 8vw;
+                }
+                .widget_profile .profile-box {
+                    width: 92vw;
+                    margin-top: 12.5333vw;
+                    border: 0.2667vw #E6E6E6 solid;
+                }
+                .widget_profile .profile-avatar {
+                    width: 25.0667vw;
+                    height: 25.0667vw;
+                    top: -12.5333vw;
+                }
+                .widget_profile .profile-content{
+                    font-size: 4vw;
+                    line-height: 5.8667vw;
+                    padding: 17.8667vw 8.0667vw 4.8267vw 8.0667vw;
+                }
+                .widget_profile .profile-content li {
+                    font-size: 4vw;
+                    line-height: 5.8667vw;
+                    margin-top: 1.3333vw;
+                    list-style: unset;
+                }
+                .widget_profile  ol, .widget_profile ul {
+                    padding-left: 2.1333vw;
+                    margin-top: 1.3333vw;
+                    margin-bottom: 1.3333vw;
+                }
+                .widget_profile  .profile-content p {
+                    margin-block-start: auto;
+                    margin-block-end: auto;
+                    margin-top: 1.3333vw;
+                }
+                .widget_profile img {
+                    max-width: 100%;
+                    height: auto;
+                }
+                .widget_profile a {
+                    font-size: 4vw;
+                    color: #004578;
+                    text-decoration: none;
+                }
+                .widget_search {
+                    margin-top: 8vw;
+                    margin-bottom: 8vw;
+                }
+                .widget_search form input[type='text'] {
+                    width: 92vw;
+                    height: 10.6667vw;
+                    border: 0.2667vw #E6E6E6 solid;
+                    border-radius: 0.5333vw;
+                    padding-left: 5.3333vw;
+                    padding-right: 6.6667vw;
+                    font-size: 4vw;
+                }
+                .widget_search form input[type='text']::placeholder {
+                    font-size: 4vw;
+                }
+                .widget_search form button[type='submit']:before {
+                    font-size: 6.4vw;
+                    margin-right: 4.1333vw;
+                }
+                .widget {
+                    border-bottom: 0.2667vw #EBEBEB solid;
+                    padding-bottom: 8.0667vw;
+                    margin-bottom: 8.0667vw;
+                }
+                .widget_search,.widget_profile {
+                    border-bottom: none;
+                    padding-bottom: 0;
+                }
+                .widget:last-child {
+                    margin-bottom: 0;
+                    border-bottom: none;
+                }
+                .widget-title {
+                    font-size: 4.5333vw;
+                    line-height: 4.5333vw;
+                    margin-bottom: 7.4133vw;
+                }
+                .widget-title:after {
+                    margin-top: 4.5067vw;
+                    width: 15.2133vw;
+                    height: 0.48vw;
+                }
+                .widget_categories>ul>li.cat-item:before {
+                    font-size: 3.6vw;
+                    margin-right: 2.8933vw;
+                }
+                .widget ul li {
+                    font-size: 4vw;
+                    line-height: 6.6667vw;
+                    margin-top: 4vw;
+                    padding-left: 6.6667vw;
+                }
+                .widget_categories>ul>li>ul.children {
+                    padding-left: 3.7333vw;
+                }
+                .widget_categories>ul>li>ul.children>li:before {
+                    font-size: 4vw;
+                    margin-right: 1.3333vw;
+                }
+                .widget_categories>ul>li>ul.children>li.cat-item {
+                    font-size: 3.3333vw;
+                    margin-top:2.6667vw;
+                }
+                .widget_categories>ul>li>ul.children>li>ul.children {
+                    padding-left: 6.6667vw;
+                }
+                .widget_categories>ul>li>ul.children>li.cat-item ul.children li {
+                    font-size: 3.3333vw;
+                    margin-top:2.6667vw;
+                }
+                .widget>ul>li:before {
+                    font-size: 3.6vw;
+                    margin-right: 2.5333vw;
+                }
+            }  
+            /* common bottom */
+            footer {
+                width: 100vw;
+                background: #000000;
+                display: flex;
+                justify-content: center;
+            }
+            .footer-container {
+                width: 71.4286vw;
+                height: 100%;
+                display: flex;
+                justify-content: center;
+                flex-direction: column;
+            }
+            .footer-container .footer-copyright {
+                margin-bottom: 1.1905vw;
+                margin-top: 2.893vw;
+            }
+            .footer-container .footer-copyright, .footer-container .footer-copyright a{
+                text-align: center;
+                font-size: 0.8333vw;
+                color: #8A8A8A;
+                line-height: 0.5952vw;
+                text-decoration: none;
+            }
+            .footer-menus>nav {
+                margin-top: 2.893vw;
+                margin-bottom: 0.875vw;
+            }
+            .footer-menus>nav>ul {
+                display: flex;
+                margin-top: 0;
+                margin-bottom: 0;
+                display: flex;
+                justify-content: center;
+            }
+            .footer-menus>nav>ul>li {
+                font-size: 1.0714vw;
+                line-height: 1.0714vw;
+                text-transform: uppercase;
+                display: flex;
+                flex-direction: column;
+            }
+            .footer-menus>nav>ul>li>a:after {
+                display: flex;
+                content: '';
+                margin-top: 0.7798vw;
+                width: 2.381vw;
+                height: 0.119vw;
+                background: #444444;
+            }
+            .footer-menus>nav>ul>li>a {
+                color: #004578;
+            }
+            .footer-menus>nav a {
+                text-decoration: none;
+                font-size: 1.0714vw;
+            }
+            .footer-menus>nav ul, .footer-menus>nav li {
+                list-style: none;
+                justify-content: space-around;
+                justify-content: space-evenly;
+                display: flex;
+                padding-left: 0;
+            }
+            .footer-menus>nav>ul>li .sub-menu {
+                display: flex;
+                flex-direction: column;
+                text-transform: none;
+            }
+            .footer-menus>nav>ul>li ul li {
+                margin-top: 1.2143vw;
+                line-height: 0.9524vw;
+                display: flex;
+                justify-content: start;
+            }
+            .footer-container a:hover {
+                color:#004578;
+            }
+            .footer-menus>nav>ul>li ul li:first-child {
+                margin-top: 0.893vw;
+            }
+            .footer-menus>nav>ul>li ul li a{
+                font-size: 0.9524vw;
+                color: rgba(255,255,255,0.6);
+                display: flex;
+            }
+            @media only screen and (max-width: 640px){
+                /* footer */
+                .footer-container {
+                    width: 100%;
+                    padding-top: 8.1333vw;
+                    padding-bottom: 5.3333vw;
+                }
+                .footer-menus>nav>ul>li {
+                    font-size: 3.7333vw;
+                    line-height: 3.7333vw;
+                    margin-bottom: 13.3333vw;
+                    min-width: 33.4667vw;
+                    margin-left: 4vw;
+                    margin-right: 4vw
+                }
+                .footer-menus>nav a {
+                    font-size: 3.7333vw;
+                }
+                .footer-menus>nav>ul>li>a:after {
+                    margin-top: 2.8vw;
+                    width: 8.5467vw;
+                    height: 0.4267vw;
+                }
+                .footer-menus>nav>ul>li ul li:first-child {
+                    margin-top: 3.1733vw;
+                }
+                .footer-menus>nav>ul>li ul li {
+                    margin-top: 4.3067vw;
+                    font-size: 3.4667vw;
+                    line-height: 3.4667vw;
+                }
+                .footer-menus>nav>ul>li ul li a {
+                    font-size: 3.4667vw;
+                }
+                .footer-menus>nav>ul {
+                    flex-wrap: wrap;
+                    justify-content: space-between;
+                    box-sizing: border-box;
+                    padding: 0 8.5334vw 0 8.5334vw;
+                }
+                .footer-menus>nav {
+                    margin: 0;
+                }
+                .footer-container .footer-copyright, .footer-container .footer-copyright a {
+                    font-size: 2.9333vw;
+                    line-height: 2.9333vw;
+                }
+                .footer-container .footer-copyright p {
+                    margin-top: 0;
+                }
+                .footer-container .footer-copyright {
+                    margin-top: 0;
+                    margin-bottom: 0;
+                }
+            }
+                .content {
+                    word-break: break-word;
+                }
+                .content * {
+                    max-width: 100%;
+                }
+                hr {
+                    border: none;
+                    background: #e6e6e6;
+                    width: 100%;
+                    height: 0.0595vw;
+                    margin-top: 2.381vw;
+                    margin-bottom: 2.381vw;
+                }
+                .post-password-form>p>label>input {
+                    margin-left: 0.893vw;
+                    margin-right: 0.8333vw;
+                    width: 19.0476vw;
+                    height: 2.381vw;
+                    border-radius: 0.2381vw;
+                    border: 0.0595vw #E6E6E6 solid;
+                    padding-left: 1.1905vw;
+                    padding-right: 1.1905vw;
+                    vertical-align: middle
+                } 
+                .post-password-form>p>input {
+                    font-size: 0.9524vw;
+                    color: white;
+                    background: #464646;
+                    border-radius: 0.2381vw;
+                    padding: 0.8452vw 1.131vw 0.8452vw 1.131vw;
+                    border: none;
+                }
+                .content figure{
+                    margin: 0;
+                }
+                h2.article-title {
+                    margin-top: 1.3095vw;
+                    font-size: 1.9048vw;
+                    line-height: 2.8571vw;
+                    margin-bottom: 1.9048vw;
+                }
+                h2.article-title a {
+                    color: black;
+                    text-decoration: none;
+                }
+                .article-info .post-meta-box {
+                    margin-top: 0;
+                }
+                .article-info .post-meta-box a.edit-link:after {
+                    display: none;
+                }
+                .article-info .post-meta-box a.edit-link:before {
+                    content: '';
+                    display: flex;
+                    background: #979797;
+                    margin-right: 1.4881vw;
+                    width: 0.0595vw;
+                    height: 0.6548vw;
+                }
+                .article-info .post-meta:first-child {
+                    margin-left: 0;
+                }
+                .article-info .post-meta-box {
+                    margin-bottom: 0.9524vw;
+                }
+                .content blockquote {
+                    margin-left:0;
+                    margin-right:0;
+                    margin-top: 1.4286vw;
+                    margin-bottom: 1.4286vw;
+                    position: relative;
+                    padding-left: 3.5714vw;
+                }
+                .content blockquote p {
+                    margin: 0;
+                    font-size: 1.3095vw;
+                    line-height: 1.9048vw;
+                    color: black;
+                }
+                .content blockquote:before {
+                    content: '\e648';
+                    font-family: "iconfont";
+                    color: #E6E6E6;
+                    font-size: 2.1072vw;
+                    margin-right: 1.6667vw;
+                    -webkit-font-smoothing: antialiased;
+                    -moz-osx-font-smoothing: grayscale;
+                    position: absolute;
+                    left: 0;
+                }
+                .content h1,
+                .content h2,
+                .content h3,
+                .content h4,
+                .content h5,
+                .content h6 {
+                    margin-top: 1.7857vw;
+                    margin-bottom: 1.7857vw;
+                }
+                .content h1 {
+                    font-size: 1.6667vw;
+                }
+                .content h2 {
+                    font-size: 1.5476vw;
+                }
+                .content h3 {
+                    font-size: 1.4286vw;
+                }
+                .content h4 {
+                    font-size: 1.3095vw;
+                }
+                .content h5 {
+                    font-size: 1.1905vw;
+                }
+                .content h6 {
+                    font-size: 1.0714vw;
+                }  
+                .content p {
+                    margin-top: 2.0238vw;
+                    margin-bottom: 2.0238vw;
+                    font-size: 1.0714vw;
+                    line-height: 1.9048vw;
+                    color: #666666;
+                    display: flex;
+                } 
+                .content .aligncenter {
+                margin-left: auto;
+                margin-right: auto;
+                }
+                .content>figure {
+                    margin: 2.0238vw 0 2.0238vw 0;
+                }
+                
+                .blocks-gallery-item figure img{
+                    display: flex;
+                }
+                .content ul, .content ol {
+                    padding-left: 1.4881vw;
+                    font-size: 1.0714vw;
+                    line-height: 1.9048vw;
+                    margin-top: 2.0238vw;  
+                    margin-bottom: 2.0238vw;  
+                }
+                .content figcaption {
+                    font-size: 1.1905vw;
+                    color: #666666;
+                    text-align: center;
+                    margin-top: 0.2976vw;
+                }
+                .wp-block-cover {
+                    margin: 2.0238vw 0 2.0238vw 0;
+                }
+                .wp-block-cover-image, .wp-block-cover {
+                    position: relative;
+                    background-color: #000;
+                    background-size: cover;
+                    background-position: center center;
+                    min-height: 25.5952vw;
+                    height: 100%;
+                    width: 100%;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    overflow: hidden;
+                }
+                .wp-block-cover-image.has-background-dim::before, 
+                .wp-block-cover.has-background-dim::before {
+                    content: "";
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    bottom: 0;
+                    right: 0;
+                    background-color: inherit;
+                    opacity: 0.5;
+                    z-index: 1;
+                }
+                .wp-block-cover .wp-block-cover__inner-container p {
+                    margin: 0;
+                    text-align: center;
+                }
+                .wp-block-cover-image .wp-block-cover__inner-container, .wp-block-cover .wp-block-cover__inner-container {
+                    z-index: 1;
+                    color: #f8f9f9;
+                }
+                .wp-block-cover__inner-containe,.wp-block-cover__inner-container p {
+                    color:white;
+                    font-size:1.7857vw;
+                }
+                figure.wp-block-gallery ul{
+                    list-style: none;
+                    padding: 0;
+                    margin: 0;
+                    max-width: 100%;
+                    display: flex;
+                    justify-content: space-between;
+                }
+                li.blocks-gallery-item {
+                    max-width: 100%;
+                }
+                .wp-block-gallery ul li figure {
+                    margin: 0;
+                    position: relative;
+                }
+                .wp-block-gallery ul li figure>figcaption {
+                    position: absolute;
+                    bottom: 0;
+                    width: 100%;
+                    font-size: 1.1905vw;
+                    line-height: 1.7857vw;
+                    padding-top: 1.3542%;
+                    padding-bottom: 1.0417%;
+                    margin: 0;
+                    color: white;
+                    background: linear-gradient(to top, rgba(13,13,13,0.85), transparent);
+                }
+                .wp-block-gallery, .blocks-gallery-grid {
+                    display: flex;
+                    flex-wrap: wrap;
+                    list-style-type: none;
+                    padding: 0;
+                    margin: 0;
+                }
+                .wp-block-gallery ul>li {
+                    margin-bottom: 0.9524vw;
+                }
+                
+                .wp-block-gallery ul>li:first-child:last-child
+                {
+                    width: 100%;
+                }
+                .wp-block-gallery ul>li:first-child:nth-last-child(n+2),
+                .wp-block-gallery ul>li:first-child:nth-last-child(n+2) ~ li
+                {
+                    width: calc((100% - 3%) / 2);
+                }
+                .wp-block-gallery ul>li:first-child:nth-last-child(3n),
+                .wp-block-gallery ul>li:first-child:nth-last-child(3n) ~ li
+                {
+                    width: calc((100% - 3%) / 3);
+                }
+                .wp-block-file {
+                    background: #F6F6F7;
+                    padding-left: 1.4881vw;
+                    padding-right: 1.0119vw;
+                    padding-top: 1.0714vw;
+                    padding-bottom: 1.0714vw;
+                    margin: 2.0238vw 0 2.0238vw 0;
+                    font-size: 0.9524vw;
+                    line-height: 2.381vw;
+                }
+                .wp-block-file:before {
+                    content: 'Download:';
+                    color: black;
+                    margin-right: 0.5952vw;
+                }
+                .wp-block-file a:last-child,
+                a.wp-block-file__button {
+                    float: right;
+                    display:flex;
+                    padding: 0.7143vw 1.131vw 0.7143vw 1.131vw;
+                    border: 0.0595vw #004578 solid;
+                    line-height: 0.7619vw;
+                }
+                .wp-block-file a:last-child:hover,
+                a.wp-block-file__button:hover {
+                    background: #004578;
+                    color: white;
+                }
+                .wp-block-file a:last-child:after,
+                a.wp-block-file__button:after {
+                    content: '\e645';
+                    font-family: "iconfont";
+                    font-size: 0.9524vw;
+                    margin-left: 0.8333vw;
+                    -webkit-font-smoothing: antialiased;
+                    -moz-osx-font-smoothing: grayscale;
+                }
+                .content a {
+                    color: #004578;
+                    text-decoration: none;
+                }
+                .content .wp-block-code {
+                    width: 100%;
+                    background: #F6F6F7;
+                    padding: 0.9524vw;
+                    font-size: 1.1905vw;
+                    line-height: 1.7857vw;
+                    color: #666666;
+                    box-sizing: border-box;
+                }
+                .wp-block-table table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    font-size: 1.1905vw;
+                }
+                .wp-block-table table td {
+                    color: #666666;
+                    border: 0.0595vw #cccccc solid;
+                    padding: 0.4762vw;
+                }
+                .wp-block-button {
+                    margin: 2.0238vw 0 2.0238vw 0;
+                }
+                .wp-block-button a {
+                    text-decoration: underline;
+                }
+                .wp-block-media-text {
+                    display: flex;
+                    margin: 2.0238vw 0 2.0238vw 0;
+                }
+                .wp-block-media-text figure {
+                    width: 50%;
+                    margin: 0;
+                }
+                .wp-block-media-text .wp-block-media-text__content {
+                    margin-left: 0.893vw;
+                }
+                
+                .wp-block-column {
+                    flex-grow: 1;
+                    min-width: 0;
+                    word-break: break-word;
+                    overflow-wrap: break-word;
+                }
+                .wp-block-columns {
+                    flex-wrap: nowrap;
+                    display: flex;
+                }
+                .likes-form {
+                    text-align: center;
+                    margin-bottom: 3.5714vw;
+                }
+                .likes-button {
+                    width: 4.7619vw;
+                    height: 4.7619vw;
+                    border-radius: 100%;
+                    border: 0.0595vw solid #C4C4C4;
+                    background: white;
+                    color: #1A1A1A;
+                    font-size: 0.8333vw;
+                    display: inline-flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                }
+                .likes-button:hover,.likes-button-active{
+                    color: #004578;
+                }
+                .likes-button:before {
+                    content: '\e64a';
+                    font-family: "iconfont";
+                    font-size: 1.9048vw;
+                    margin-bottom: 0.3571vw;
+                    -webkit-font-smoothing: antialiased;
+                    -moz-osx-font-smoothing: grayscale;
+                }
+                .likes-form .likes-button-active:before {
+                    content: '\e63d';
+                }
+                .post-nav {
+                    display: flex;
+                    justify-content: space-between; 
+                    margin-bottom: 4.5238vw;           
+                }
+                .post-nav .nav-previous a,.post-nav .nav-next a {
+                    color: #c5c5c5;
+                    font-size: 1.0714vw;
+                    text-decoration: none;
+                    font-weight: bold;
+                    display: inline-flex;
+                }
+                .post-nav a.post-nav-link-active {
+                    color: black;
+                }
+                .post-nav a.post-nav-link-active:hover {
+                    color: #004578;
+                }
+                .post-nav .nav-previous a:before {
+                    content: '\e640';
+                    font-family: "iconfont";
+                    font-size: 1.5476vw;
+                    margin-right: 0.875vw;
+                    -webkit-font-smoothing: antialiased;
+                    -moz-osx-font-smoothing: grayscale;         
+                }
+                .post-nav .nav-next a:after {
+                    content: '\e649';
+                    font-family: "iconfont";
+                    font-size: 1.5476vw;
+                    margin-left: 0.875vw;
+                    -webkit-font-smoothing: antialiased;
+                    -moz-osx-font-smoothing: grayscale;         
+                }
+                .social-share {
+                    display: flex;
+                    max-width: 100%;
+                }
+                .social-share-box {
+                    width: 2.9762vw;
+                    height: 2.9762vw;
+                    margin-right: 1.7857vw;
+                }
+                amp-social-share.rounded {
+                    display: flex;
+                    border-radius: 50%;
+                    background-size: 60%;
+                    color: #fff;
+                    background-color: black;
+                }
+                amp-social-share.rounded:hover {
+                    background-color: #004578;
+                }
+                .post-tags {
+                    display: flex;
+                    margin-top: 1.9644vw;
+                flex-wrap: wrap;
+                }
+                .post-tags a{
+                    display: inline-flex;
+                    background: #F2F2F2;
+                    padding-left: 1.3393vw;
+                    padding-right: 1.3393vw;
+                    padding-top: 0.6548vw;
+                    padding-bottom: 0.6548vw;
+                    margin-right: 0.3571vw;
+                margin-bottom: 0.3571vw;
+                    color: #666666;
+                    font-size: 0.8333vw;
+                    line-height: 0.8333vw;
+                    text-decoration: none;
+                    text-transform: uppercase;
+                }
+                #comments {
+                    margin-top: 4.7619vw;
+                }
+                .comments>h2 {
+                    text-align: center;
+                    margin-bottom: 3.5714vw;
+                    font-size: 1.0714vw;
+                    line-height: 1.0714vw;
+                    text-transform: uppercase;
+                }
+                .comments>ul {
+                    list-style: none;
+                    padding-left: 0.9524vw;
+                    margin-top: 0;
+                    margin-bottom: 1.7857vw;
+                }
+                .comments>ul .comment-author .avatar {
+                    border-radius: 100%;
+                    width: 4.7619vw;
+                    height: 4.7619vw;
+                    position: absolute;
+                    left: 0.9524vw;
+                }
+                .comments>ul cite.fn a {
+                    font-weight: bold;
+                    font-size: 1.0714vw;
+                    color: black;
+                    font-style: normal;
+                }
+                .comments>ul span.says {
+                    display: none;
+                }
+                .comments>ul cite.fn {
+                    font-weight: bold;
+                    font-style: normal;
+                }
+                .comments>ul .comment-meta a:first-child{
+                    color: #B5B5B5;
+                    font-size: 0.9524vw;
+                    line-height: 0.9524vw;
+                    font-style: italic;
+                }
+                .comments>ul .comment-meta {
+                    margin-bottom: 1.9048vw;
+                }
+                .comments>ul .comment-body {
+                    position: relative;
+                    padding-left: 7.7381vw;
+                    padding-bottom: 0.5952vw;
+                    padding-top: 2.381vw;
+                    
+                }
+                #comments>ul>li.comment ul {
+                    list-style: none;
+                }
+                #comments>ul>li.comment ul .comment-body:before {
+                    content: ' ';
+                    height: 2.9762vw;
+                    width: 0.2381vw;
+                    background: #EEEEEE;
+                    display: flex;
+                    position: absolute;
+                    left: -0.5952vw;
+                    top: 3.2738vw;
+                }
+                #comments>ul>li.comment {
+                    border-bottom: 0.0595vw solid #E6E6E6;
+                }
+                #comments>ul>li.comment:last-child {
+                    border-bottom: none;
+                }
+                .comments>ul .comment-body .reply {
+                    text-transform: uppercase;
+                    position: absolute;
+                    right: 0;
+                    top: 2.381vw;
+                    font-size: 1.0714vw;
+                }
+                .comment-respond .comment-reply-title{
+                    font-size: 1.0714vw;
+                    text-transform: uppercase;
+                }
+                .comment-respond .comment-reply-title>small {
+                    text-transform: uppercase;
+                    float: right
+                }
+                .comment-form {
+                    font-size: 0;  /* css hack for fix blank position */
+                }
+                .comment-form>.logged-in-as a:first-child {
+                    color: #666666;
+                }
+                .comment-form>.logged-in-as {
+                    margin-bottom: 1.7857vw;
+                }
+                .comment-form>.form-submit {
+                    margin-bottom: 4.7619vw
+                }
+                .comment-form .comment-error {
+                    color: red;
+                    font-size: 1.0714vw;
+                    margin-bottom: 0.2976vw;
+                }
+                .comment-form-comment .comment-content {
+                    width: 48.2143vw;
+                    height: 11.9048vw;
+                    resize: none;
+                    border: 0.0595vw #E6E6E6 solid;
+                    padding: 1.1905vw 1.3095vw 1.1905vw 1.3095vw;
+                    font-size: 1.0952vw;
+                    line-height: 1.0952vw;
+                    box-sizing: border-box;
+                }
+                .comment-form-comment .comment-content::placeholder {
+                    font-size: 1.0952vw;
+                    line-height: 1.0952vw;
+                }
+                .comment-form>.form-submit>.submit {
+                    border: 0.0595vw solid #004578;
+                    text-transform: uppercase;
+                    color: #004578;
+                    font-size: 1.0952vw;
+                    line-height: 1.0952vw;
+                    background: white;
+                    box-sizing: border-box;
+                    padding: 0.9644vw 1.5059vw 0.9644vw 1.5059vw;
+                    cursor: pointer;
+                }
+                .comment-form>.form-submit>.submit:hover {
+                    background: #004578;
+                    color: white; 
+                }
+                .comment-form-author {
+                    margin-right: 1.3095vw;
+                }
+                .comment-form-author,
+                .comment-form-email,
+                .comment-form-url
+                {
+                    display: inline-flex;
+                }
+                .comment-form-author input,
+                .comment-form-email input,
+                .comment-form-url input
+                {
+                    width: 23.4524vw;
+                    height: 3.4524vw;
+                    border: 0.0595vw solid #E6E6E6;
+                    padding:  1.369vw;
+                    font-size: 0.9524vw;
+                    line-height: 0.9524vw;
+                    color: #333333;
+                    box-sizing: border-box;
+                }
+                .comment-form-url input {
+                    width: 48.2143vw;
+                }
+                #wp-comment-cookies-consent {
+                    width: 1.0714vw;
+                    height: 1.0714vw;
+                    margin: 0;
+                    vertical-align: middle;
+                    margin-right: 0.2976vw;
+                } 
+                .comment-form-cookies-consent>label {
+                    color: #B5B5B5;
+                    font-size: 0.9524vw;
+                    line-height: 0.9524vw;
+                }
+                @media only screen and (max-width: 640px){
+                    .likes-form {
+                        margin-bottom: 8vw;
+                    }
+                    .article-info .post-meta-box a.edit-link:before {
+                        margin-right: 3.2133vw;
+                        width: 0.1333vw;
+                        height: 1.68vw;
+                    }
+                    h2.article-title {
+                        margin-top: 5.3333vw;
+                        font-size: 5.0667vw;
+                        line-height: 6.9334vw;
+                        margin-bottom: 5.3333vw;
+                    }
+                    .article-info .post-meta-box {
+                        margin-bottom: 0;
+                    }
+                    .content blockquote {
+                        margin-top: 6.4666vw;
+                        margin-bottom: 6.4666vw;
+                        padding-left: 8vw;   
+                    }
+                    .content blockquote:before {
+                        font-size: 4.7201vw;
+                        margin-right: 3.7333vw;
+                    }
+                    .content blockquote p {
+                        font-size: 4vw;
+                        line-height: 5.6vw;
+                    }
+                    .content h1, .content h2, .content h3, .content h4, .content h5, .content h6 {
+                        margin-top: 5.3333vw;
+                        margin-bottom: 5.3333vw;
+                    }
+                    .content h1 {
+                        font-size: 5.6vw;
+                    }
+                    .content h2 {
+                        font-size: 5.3333vw;
+                    }  
+                    .content h3 {
+                        font-size: 5.0667vw;
+                    } 
+                    .content h4 {
+                        font-size: 4.8vw;
+                    } 
+                    .content h5 {
+                        font-size: 4.5333vw;
+                    } 
+                    .content h6 {
+                        font-size: 4.2667vw;
+                    } 
+                    .content p {
+                        margin-top: 4.5333vw;
+                        margin-bottom: 4.5333vw;
+                        font-size: 4vw;
+                        line-height: 5.8667vw;
+                    }
+                    .content ul, .content ol {
+                        padding-left: 3.3333vw;
+                        font-size: 4vw;
+                        line-height: 5.8667vw;  
+                        margin-top: 5.3333vw;    
+                        margin-bottom: 5.3333vw;    
+                    }
+                    .content figcaption {
+                        font-size: 3.2vw;
+                        margin-top: 0.6666vw;
+                    }
+                    .content>figure {
+                        margin: 4.5333vw 0 4.5333vw 0;
+                    }
+                    .wp-block-cover-image, .wp-block-cover {
+                        min-height: 50vw;
+                        margin: 4.5333vw 0 4.5333vw 0;
+                    }
+                    .wp-block-gallery ul>li {
+                        margin-bottom: 2.1333vw;
+                    }
+                    .content .wp-block-code {
+                        padding: 2.1333vw;
+                        font-size: 3.3vw;
+                        line-height: 4.2667vw; 
+                    }
+                    .wp-block-table table {
+                        font-size: 3.4667vw;
+                    }
+                    .wp-block-file {
+                        padding-left: 3.4667vw;
+                        padding-right: 2.6667vw;
+                        padding-top: 1.3333vw;
+                        padding-bottom: 1.3333vw;
+                        margin: 4.5333vw 0 4.5333vw 0;
+                        font-size: 3.4667vw;
+                        line-height: 5.3333vw;
+                    }
+                    .wp-block-file a:last-child, a.wp-block-file__button {
+                        padding: 1.6vw 3.2vw 1.6vw 3.2vw;
+                        border: 0.1333vw #004578 solid;
+                        line-height: 2.1333vw;
+                    }
+                    .wp-block-file a:last-child:after, a.wp-block-file__button:after {
+                        font-size: 2.6667vw;
+                        margin-left: 2.4vw;
+                    }
+                    
+                    .nav-links {
+                        margin-top: 4.5333vw;
+                        margin-bottom: 4.5333vw;
+                    }
+                    .wp-block-button {
+                        margin: 4.5333vw 0 4.5333vw 0;
+                    }
+                    .likes-button {
+                        width: 16vw;
+                        height: 16vw;
+                        border: 0.1333vw solid #C4C4C4;
+                        font-size: 2.6667vw;
+                        margin-top: 2.6667vw;
+                    }
+                    .likes-button:before {
+                        font-size: 5.6vw;
+                        margin-bottom: 1.8667vw;
+                    }
+                    .post-nav {
+                        margin-bottom: 12.6667vw;           
+                    }
+                    .post-nav .nav-previous a, .post-nav .nav-next a {
+                        font-size: 3.7333vw;
+                    }
+                    .social-share-box {
+                        width: 6.6667vw;
+                        height: 6.6667vw;
+                        margin-right: 4vw;
+                    }
+                    .post-tags {
+                        margin-top: 8.8vw;;
+                    }
+                    .post-tags a{
+                        padding-left: 3.5333vw;
+                        padding-right: 3.5333vw;
+                        padding-top: 1.7333vw;
+                        padding-bottom: 1.7333vw;
+                        margin-right: 1.3333vw;
+                        font-size: 2.2vw;
+                        line-height: 2.2vw;
+                    }
+                    .comments>ul .comment-author .avatar {
+                        width: 10.6667vw;
+                        height: 10.6667vw;
+                        left: 0;
+                    }
+                    #comments>ul {
+                        padding-left: 0;
+                    }
+                    .comments>ul .comment-body {
+                        padding-left: 15.7067vw;
+                        padding-bottom: 1.8667vw;
+                        padding-top: 5.3333vw;         
+                    }
+                    .comments>ul cite.fn a {
+                        font-size: 3.7333vw;
+                    }
+                    .comments>ul .comment-meta a:first-child {
+                        font-size: 3.2vw;
+                        line-height: 3.2vw;
+                    }
+                    .comments>ul .comment-body .reply {
+                        font-size: 3.7333vw;
+                        top: 5.3333vw;       
+                    }
+                    .comments>h2,.comment-respond .comment-reply-title {
+                        font-size: 3.7333vw;
+                    }
+                    .comment-form-comment .comment-content {
+                        width: 92vw;
+                        height: 26.6667vw;
+                        border: 0.1333vw #E6E6E6 solid;
+                        padding: 4vw 3.3333vw 4vw 3.3333vw;
+                        font-size: 3.4667vw;
+                        line-height: 3.4667vw;     
+                    }
+                    .comment-form-comment .comment-content::placeholder {
+                        font-size: 3.4667vw;
+                        line-height: 3.4667vw;   
+                    }
+                    .comment-form>.form-submit>.submit {
+                        border: 0.1333vw solid #004578;
+                        font-size: 3.2vw;
+                        line-height: 3.2vw;
+                        padding: 2.8133vw 4.4vw 2.8133vw 4.4vw;
+                        cursor: pointer;
+                    }
+                    .comment-form .comment-error {
+                        font-size: 3.4667vw;
+                    }
+                    #comments>ul>li.comment {
+                        border-bottom: 0.1333vw solid #E6E6E6;
+                    }
+                    .comment-form-author input, .comment-form-email input, .comment-form-url input {
+                        width: 92vw;
+                        height: 10.6667vw;
+                        border: 0.1333vw solid #E6E6E6;
+                        padding: 2.5333vw;
+                        font-size: 3.4667vw;
+                        line-height: 3.4667vw;
+                    }
+                    #wp-comment-cookies-consent {
+                        width: 5.3333vw;
+                        height: 5.3333vw;
+                        margin-right: 1.3333vw;
+                    }
+                    .comment-form-cookies-consent>label {
+                        font-size: 3.2vw;
+                        line-height: 4.8vw;
+                    }
+                    .comment-form-cookies-consent {
+                        display: flex;
+                    }
+                    .post-nav .nav-previous a:before {
+                        font-size: 5.3333vw;
+                        margin-right: 2.8vw;         
+                    }
+                    .post-nav .nav-next a:after {
+                        font-size: 5.3333vw; 
+                        margin-left: 2.8vw;        
+                    }
+                    hr {
+                        height: 0.1333vw;
+                        margin-top: 5.3333vw;
+                        margin-bottom: 5.3333vw;
+                    }
+                    .post-password-form>p>label>input {
+                        margin-left: 2.0001vw;
+                        margin-right: 1.8667vw;
+                        width: 42.6667vw;
+                        height: 5.3333vw;
+                        border-radius: 0.5333vw;
+                        border: 0.1334vw #E6E6E6 solid;
+                        padding-left: 2.6667vw;
+                        padding-right: 2.6667vw;
+                    } 
+                
+                    .post-password-form>p>input {
+                        font-size: 2.1333vw;
+                        border-radius: 0.5333vw;
+                        padding: 1.8934vw 2.5334vw 1.8934vw 2.5334vw;
+                    }
+                    #comments>ul>li.comment ul .comment-body:before {
+                        height: 6.6667vw;
+                        width: 0.5333vw;
+                        left: -3.3333vw;
+                        top: 7.3334vw;
+                    }
+                    #comments {
+                        margin-top: 12vw;
+                    }
+                    .wp-block-table table td {
+                        border: 0.2667vw #cccccc solid;
+                        padding: 1.0667vw;
+                    }
+                    .wp-block-gallery ul li figure>figcaption {
+                        font-size: 1.7333vw;
+                        line-height: 2.9333vw;
+                    }
+                }
+                pre, code {
+                font-family: "Lucida Console", Monaco, monospace;
+                font-size: 12pt;
+                background-color: #F1F1F1;
+                    padding: .5em;
+                }
+                code {
+                    padding: 0.1em;
+                }
+                :root:not(#_):not(#_):not(#_):not(#_):not(#_) .amp-wp-681d4ff{text-align:center;margin-top:.5vw}
+            </style>
+    
+
+
+<style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style>
+<noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+<link rel="canonical" href="http://blog.zerokirin.online/post/mysql-ji-chu-hui-gu/" />
+<link rel="shortcut icon" href="http://blog.zerokirin.online/favicon.ico?v=1621172117040">
+
+<meta name="author" content="破庙主任">
+
+<meta itemprop="name" content="Mysql基础回顾 | Zer0kiriN">
+<meta itemprop="description" content="ORM库用起来是真的爽，面试的时候被问sql也是真的爽，人自闭了重新复习吧
+增删改查
+select
+(8)SELECT (9)[ALL|DISTINCT|DISTINCTROW|TOP]
+(11){*|talbe.*|[table.]fie...">
+<meta itemprop="image" content="">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Mysql基础回顾 | Zer0kiriN">
+<meta name="twitter:description" content="ORM库用起来是真的爽，面试的时候被问sql也是真的爽，人自闭了重新复习吧
+增删改查
+select
+(8)SELECT (9)[ALL|DISTINCT|DISTINCTROW|TOP]
+(11){*|talbe.*|[table.]fie...">
+<meta name="twitter:image" content="" />
+<meta name="twitter:image:alt" content="Mysql基础回顾 | Zer0kiriN" />
+
+
+<meta property="og:type" content="website">
+<meta property="og:url" content="http://blog.zerokirin.online/post/mysql-ji-chu-hui-gu/">
+<meta property="og:title" content="Mysql基础回顾 | Zer0kiriN">
+<meta property="og:description" content="ORM库用起来是真的爽，面试的时候被问sql也是真的爽，人自闭了重新复习吧
+增删改查
+select
+(8)SELECT (9)[ALL|DISTINCT|DISTINCTROW|TOP]
+(11){*|talbe.*|[table.]fie...">
+<meta property="og:image" content="">
+<meta property="og:image:alt" content="Mysql基础回顾 | Zer0kiriN" />
+<meta property="og:site_name" content="Zer0kiriN">
+<meta property="og:locale" content="zh_CN">
+<meta property="tag" content="Mysql基础回顾 | Zer0kiriN" />
+
+
+<script type="application/ld+json">
+  {
+"@context": "https://schema.org",
+"@type": "BlogPosting",
+"mainEntityOfPage": {
+  "@type": "WebPage",
+  "@id": "http://blog.zerokirin.online/post/mysql-ji-chu-hui-gu/"
+},
+"headline": "Mysql基础回顾 | Zer0kiriN",
+"datePublished": "Sun May 16 2021 21:32:23 GMT+0800",
+"dateModified": "Sun May 16 2021 21:32:23 GMT+0800",
+"author": {
+  "@type": "Person",
+  "name": "破庙主任"
+},
+"publisher": {
+  "@type": "Organization",
+  "name": "破庙主任",
+  "logo": {
+    "@type": "ImageObject",
+    "url": "http://blog.zerokirin.online/favicon.ico"
+  }
+},
+"image": [
+""
+],
+"description": "ORM库用起来是真的爽，面试的时候被问sql也是真的爽，人自闭了重新复习吧
+增删改查
+select
+(8)SELECT (9)[ALL|DISTINCT|DISTINCTROW|TOP]
+(11){*|talbe.*|[table.]fie..."
+ }
+
+</script>
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org/", 
+    "@type": "BreadcrumbList", 
+    "itemListElement": [{
+      "@type": "ListItem", 
+      "position": 1, 
+      "name": "Home",
+      "item": "http://blog.zerokirin.online"  
+    },{
+      "@type": "ListItem", 
+      "position": 2, 
+      "name": "Mysql基础回顾 | Zer0kiriN",
+      "item": "http://blog.zerokirin.online/post/mysql-ji-chu-hui-gu/"  
+    }]
+  }
+  </script>
+
+
+
+
+
+
+
+<script async custom-element="amp-form" src="https://cdn.ampproject.org/v0/amp-form-0.1.js"></script>
+<script async custom-element="amp-video" src="https://cdn.ampproject.org/v0/amp-video-0.1.js"></script>
+<script async custom-element="amp-audio" src="https://cdn.ampproject.org/v0/amp-audio-0.1.js"></script>
+
+
+<script async custom-element="amp-social-share" src="https://cdn.ampproject.org/v0/amp-social-share-0.1.js"></script>
+
+
+
+<script async custom-element="amp-gist" src="https://cdn.ampproject.org/v0/amp-gist-0.1.js"></script>
+
+<link rel="alternate" type="application/atom+xml" title="Mysql基础回顾 | Zer0kiriN - Atom Feed" href="http://blog.zerokirin.online/atom.xml">
+
+
+
+  
+
+
+
+  
+
+
+</head>
+
+<body>
+  <input type="checkbox" id="header-menu-button">
+  <header id="commonTop">
+  <div class="top-container">
+    <div class="title-menus-area">
+      <a class="blog-title" href="http://blog.zerokirin.online">Zer0kiriN</a>
+      <label for="header-menu-button" class="top-menus">
+        <nav class="menu-menu-1-container">
+          <ul id="menu-menu-1" class="menu">
+            
+            
+            <li>
+              <a href="/" aria-current="page">首页</a></li>
+            
+            
+            
+            <li>
+              <a href="/archives" aria-current="page">归档</a></li>
+            
+            
+            
+            <li>
+              <a href="/post/about" aria-current="page">关于</a></li>
+            
+            
+            
+            <li>
+              <a href="http://blog.zerokirin.online/post/every-day" aria-current="page">Every Day</a></li>
+            
+            
+          </ul>
+        </nav>
+      </label>
+    </div>
+    
+  </div>
+</header>
+  <main>
+    <div class="main-container">
+
+      <div class="article-info">
+        
+          <div class="flex-box meta-category">
+            <a class="post-cate" href="http://blog.zerokirin.online/tag/QlWdPOjLh/">select</a></div>
+          
+        <h2 class="article-title">
+          <a href="http://blog.zerokirin.online/post/mysql-ji-chu-hui-gu/">Mysql基础回顾</a>
+        </h2>
+        <div class="flex-box">
+          <div class="flex-box post-meta-box">
+            <a class="post-meta" href="http://blog.zerokirin.online"><span
+                class="iconfont icon-mr-postmeta"></span>破庙主任</a>
+            <span class="post-meta"><span class="iconfont icon-mr-postmeta"></span>2021 年 05	月 16日</span>
+            
+
+
+          </div>
+        </div>
+      </div>
+      <div class="content">
+        <p><s>ORM库用起来是真的爽，面试的时候被问sql也是真的爽，人自闭了重新复习吧</s></p>
+<h2 id="增删改查">增删改查</h2>
+<h3 id="select">select</h3>
+<pre><code class="language-sql">(8)SELECT (9)[ALL|DISTINCT|DISTINCTROW|TOP]
+(11){*|talbe.*|[table.]field1[AS alias1][,[table.]field2[AS alias2][,…]]}
+(1)FROM &lt;left_table[,…]&gt;
+(3)[[{LEFT|RIGHT|INNER|CROSS}] JOIN &lt;right_table&gt; 
+(2)	ON &lt;condition&gt;]
+(4)[WHERE &lt;where_condition&gt;]
+(5)[GROUP BY {col_name | expr | position}, ... (6)[WITH ROLLUP]]
+(7)[HAVING &lt;where_condition&gt;]
+(10)[ORDER BY {col_name | expr | position} [ASC | DESC]}
+</code></pre>
+<p>这是一个缩略版的select的解释顺序，括号中的数字代表解释的优先级，可以看到观察到几个点</p>
+<ul>
+<li>order by，field_list 等的优先级可以说是整个流程的最低级</li>
+<li>group by 和 having 比where的优先级要低，也就是说所有的分组操作都是来源于where筛选后的结果</li>
+<li>having做的是对分组后的结果集的再次查询，因此应该先使用where过滤，比如说找到非A用户的登录记录，筛选条件是可以放到having后的，但是A用户已经被分组了，同时参与了count等运算，只是最后剔除了这一组，所以说having可以看作是where的补充，能不用就不用</li>
+<li>group by 和 order by 都支持position，也就是下标访问，不过是从1开始的，数组就是field_list</li>
+</ul>
+<h3 id="insert">insert</h3>
+<p>insert into 有三种写法，官网的语句太复杂了，简化一下</p>
+<ul>
+<li>
+<p>一种就是最基础的</p>
+<pre><code class="language-sql">INSERT INTO tbl_name [(a,b,c)] VALUES (1,2,3)[, (4,5,6), (7,8,9)];
+--或者是
+INSERT INTO tbl_name [(a,b,c)] VALUES ROW(1,2,3)[, ROW(4,5,6), ROW(7,8,9)];
+</code></pre>
+<p>table后面可选择列名，如果不选的话，values后面每个括号中的内容都要按字段顺序填入</p>
+<p>多个括号就是批量插入的意思</p>
+</li>
+<li>
+<p>这种是用set代替了values</p>
+<pre><code class="language-sql">INSERT INTO
+	friend
+SET
+	name = 'Kim',
+	isBFF = true
+;
+</code></pre>
+<p>用法和普通的一样，类似于update语句，个人感觉更符合直觉一点，但是不支持批量插入</p>
+</li>
+<li>
+<p>比较特殊的，从另一个表搜索数据然后插入</p>
+<pre><code class="language-sql">INSERT INTO tbl_temp2 (fld_id)
+  SELECT tbl_temp1.fld_order_id
+  FROM tbl_temp1 WHERE tbl_temp1.fld_order_id &gt; 100;
+  
+--8.0.19版本后支持用table字段替代select
+INSERT INTO ta TABLE tb; --select * from tb;支持limit和order by
+</code></pre>
+</li>
+</ul>
+<p>insert的特殊用法</p>
+<ul>
+<li>
+<p>插入的行的主键已经存在 <code>ON DUPLICATE KEY UPDATE</code> ，存在就更新，大概有三种用法</p>
+<pre><code class="language-sql">--可以引用a，b列的值，类似于分别设置c=1+2和c=4+5
+INSERT INTO t1 (a,b,c) VALUES (1,2,3),(4,5,6) ON DUPLICATE KEY UPDATE c=VALUES(a)+VALUES(b);
+--8.0.19版本后增加了AS关键字，可以通过表名来引用行
+INSERT INTO t1 (a,b,c) VALUES (1,2,3),(4,5,6) AS new ON DUPLICATE KEY UPDATE c = new.a+new.b;
+--更骚的是还支持指定列名
+INSERT INTO t1 SET a=1,b=2,c=3 AS new(m,n,p) ON DUPLICATE KEY UPDATE c = m+n;
+--如果是插入，影响条数1，更新是2，内容不变的话是0
+--这个用法在insert into select中也是可以的，其实就是把values...这部分换成了select...只放例子不再赘述
+INSERT INTO t1
+  SELECT * FROM (SELECT c, c+d AS e FROM t2) AS dt
+  ON DUPLICATE KEY UPDATE b = e; --insert ...select语句的update部分不能使用VALUES()会报错
+</code></pre>
+</li>
+<li>
+<p>insert开头的可选项</p>
+<table>
+<thead>
+<tr>
+<th><strong>指令</strong></th>
+<th><strong>已存在</strong></th>
+<th><strong>不存在</strong></th>
+<th><strong>举例</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>insert</td>
+<td>报错</td>
+<td>插入</td>
+<td>insert into names(name, age) values(“小明”, 23);</td>
+</tr>
+<tr>
+<td>insert ignore</td>
+<td>忽略</td>
+<td>插入</td>
+<td>insert ignore into names(name, age) values(“小明”, 24);</td>
+</tr>
+<tr>
+<td>replace</td>
+<td>替换</td>
+<td>插入</td>
+<td>replace into names(name, age) values(“小明”, 25);</td>
+</tr>
+</tbody>
+</table>
+<p>重点看第三个，replace和on duplicate key的区别</p>
+<ul>
+<li>如果主键不存在，都是insert，无区别</li>
+<li>如果存在，replace是真的delete后再insert，原有数据被清空，因此新行的值要写全不然会置零</li>
+<li>on duplicate key是只更新update后面描述的结果，不是删除插入</li>
+</ul>
+</li>
+</ul>
+<h3 id="delete">delete</h3>
+<p>这个没什么好说的用法不多基础语法如下：</p>
+<pre><code class="language-sql">--删除一个表的数据
+DELETE [LOW_PRIORITY] [QUICK] [IGNORE] FROM tbl_name [[AS] tbl_alias]
+    [PARTITION (partition_name [, partition_name] ...)] --这里是分区
+    [WHERE where_condition]
+    [ORDER BY ...]
+    [LIMIT row_count]
+    
+--多个表一起删或者作为辅助查询，下面两个用法一样，只是写法不同
+DELETE [LOW_PRIORITY] [QUICK] [IGNORE]
+    tbl_name[.*] [, tbl_name[.*]] ...
+    FROM table_references --此处的写法和select中的join一样，支持各种join
+    [WHERE where_condition]
+--实例1. 
+DELETE t1, t2 FROM t1 INNER JOIN t2 INNER JOIN t3
+WHERE t1.id=t2.id AND t2.id=t3.id;
+
+DELETE [LOW_PRIORITY] [QUICK] [IGNORE]
+    FROM tbl_name[.*] [, tbl_name[.*]] ...
+    USING table_references
+    [WHERE where_condition]
+--实例2.
+DELETE FROM t1, t2 USING t1 INNER JOIN t2 INNER JOIN t3
+WHERE t1.id=t2.id AND t2.id=t3.id; --没啥子区别，join部分一模一样
+
+--比较实用的例子，从t1中删掉t2没有的行
+DELETE t1 FROM t1 LEFT JOIN t2 ON t1.id=t2.id WHERE t2.id IS NULL;
+</code></pre>
+<h3 id="update">update</h3>
+<p>最朴实无华的语法（非官方定义）</p>
+<pre><code class="language-sql">UPDATE Tab1, [Tab2, [INNER JOIN | LEFT JOIN] Tab1 ON Tab1.C1 = Tab2.C1]  
+SET Tab1.C2 = [Tab2.C2, Tab2.C3 =] expression  
+WHERE Condition;  
+</code></pre>
+<p>如果只更新一个表就很简单，直接再set后面写出谁等于谁就好</p>
+<pre><code class="language-sql">UPDATE t SET id = id + 1 ORDER BY id DESC; --这里用了orderby desc是因为，如果升序来，会先把1-&gt;2，这样就有两个2的记录了，违反了主键约束原则，因此降序更新
+</code></pre>
+<p>多个表的例子（多表时不能用order by 和limit）</p>
+<pre><code class="language-sql">UPDATE items,month SET items.price=month.price WHERE items.id=month.id; --这里默认是inner join
+</code></pre>
+<p>左连接例子</p>
+<pre><code class="language-sql">UPDATE Employees e LEFT JOIN Performance p   
+ON e.performance = p.performance  
+SET salary = salary + salary * 0.025  
+WHERE p.percentage IS NULL;  
+</code></pre>
+<p>需要注意的一个问题是，update中where的子语句不能直接使用当前表的结果，例如：</p>
+<pre><code class="language-sql">mysql&gt; UPDATE items
+     &gt; SET retail = retail * 0.9
+     &gt; WHERE id IN
+     &gt;     (SELECT id FROM items
+     &gt;         WHERE retail / wholesale &gt;= 1.3 AND quantity &gt; 100);
+ERROR 1093 (HY000): You can't specify target table 'items' for update in FROM clause
+</code></pre>
+<p>需要将子查询移到一个新的派生表中</p>
+<pre><code class="language-sql">UPDATE items,
+       (SELECT id FROM items
+        WHERE id IN
+            (SELECT id FROM items
+             WHERE retail / wholesale &gt;= 1.3 AND quantity &lt; 100))
+        AS discounted
+SET items.retail = items.retail * 0.9
+WHERE items.id = discounted.id;
+</code></pre>
+<h2 id="数据类型">数据类型</h2>
+<p>数据分为数值类型，字符串类型，时间类型，空间类型</p>
+<h3 id="数值类型">数值类型</h3>
+<h4 id="整型">整型</h4>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">类型</th>
+<th style="text-align:left">大小</th>
+<th style="text-align:left">范围（有符号）</th>
+<th style="text-align:left">范围（无符号）</th>
+<th style="text-align:left">用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">TINYINT</td>
+<td style="text-align:left">1 byte</td>
+<td style="text-align:left">(-128，127)</td>
+<td style="text-align:left">(0，255)</td>
+<td style="text-align:left">小整数值</td>
+</tr>
+<tr>
+<td style="text-align:left">SMALLINT</td>
+<td style="text-align:left">2 bytes</td>
+<td style="text-align:left">(-32 768，32 767)</td>
+<td style="text-align:left">(0，65 535)</td>
+<td style="text-align:left">大整数值</td>
+</tr>
+<tr>
+<td style="text-align:left">MEDIUMINT</td>
+<td style="text-align:left">3 bytes</td>
+<td style="text-align:left">(-8 388 608，8 388 607)</td>
+<td style="text-align:left">(0，16 777 215)</td>
+<td style="text-align:left">大整数值</td>
+</tr>
+<tr>
+<td style="text-align:left">INT或INTEGER</td>
+<td style="text-align:left">4 bytes</td>
+<td style="text-align:left">(-2 147 483 648，2 147 483 647)</td>
+<td style="text-align:left">(0，4 294 967 295)</td>
+<td style="text-align:left">大整数值</td>
+</tr>
+<tr>
+<td style="text-align:left">BIGINT</td>
+<td style="text-align:left">8 bytes</td>
+<td style="text-align:left">(-9,223,372,036,854,775,808，9 223 372 036 854 775 807)</td>
+<td style="text-align:left">(0，18 446 744 073 709 551 615)</td>
+<td style="text-align:left">极大整数值</td>
+</tr>
+</tbody>
+</table>
+<p>借用菜鸟的表格，可以看到每种类型的大小已经固定了，而在类型声明的时候有可能会有这种情况</p>
+<pre><code class="language-sql">CREATE TABLE test(
+    id1 int(1),
+    id2 tinyint(1)
+);
+</code></pre>
+<p>这里内的值我们暂时称为M，M表示的意思就是实际的显示位数，但是<strong>上述写法是没有意义的</strong>，因为int和tinyint本身的长度是已经确定的，加括号的真正写法是</p>
+<pre><code class="language-sql">CREATE TABLE test(
+    int_test_M int(3) ZEROFILL,
+);
+</code></pre>
+<p>只有用zerofill 修饰才有意义，加了zerofill后，会默认添加unsigned参数，也就是变成无符号数（非负数）</p>
+<pre><code class="language-sql">mysql&gt; desc test1;
++------------+--------------------------+------+-----+---------+-------+
+| Field      | Type                     | Null | Key | Default | Extra |
++------------+--------------------------+------+-----+---------+-------+
+| int_test_M | int(3) unsigned zerofill | YES  |     | NULL    |       |
++------------+--------------------------+------+-----+---------+-------+
+1 row in set (0.02 sec)
+
+mysql&gt; select * from test1;
++------------+
+| int_test_M |
++------------+
+|        001 | --这里吧一位的长度补足了
+|       1111 | --没啥用了
++------------+
+2 rows in set (0.00 sec)
+</code></pre>
+<blockquote>
+<p>As of MySQL 8.0.17, the <code>ZEROFILL</code> attribute is deprecated for numeric data types; you should expect support for it to be removed in a future version of MySQL. Consider using an alternative means of producing the effect of this attribute. For example, applications could use the <a href="https://dev.mysql.com/doc/refman/8.0/en/string-functions.html#function_lpad"><code>LPAD()</code></a> function to zero-pad numbers up to the desired width, or they could store the formatted numbers in <a href="https://dev.mysql.com/doc/refman/8.0/en/char.html"><code>CHAR</code></a> columns.</p>
+</blockquote>
+<p>官方文档已经说了zerofill这玩意已经快废弃了，就别用这种骚操作了</p>
+<p>另外还有两个整数型</p>
+<ul>
+<li>
+<p><strong>BIT[(M)]</strong>  表示Mbits的数据大小，默认M为1，存储二进制数据，长度就是M，超过了大小则无法插入</p>
+</li>
+<li>
+<p><strong>BOOL/BOOLEAN</strong> 本质上是TINYINT(1)，1是<code>'true'</code> 0是<code>'false'</code>，其他的值既不是true也不是false</p>
+</li>
+</ul>
+<h4 id="浮点数">浮点数</h4>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">类型</th>
+<th style="text-align:left">大小</th>
+<th style="text-align:left">范围（有符号）</th>
+<th style="text-align:left">范围（无符号）</th>
+<th style="text-align:left">用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">FLOAT</td>
+<td style="text-align:left">4 bytes</td>
+<td style="text-align:left">(-3.402 823 466 E+38，-1.175 494 351 E-38)，0，(1.175 494 351 E-38，3.402 823 466 351 E+38)</td>
+<td style="text-align:left">0，(1.175 494 351 E-38，3.402 823 466 E+38)</td>
+<td style="text-align:left">单精度 浮点数值</td>
+</tr>
+<tr>
+<td style="text-align:left">DOUBLE</td>
+<td style="text-align:left">8 bytes</td>
+<td style="text-align:left">(-1.797 693 134 862 315 7 E+308，-2.225 073 858 507 201 4 E-308)，0，(2.225 073 858 507 201 4 E-308，1.797 693 134 862 315 7 E+308)</td>
+<td style="text-align:left">0，(2.225 073 858 507 201 4 E-308，1.797 693 134 862 315 7 E+308)</td>
+<td style="text-align:left">双精度 浮点数值</td>
+</tr>
+<tr>
+<td style="text-align:left">DECIMAL</td>
+<td style="text-align:left">对DECIMAL(M,D) ，如果M&gt;D，为M+2否则为D+2</td>
+<td style="text-align:left">依赖于M和D的值</td>
+<td style="text-align:left">依赖于M和D的值</td>
+<td style="text-align:left">小数值</td>
+</tr>
+</tbody>
+</table>
+<p>先说float和double，这是最常见的单精度和双精度浮点数，这里我们在M的基础上引入D，M说过了就是位数，D则代表了小数点后的位数，默认情况下float的D是7，double的D是15</p>
+<p>这里float还有个特殊的骚操作，float[p]，用p代替了DM，p在0-24时当作float，25-53时当作double</p>
+<p>但是给float和double指定精度的操作都是mysql特有的，并不是sql标准语法，并且官方文档已经说明，从8.0.17开始将不再建议此写法，同时有可能在未来的版本中删除，因此不要写这种奇奇怪怪的东西了，又不方便拓展又不能节省空间，何必呢</p>
+<p>这里再说下<strong>DECIMAL</strong>，这个类型和float，double<strong>完全不一样</strong>，默认情况下他的(M,D)是(10,0)，M最大支持65，D最大30，千万不要把他理解成double，这是<strong>完全不一样</strong>的类型，众所周知，计算机内浮点数的存储方式和整型不一样，因为阶码和尾数的存在永远只能近似，但是DECIMAL<strong>完全不一样</strong>（三遍）</p>
+<p>DECIMAL的英文含义就是十进制，因此它的存储结构和他的名字类似</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">数位</th>
+<th style="text-align:center">字节</th>
+<th style="text-align:center">最大值（有符号）</th>
+<th style="text-align:center">最大值位数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+</tr>
+<tr>
+<td style="text-align:center">1-2</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">127</td>
+<td style="text-align:center">3</td>
+</tr>
+<tr>
+<td style="text-align:center">3-4</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">32767</td>
+<td style="text-align:center">5</td>
+</tr>
+<tr>
+<td style="text-align:center">5-6</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">8388607</td>
+<td style="text-align:center">7</td>
+</tr>
+<tr>
+<td style="text-align:center">7-9</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">2147483647</td>
+<td style="text-align:center">10</td>
+</tr>
+</tbody>
+</table>
+<p>这样，每一个位数的最大值9999999都可以被他的空间完全表示出来，位数逢十进一，每10位占4个字节，整数和小数分开存储，举个例子，decimal(26,14)，小数14位，9+5，所以需要4+3=7字节大小存储小数，整数12位，9+3，也就是4+2=6字节存储，一共6+7=13字节大小</p>
+<p>通过这种饱和式的存储方式，可以实现真正意义上的精度，再也不会有<code>1-0.0000000001!=0.9999999999</code>的情况出现，当然缺点就是存储空间大，但如果不是非要用那么大的精度的话，其实还好</p>
+<p>当然这个类型也支持unsigned和zerofill，但是同样在8.0.17后已经不被推荐了，以后少用</p>
+<h3 id="字符串类型">字符串类型</h3>
+<p>字符串类型也大概可以分成两类，字符串和二进制字符串，当然还有一类比较特殊的ENUM和SET，我们先讲这两个</p>
+<h4 id="enum-枚举set-集合">ENUM 枚举，SET 集合</h4>
+<p>共同点：</p>
+<ul>
+<li>虽然显示格式是字符串，但是实际上存储的是其定义时的索引位置</li>
+<li>直接插入整型变量的时候会当作索引</li>
+<li>如果插入的字符串变量不在声明之中，会尝试将其索引化</li>
+<li>空值是null，''是一个合法的值，代表着索引0的值，不是null</li>
+</ul>
+<p>区别就是ENUM只能存定义里的其中一个，SET是存任意多个</p>
+<p>在存储上，ENUM只需要存储对应字符串的索引即可，最多支持65535个可选项，因此索引值最大也就是65535，正好是2Bytes的存储上限</p>
+<p>而SET，集合就不一样了，集合有很多操作，比如交并补，因此set中子项的保存形式是以二进制字符串中1的位置来确定的，<code>SET('a','b','c','d')</code> 的索引值如下表</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left"><code>SET</code> Member</th>
+<th style="text-align:left">Decimal Value</th>
+<th style="text-align:left">Binary Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>''</code></td>
+<td style="text-align:left"><code>0</code></td>
+<td style="text-align:left"><code>0000</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>'a'</code></td>
+<td style="text-align:left"><code>1</code></td>
+<td style="text-align:left"><code>0001</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>'b'</code></td>
+<td style="text-align:left"><code>2</code></td>
+<td style="text-align:left"><code>0010</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>'c'</code></td>
+<td style="text-align:left"><code>4</code></td>
+<td style="text-align:left"><code>0100</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>'d'</code></td>
+<td style="text-align:left"><code>8</code></td>
+<td style="text-align:left"><code>1000</code></td>
+</tr>
+</tbody>
+</table>
+<p>这样集合的交并补就变成了两个二进制数的与或非操作</p>
+<p>SET最大支持64个子项，也就是最大8Bytes，具体的字节数为 (N+7)/8四舍五入</p>
+<p>在匹配的时候可以使用函数FIND_IN_SET()也可以用 like '%value%'</p>
+<h4 id="字符串和二进制字符串">字符串和二进制字符串</h4>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">类型</th>
+<th style="text-align:left">大小</th>
+<th style="text-align:left">用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">CHAR(M)</td>
+<td style="text-align:left">0-255 个字符</td>
+<td style="text-align:left">定长字符串</td>
+</tr>
+<tr>
+<td style="text-align:left">VARCHAR(M)</td>
+<td style="text-align:left">取决于整行的大小</td>
+<td style="text-align:left">变长字符串</td>
+</tr>
+<tr>
+<td style="text-align:left">TINYBLOB</td>
+<td style="text-align:left">0-255 bytes</td>
+<td style="text-align:left">不超过 255 个字符的二进制字符串</td>
+</tr>
+<tr>
+<td style="text-align:left">TINYTEXT</td>
+<td style="text-align:left">0-255 bytes</td>
+<td style="text-align:left">短文本字符串</td>
+</tr>
+<tr>
+<td style="text-align:left">BLOB(M)</td>
+<td style="text-align:left">0-65 535 bytes</td>
+<td style="text-align:left">二进制形式的长文本数据</td>
+</tr>
+<tr>
+<td style="text-align:left">TEXT(M)</td>
+<td style="text-align:left">0-65 535 bytes</td>
+<td style="text-align:left">长文本数据</td>
+</tr>
+<tr>
+<td style="text-align:left">MEDIUMBLOB</td>
+<td style="text-align:left">0-16 777 215 bytes</td>
+<td style="text-align:left">二进制形式的中等长度文本数据</td>
+</tr>
+<tr>
+<td style="text-align:left">MEDIUMTEXT</td>
+<td style="text-align:left">0-16 777 215 bytes</td>
+<td style="text-align:left">中等长度文本数据</td>
+</tr>
+<tr>
+<td style="text-align:left">LONGBLOB</td>
+<td style="text-align:left">0-4 294 967 295 bytes</td>
+<td style="text-align:left">二进制形式的极大文本数据</td>
+</tr>
+<tr>
+<td style="text-align:left">LONGTEXT</td>
+<td style="text-align:left">0-4 294 967 295 bytes</td>
+<td style="text-align:left">极大文本数据</td>
+</tr>
+</tbody>
+</table>
+<p><s>表是从菜鸟拿的，错得离谱。。。</s></p>
+<h5 id="先从老生常谈的char与varchar说起">先从老生常谈的char与varchar说起</h5>
+<ul>
+<li>
+<p>char</p>
+<p>char是固定长度字符串，一般用法是char(M)，如果省略M，默认值1最大长度255，早在5.0以后M就不是字节了，M代表的是字符，菜鸟这么多年都没改过表格吗。。。</p>
+<p>一个utf8编码下的中文字符占了3个字节，256*3=768字节，这才是CHAR的标准上限，但是如果使用utf8mb4过长的编码格式，就会超过768字节，innoDB会将多余的字节存到其他位置，所以只要是5.0版本以后就根本不需要care字节数的问题</p>
+<p>存储时如果不足M长度，自动在末尾补' '填充，这也是为啥char类型的末尾' '会消失</p>
+</li>
+<li>
+<p>varchar</p>
+<p>varchar和char的区别不只是可变长度，其存储结构也不一样</p>
+<p>在varchar中开头需要预留1或者2个字节作为长度的值，分别能表示255和65535个字节的长度，但这是字节数的理论上限，M的范围呢？</p>
+<p>在innoDB中要求每一行一共能存储65535字节大小的数据，这是所有列共享的，因此M的大小还受到其他的列的影响，假如只有一列，那么一个中文字符大小3个字节，算上开头的两个表示长度的字节，一个NULL标记字节，65535-2-1=65532，65532/3=21844，这就是M在这种情况下的理论最大值</p>
+<p>可以看到这个值是很不稳定的，因为还要考虑其他的列，因此不建议设这么大</p>
+</li>
+</ul>
+<h5 id="binary和varbinar">BINARY和VARBINAR</h5>
+<p>这俩和char，varchar非常相似，几乎一样，官方文档直说区别仅仅是保存的二进制字符串而已，不再赘述</p>
+<h5 id="剩下的主要就是blob和text">剩下的主要就是BLOB和TEXT</h5>
+<p>在mysql的官方文档中，可以看到它和varchar与varbinary十分类似</p>
+<blockquote>
+<p>In most respects, you can regard a <code>BLOB</code> column as a <a href="https://dev.mysql.com/doc/refman/8.0/en/binary-varbinary.html"><code>VARBINARY</code></a> column that can be as large as you like. Similarly, you can regard a <code>TEXT</code> column as a <a href="https://dev.mysql.com/doc/refman/8.0/en/char.html"><code>VARCHAR</code></a> column. <code>BLOB</code> and <code>TEXT</code> differ from <a href="https://dev.mysql.com/doc/refman/8.0/en/binary-varbinary.html"><code>VARBINARY</code></a> and <a href="https://dev.mysql.com/doc/refman/8.0/en/char.html"><code>VARCHAR</code></a> in the following ways:</p>
+<ul>
+<li>For indexes on <code>BLOB</code> and <code>TEXT</code> columns, you must specify an index prefix length. For <a href="https://dev.mysql.com/doc/refman/8.0/en/char.html"><code>CHAR</code></a> and <a href="https://dev.mysql.com/doc/refman/8.0/en/char.html"><code>VARCHAR</code></a>, a prefix length is optional. See <a href="https://dev.mysql.com/doc/refman/8.0/en/column-indexes.html">Section 8.3.5, “Column Indexes”</a>.</li>
+<li><code>BLOB</code> and <code>TEXT</code> columns cannot have <code>DEFAULT</code> values.</li>
+</ul>
+</blockquote>
+<p>主要的区别就是TEXT和BLOB需要指定前缀位数作为索引，不可以设置默认值</p>
+<p>他们的存储方式取决于<a href="https://dev.mysql.com/doc/refman/8.0/en/innodb-row-format.html#innodb-row-format-dynamic">InnoDB Row Formats</a>， 在mysql5.7.9以后默认是dynamic</p>
+<p>我们暂且只介绍dynamic模式，在这种存储方式下，数据会尽可能的填充满整个行，但不是我们所谓的65535的上限值，官方提供了一个例子</p>
+<pre><code class="language-sql">mysql&gt; CREATE TABLE t4 (
+       c1 CHAR(255),c2 CHAR(255),c3 CHAR(255),
+       c4 CHAR(255),c5 CHAR(255),c6 CHAR(255),
+       c7 CHAR(255),c8 CHAR(255),c9 CHAR(255),
+       c10 CHAR(255),c11 CHAR(255),c12 CHAR(255),
+       c13 CHAR(255),c14 CHAR(255),c15 CHAR(255),
+       c16 CHAR(255),c17 CHAR(255),c18 CHAR(255),
+       c19 CHAR(255),c20 CHAR(255),c21 CHAR(255),
+       c22 CHAR(255),c23 CHAR(255),c24 CHAR(255),
+       c25 CHAR(255),c26 CHAR(255),c27 CHAR(255),
+       c28 CHAR(255),c29 CHAR(255),c30 CHAR(255),
+       c31 CHAR(255),c32 CHAR(255),c33 CHAR(255)
+       ) ENGINE=InnoDB ROW_FORMAT=DYNAMIC DEFAULT CHARSET latin1;
+ERROR 1118 (42000): Row size too large (&gt; 8126). Changing some columns to TEXT or BLOB may help.
+In current row format, BLOB prefix of 0 bytes is stored inline.
+</code></pre>
+<p>算算字节数，255*33=8415这点字节还远不到65535，但是却提示超过了8126，这个数是哪来的呢？</p>
+<p>原来65535是mysql层判断的，实际存储的时候还需要存储引擎去判断，innoDB的策略是略小于存储页面大小的一半，默认的页面大小是16KB，它的一半就是8192，因此在innoDB看来最大行不能超过8126字节，这样上限我们就搞清楚了</p>
+<p>TEXT与BLOB类型都会尽可能的存在这一行中，也就是B+树的叶子节点中，当长度已经满了的时候，会从所有的字段中选择最长的一列放到外部存储，dynamic的思想是，如果要用外部页面存储，就把整个数据都放过去，页内只留20字节的指针指向外部存储，对于长度小于40字节的TEXT和BLOB，并不会转移到外部，而是直接存在行内</p>
+<p>BLOB和TEXT都支持M的用法（但是真的别用了，挺没意义的，都已经用这个类型了还纠结长度不如取用varchar，人家速度还快），如果用了M，会返回一个能满足M的要求的最小的预定义的TEXT或BLOB，举个例子：</p>
+<pre><code class="language-sql">mysql&gt; alter table test1 add text_test text(20);
+mysql&gt; desc test1;
++----------------+--------------------------+------+-----+---------+-------+
+| Field          | Type                     | Null | Key | Default | Extra |
++----------------+--------------------------+------+-----+---------+-------+
+| int_test_M     | int(3) unsigned zerofill | YES  |     | NULL    |       |
+| bit_test_M     | bit(3)                   | YES  |     | NULL    |       |
+| decimal_test_M | decimal(65,0)            | YES  |     | NULL    |       |
+| binary_test    | binary(6)                | YES  |     | NULL    |       |
+| set_test       | set('1','一')            | YES  |     | NULL    |       |
+| text_test      | tinytext                 | YES  |     | NULL    |       |
++----------------+--------------------------+------+-----+---------+-------+
+6 rows in set (0.02 sec)
+</code></pre>
+<p>可以看到，text_test并没有像其他的一样有M，而是直接分配了一个tinytext，blob同理，至此字符串基本上讲完了</p>
+<h3 id="时间类型">时间类型</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">类型</th>
+<th style="text-align:left">大小 ( bytes)</th>
+<th style="text-align:left">范围</th>
+<th style="text-align:left">格式</th>
+<th style="text-align:left">用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">DATE</td>
+<td style="text-align:left">3</td>
+<td style="text-align:left">1000-01-01/9999-12-31</td>
+<td style="text-align:left">YYYY-MM-DD</td>
+<td style="text-align:left">日期值</td>
+</tr>
+<tr>
+<td style="text-align:left">TIME</td>
+<td style="text-align:left">3</td>
+<td style="text-align:left">'-838:59:59'/'838:59:59'</td>
+<td style="text-align:left">HH:MM:SS</td>
+<td style="text-align:left">时间值或持续时间</td>
+</tr>
+<tr>
+<td style="text-align:left">YEAR</td>
+<td style="text-align:left">1</td>
+<td style="text-align:left">1901/2155</td>
+<td style="text-align:left">YYYY</td>
+<td style="text-align:left">年份值</td>
+</tr>
+<tr>
+<td style="text-align:left">DATETIME</td>
+<td style="text-align:left">8</td>
+<td style="text-align:left">1000-01-01 00:00:00/9999-12-31 23:59:59</td>
+<td style="text-align:left">YYYY-MM-DD HH:MM:SS</td>
+<td style="text-align:left">混合日期和时间值</td>
+</tr>
+<tr>
+<td style="text-align:left">TIMESTAMP</td>
+<td style="text-align:left">4</td>
+<td style="text-align:left">1970-01-01 00:00:00/2038结束时间是第 <strong>2147483647</strong> 秒，北京时间 <strong>2038-1-19 11:14:07</strong>，格林尼治时间 2038年1月19日 凌晨 03:14:07，本质是一个存着时间戳的四字节整型</td>
+<td style="text-align:left">YYYYMMDD HHMMSS</td>
+<td style="text-align:left">混合日期和时间值，时间戳</td>
+</tr>
+</tbody>
+</table>
+<p>datetime和timestamp有个区别就是，当存入数据库的时候，datetime存储的是当前时区的时间，而时间戳是全球统一的，无需担心时区的问题</p>
+<ul>
+<li>8.0.19版本开始，可以在datetime和timestamp类型修改的时候添加时间偏移量</li>
+<li>8.0.22版本开始，支持通过CAST()函数将timestamp转换成特定时区的datetime值</li>
+</ul>
+<p>举两个魔改的官方例子解释</p>
+<pre><code class="language-sql">mysql&gt; SELECT @@system_time_zone; --提示了系统时区，现在是EST，北美东部标准时间，-05:00，我国是+08:00
++--------------------+
+| @@system_time_zone |
++--------------------+
+| EST                |
++--------------------+
+
+mysql&gt; CREATE TABLE ts (
+    -&gt;     id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    -&gt;     col TIMESTAMP NOT NULL
+    -&gt; ) AUTO_INCREMENT = 1;
+
+mysql&gt; SET @@time_zone = 'SYSTEM'; -- -05:00
+
+mysql&gt; INSERT INTO ts (col) VALUES ('2020-01-01 10:10:10'),
+    -&gt;     ('2020-01-01 10:10:10+05:30'), ('2020-01-01 10:10:10-08:00');
+--这里插入了三个，后两个的含义是，当前时区为+05:30的10.10.10，和当前时区-08:00的10.10.10，如果转换成UTC，分别应该-5.30和+8.00，但和第一个值明显对不上，原因看下一个
+
+mysql&gt; SET @@time_zone = '+00:00';
+
+mysql&gt; INSERT INTO ts (col) VALUES ('2020-01-01 10:10:10'),
+    -&gt;     ('2020-01-01 10:10:10+05:30'), ('2020-01-01 10:10:10-08:00'); --这里已经将时区切换成标准UTC时间了，再让我们看看结果，下面的23和56都是一样的，也就是说，当我们手动添加时区的偏移量的时候，会屏蔽掉设置的时区 
+
+
+mysql&gt; SET @@time_zone = 'SYSTEM';
+--这里又切换回了-5的时区，导致UTC时间的10.10.10，在显示的时候按照-5的时区显示，变成了05.10.10
+
+mysql&gt; SELECT col, UNIX_TIMESTAMP(col) FROM ts ORDER BY id;
++---------------------+---------------------+
+| col                 | UNIX_TIMESTAMP(col) |
++---------------------+---------------------+
+| 2020-01-01 10:10:10 |          1577891410 | --这里代表了-5:00的时区下的时间
+| 2019-12-31 23:40:10 |          1577853610 |
+| 2020-01-01 13:10:10 |          1577902210 |
+| 2020-01-01 05:10:10 |          1577873410 | --这里才是真实的UTC标准时间
+| 2019-12-31 23:40:10 |          1577853610 |
+| 2020-01-01 13:10:10 |          1577902210 |
++---------------------+---------------------+
+
+
+mysql&gt; CREATE TABLE dt (
+    -&gt;     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    -&gt;     col DATETIME NOT NULL
+    -&gt; ) AUTO_INCREMENT = 1;
+
+mysql&gt; INSERT INTO dt (col) VALUES ('2020-01-01 10:10:10'),
+    -&gt;     ('2020-01-01 10:10:10+05:30'), ('2020-01-01 10:10:10-08:00');
+
+mysql&gt; SET @@time_zone = '+00:00';
+
+mysql&gt; INSERT INTO dt (col) VALUES ('2020-01-01 10:10:10'),
+    -&gt;     ('2020-01-01 10:10:10+05:30'), ('2020-01-01 10:10:10-08:00');
+--从这里的1，4可以看到，不管在哪个时区下，datetime的值只取决于获取时的时间，不随时区变化而改变
+--但是一旦手动设置了偏移量，偏移量的大小都会先计算一次时区偏移，比如23的结果，都是在10.10.10的基础上-5，然后再-05.30和+08.00
+--也就是说它老把自己当成UTC时间，手动改修改偏移量后然后自作聪明的想存进该时区时间，所以会先算一次时区，再计算时间戳
+
+mysql&gt; SET @@time_zone = 'SYSTEM';
+
+mysql&gt; SELECT col, UNIX_TIMESTAMP(col) FROM dt ORDER BY id;
++---------------------+---------------------+
+| col                 | UNIX_TIMESTAMP(col) |
++---------------------+---------------------+
+| 2020-01-01 10:10:10 |          1577891410 |
+| 2019-12-31 23:40:10 |          1577853610 |
+| 2020-01-01 13:10:10 |          1577902210 |
+| 2020-01-01 10:10:10 |          1577891410 |
+| 2020-01-01 04:40:10 |          1577871610 |
+| 2020-01-01 18:10:10 |          1577920210 |
++---------------------+---------------------+
+</code></pre>
+<p>可以看到，timestamp和datetime在面对不一样的时区时做的操作是完全不同的，相比之下timestamp更通用一些</p>
+<p>timestamp和datetime还支持自动更新</p>
+<pre><code class="language-sql">created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP --创建时间
+updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP --更新时间
+</code></pre>
+<p>至此时间类型也差不多讲完了，空间类型这个是真的一般用不到，等用到了再细究不迟，这里就不再赘述了，现在才发现其实mysql的官方文档才是最好的教程，远比网上搜的东西清楚</p>
+
+      </div>
+
+      
+      <nav class="post-nav">
+        
+        
+        <div class="nav-next">
+          <a class="post-nav-link-active" title="如何在github上开源自己的包" href="http://blog.zerokirin.online/post/ru-he-zai-github-shang-kai-yuan-zi-ji-de-bao/">下一篇文章</a>
+          
+
+        </div>
+      </nav>
+      
+
+      
+      <div class="social-share">
+  <div class="social-share-box">
+    <amp-social-share class="rounded" type="email" layout="responsive" width="20" height="20"></amp-social-share>
+  </div>
+  <div class="social-share-box">
+    <amp-social-share class="rounded" type="linkedin" layout="responsive" width="20" height="20">
+    </amp-social-share>
+  </div>
+  <div class="social-share-box">
+    <amp-social-share class="rounded" type="pinterest" layout="responsive"
+      data-param-media="https://amp.dev/static/samples/img/amp.jpg" width="20" height="20"></amp-social-share>
+  </div>
+  <div class="social-share-box">
+    <amp-social-share class="rounded" type="tumblr" layout="responsive" width="20" height="20"></amp-social-share>
+  </div>
+  <div class="social-share-box">
+    <amp-social-share class="rounded" type="twitter" layout="responsive" width="20" height="20">
+    </amp-social-share>
+  </div>
+  <div class="social-share-box">
+    <amp-social-share class="rounded" type="whatsapp" layout="responsive" width="20" height="20">
+    </amp-social-share>
+  </div>
+  <div class="social-share-box">
+    <amp-social-share class="rounded" type="line" layout="responsive" width="20" height="20"></amp-social-share>
+  </div>
+</div>
+      
+      
+
+      <div class="post-tags">
+        
+        <a href="http://blog.zerokirin.online/tag/QlWdPOjLh/" rel="tag">select</a>        
+        
+        <a href="http://blog.zerokirin.online/tag/wQhcZm0ye_/" rel="tag">update</a>        
+        
+        <a href="http://blog.zerokirin.online/tag/3EExwt-CBi/" rel="tag">delete</a>        
+        
+        <a href="http://blog.zerokirin.online/tag/k9o7itsYG6/" rel="tag">insert</a>        
+        
+        <a href="http://blog.zerokirin.online/tag/M3QtfYt2dg/" rel="tag">mysql</a>        
+        
+        <a href="http://blog.zerokirin.online/tag/3mkkIacOvl/" rel="tag">sql</a>        
+        
+        <a href="http://blog.zerokirin.online/tag/aBLgVGYUdr/" rel="tag">char</a>        
+        
+        <a href="http://blog.zerokirin.online/tag/RSdPrssEte/" rel="tag">varchar</a>        
+        
+        <a href="http://blog.zerokirin.online/tag/zHUinlwqeK/" rel="tag">text</a>        
+        
+        <a href="http://blog.zerokirin.online/tag/lkoJt7TKuY/" rel="tag">blob</a>        
+        
+        <a href="http://blog.zerokirin.online/tag/VAofEbOV0f/" rel="tag">int</a>        
+        
+        <a href="http://blog.zerokirin.online/tag/H8EsIEIFEm/" rel="tag">float</a>        
+        
+        <a href="http://blog.zerokirin.online/tag/EnwgKJ1Hsn/" rel="tag">double</a>        
+        
+        <a href="http://blog.zerokirin.online/tag/HSk83ub7Yf/" rel="tag">decimal</a>        
+        
+        <a href="http://blog.zerokirin.online/tag/X87d8T0slJ/" rel="tag">timestamp</a>        
+        
+        <a href="http://blog.zerokirin.online/tag/BdVYAYj4mu/" rel="tag">datetime</a>        
+        
+        <a href="http://blog.zerokirin.online/tag/pvs_6vjYE9c/" rel="tag">mysql数据类型</a>        
+        
+        <a href="http://blog.zerokirin.online/tag/1E5Eva_N1Pp/" rel="tag">sql语法</a>        
+               
+      </div>
+
+
+        
+
+    </div>
+
+    <div class="sidebar">
+  <aside id="profile-2" class="widget widget_profile">
+    <div class="profile-box">
+      <div class="profile-avatar">
+        <amp-img src="http://blog.zerokirin.online/images/avatar.png?v=1621172117040" alt="avatar"
+          layout="fill"></amp-img>
+      </div>
+      <div class="profile-content">
+        <div class="amp-wp-681d4ff">
+          记录
+        </div>
+
+      </div>
+    </div>
+  </aside>
+  
+    <aside id="search-10" class="widget widget_search">
+      <form target="_top" role="search" method=get class="search-form" action="https://www.google.com/search">
+        <input type=hidden name=domains value="http://blog.zerokirin.online">
+        <input type=hidden name=sitesearch value="http://blog.zerokirin.online">
+        <input name="hl" value="zh-CN" type="hidden">
+        <input required type="text" class="search-field" placeholder="搜索…" name="q">
+        <button type="submit"
+          class="search-submit"></button>
+      </form>
+    </aside>
+    
+    
+      <aside id="recent-posts-2" class="widget widget_recent_entries">
+        <h4 class="widget-title">近期文章</h4>
+         <ul>
+          
+            
+          <li>
+           <a href="http://blog.zerokirin.online/post/mysql-ji-chu-hui-gu/" aria-current="page">Mysql基础回顾</a>
+          </li>
+          
+          
+            
+          <li>
+           <a href="http://blog.zerokirin.online/post/ru-he-zai-github-shang-kai-yuan-zi-ji-de-bao/" aria-current="page">如何在github上开源自己的包</a>
+          </li>
+          
+          
+            
+          <li>
+           <a href="http://blog.zerokirin.online/post/golang-yun-xing-shi-yi/" aria-current="page">Golang 运行时（一）</a>
+          </li>
+          
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+        </ul>
+     </aside>
+     
+  
+     
+      <aside id="categories-2" class="widget widget_categories">
+        <h4 class="widget-title">标签</h4>
+        <ul>
+            
+              <li class="cat-item"><a href="http://blog.zerokirin.online/tag/QlWdPOjLh/">
+              select
+            </a>
+            
+              <li class="cat-item"><a href="http://blog.zerokirin.online/tag/wQhcZm0ye_/">
+              update
+            </a>
+            
+              <li class="cat-item"><a href="http://blog.zerokirin.online/tag/3EExwt-CBi/">
+              delete
+            </a>
+            
+              <li class="cat-item"><a href="http://blog.zerokirin.online/tag/k9o7itsYG6/">
+              insert
+            </a>
+            
+              <li class="cat-item"><a href="http://blog.zerokirin.online/tag/M3QtfYt2dg/">
+              mysql
+            </a>
+            
+              <li class="cat-item"><a href="http://blog.zerokirin.online/tag/3mkkIacOvl/">
+              sql
+            </a>
+            
+              <li class="cat-item"><a href="http://blog.zerokirin.online/tag/aBLgVGYUdr/">
+              char
+            </a>
+            
+              <li class="cat-item"><a href="http://blog.zerokirin.online/tag/RSdPrssEte/">
+              varchar
+            </a>
+            
+              <li class="cat-item"><a href="http://blog.zerokirin.online/tag/zHUinlwqeK/">
+              text
+            </a>
+            
+              <li class="cat-item"><a href="http://blog.zerokirin.online/tag/lkoJt7TKuY/">
+              blob
+            </a>
+            
+              <li class="cat-item"><a href="http://blog.zerokirin.online/tag/VAofEbOV0f/">
+              int
+            </a>
+            
+              <li class="cat-item"><a href="http://blog.zerokirin.online/tag/H8EsIEIFEm/">
+              float
+            </a>
+            
+              <li class="cat-item"><a href="http://blog.zerokirin.online/tag/EnwgKJ1Hsn/">
+              double
+            </a>
+            
+              <li class="cat-item"><a href="http://blog.zerokirin.online/tag/HSk83ub7Yf/">
+              decimal
+            </a>
+            
+              <li class="cat-item"><a href="http://blog.zerokirin.online/tag/X87d8T0slJ/">
+              timestamp
+            </a>
+            
+              <li class="cat-item"><a href="http://blog.zerokirin.online/tag/BdVYAYj4mu/">
+              datetime
+            </a>
+            
+              <li class="cat-item"><a href="http://blog.zerokirin.online/tag/pvs_6vjYE9c/">
+              mysql数据类型
+            </a>
+            
+              <li class="cat-item"><a href="http://blog.zerokirin.online/tag/1E5Eva_N1Pp/">
+              sql语法
+            </a>
+            
+              <li class="cat-item"><a href="http://blog.zerokirin.online/tag/xeynZVmko/">
+              go mod
+            </a>
+            
+              <li class="cat-item"><a href="http://blog.zerokirin.online/tag/3OGqShz15j/">
+              go package
+            </a>
+            
+              <li class="cat-item"><a href="http://blog.zerokirin.online/tag/iBI9azZkgJ/">
+              go stack
+            </a>
+            
+              <li class="cat-item"><a href="http://blog.zerokirin.online/tag/2n3c2auIY/">
+              golang
+            </a>
+            
+              <li class="cat-item"><a href="http://blog.zerokirin.online/tag/FGxA9Oea-/">
+              运行时
+            </a>
+            
+              <li class="cat-item"><a href="http://blog.zerokirin.online/tag/a80OXa5tzp/">
+              变量逃逸
+            </a>
+            
+              <li class="cat-item"><a href="http://blog.zerokirin.online/tag/-Ep2xEDPKR/">
+              笔记
+            </a>
+            
+              <li class="cat-item"><a href="http://blog.zerokirin.online/tag/qzFUt7Z9q/">
+              应用层
+            </a>
+            
+              <li class="cat-item"><a href="http://blog.zerokirin.online/tag/sfbQ61MwD9/">
+              HTTPS
+            </a>
+            
+              <li class="cat-item"><a href="http://blog.zerokirin.online/tag/3r2C_nCspS/">
+              HTTP2.0
+            </a>
+            
+              <li class="cat-item"><a href="http://blog.zerokirin.online/tag/4qrh5mF4T5/">
+              计算机网络
+            </a>
+            
+              <li class="cat-item"><a href="http://blog.zerokirin.online/tag/t3AfmBRjr/">
+              传输层
+            </a>
+            
+              <li class="cat-item"><a href="http://blog.zerokirin.online/tag/00plriG5k/">
+              网络层
+            </a>
+            
+              <li class="cat-item"><a href="http://blog.zerokirin.online/tag/OeNZRWzRL/">
+              goroutine
+            </a>
+            
+              <li class="cat-item"><a href="http://blog.zerokirin.online/tag/nRa6ExP4g/">
+              channel
+            </a>
+            
+              <li class="cat-item"><a href="http://blog.zerokirin.online/tag/EwjLvEpmk/">
+              string
+            </a>
+            
+              <li class="cat-item"><a href="http://blog.zerokirin.online/tag/PM-CMPlRec/">
+              rune
+            </a>
+            
+              <li class="cat-item"><a href="http://blog.zerokirin.online/tag/i2Qk4pOuX/">
+              map
+            </a>
+            
+          </li>
+    
+        </ul>
+      </aside>
+      
+
+
+  <aside id="linkcat-2" class="widget widget_links">
+  <h4 class="widget-title">友链</h4>
+  <ul class="xoxo blogroll">
+    
+      
+    
+  </ul>
+</aside>
+
+
+</div>
+    <div class="scrolltop-wrap">
+  <span tabindex="0" role="button" class="go-top" on="tap:commonTop.scrollTo(duration=500, position=top)">
+    <span class="iconfont"></span>
+  </span>
+</div>
+  </main>
+  <footer>
+  <div class="footer-container">
+    <div class="footer-menus">
+    </div>
+    <div class="footer-copyright">
+      
+      
+      <p>
+        主题版本：1.3.0-beta.0；最新版本：<br><br><br><br>
+        <a href="https://github.com/jiansing/gridea-theme-inlineamp/releases" rel="nofollow">
+        <amp-img alt="InlineAMP release (latest by date)" src="https://img.shields.io/github/v/release/jiansing/gridea-theme-inlineamp" height="20" width="80"></amp-img></a>
+      </p>
+      
+      
+
+    </div>
+  </div>
+</footer>
+
+
+  
+
+
+</body>
+
+</html>
