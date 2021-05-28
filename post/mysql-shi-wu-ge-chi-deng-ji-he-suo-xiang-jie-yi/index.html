@@ -4,29 +4,19 @@
 <head>
   <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="内存分区
-一个应用程序在运行的时候会分出对应的区域
+<meta name="description" content="一致性
+我们都知道数据库原理中著名的ACID
 
+atomicity 原子性
+consistency 一致性
+isolation 隔离性
+durability 持久性
 
-text 代码区
-用于存放cpu执行的机器指令，只读
-
-
-data 数据区
-
-初始化后的全局变量
-初始化后的静态变量（包括全局和局部）
-常量
-
-
-
-bss 未初始化区
-
-未初始化的全局..." />
+这其中一致性是通过原子性和隔离性保证的，如何保证一致性是数据库的最重要的..." />
 <link rel="preload" as="script" href="https://cdn.ampproject.org/v0.js">
 <link rel="preconnect dns-prefetch" href="https://cdn.jsdelivr.net/" crossorigin>
 <script async src="https://cdn.ampproject.org/v0.js"></script>
-<title>Golang 运行时（一） | Zer0kiriN</title>
+<title>Mysql 事务隔离等级和锁详解（一） | Zer0kiriN</title>
 
 
   
@@ -2219,85 +2209,55 @@ bss 未初始化区
 
 <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style>
 <noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
-<link rel="canonical" href="http://blog.zerokirin.online/post/golang-yun-xing-shi-yi/" />
+<link rel="canonical" href="http://blog.zerokirin.online/post/mysql-shi-wu-ge-chi-deng-ji-he-suo-xiang-jie-yi/" />
 <link rel="shortcut icon" href="http://blog.zerokirin.online/favicon.ico?v=1622229326771">
 
 <meta name="author" content="破庙主任">
 
-<meta itemprop="name" content="Golang 运行时（一） | Zer0kiriN">
-<meta itemprop="description" content="内存分区
-一个应用程序在运行的时候会分出对应的区域
+<meta itemprop="name" content="Mysql 事务隔离等级和锁详解（一） | Zer0kiriN">
+<meta itemprop="description" content="一致性
+我们都知道数据库原理中著名的ACID
 
+atomicity 原子性
+consistency 一致性
+isolation 隔离性
+durability 持久性
 
-text 代码区
-用于存放cpu执行的机器指令，只读
-
-
-data 数据区
-
-初始化后的全局变量
-初始化后的静态变量（包括全局和局部）
-常量
-
-
-
-bss 未初始化区
-
-未初始化的全局...">
+这其中一致性是通过原子性和隔离性保证的，如何保证一致性是数据库的最重要的...">
 <meta itemprop="image" content="">
 
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Golang 运行时（一） | Zer0kiriN">
-<meta name="twitter:description" content="内存分区
-一个应用程序在运行的时候会分出对应的区域
+<meta name="twitter:title" content="Mysql 事务隔离等级和锁详解（一） | Zer0kiriN">
+<meta name="twitter:description" content="一致性
+我们都知道数据库原理中著名的ACID
 
+atomicity 原子性
+consistency 一致性
+isolation 隔离性
+durability 持久性
 
-text 代码区
-用于存放cpu执行的机器指令，只读
-
-
-data 数据区
-
-初始化后的全局变量
-初始化后的静态变量（包括全局和局部）
-常量
-
-
-
-bss 未初始化区
-
-未初始化的全局...">
+这其中一致性是通过原子性和隔离性保证的，如何保证一致性是数据库的最重要的...">
 <meta name="twitter:image" content="" />
-<meta name="twitter:image:alt" content="Golang 运行时（一） | Zer0kiriN" />
+<meta name="twitter:image:alt" content="Mysql 事务隔离等级和锁详解（一） | Zer0kiriN" />
 
 
 <meta property="og:type" content="website">
-<meta property="og:url" content="http://blog.zerokirin.online/post/golang-yun-xing-shi-yi/">
-<meta property="og:title" content="Golang 运行时（一） | Zer0kiriN">
-<meta property="og:description" content="内存分区
-一个应用程序在运行的时候会分出对应的区域
+<meta property="og:url" content="http://blog.zerokirin.online/post/mysql-shi-wu-ge-chi-deng-ji-he-suo-xiang-jie-yi/">
+<meta property="og:title" content="Mysql 事务隔离等级和锁详解（一） | Zer0kiriN">
+<meta property="og:description" content="一致性
+我们都知道数据库原理中著名的ACID
 
+atomicity 原子性
+consistency 一致性
+isolation 隔离性
+durability 持久性
 
-text 代码区
-用于存放cpu执行的机器指令，只读
-
-
-data 数据区
-
-初始化后的全局变量
-初始化后的静态变量（包括全局和局部）
-常量
-
-
-
-bss 未初始化区
-
-未初始化的全局...">
+这其中一致性是通过原子性和隔离性保证的，如何保证一致性是数据库的最重要的...">
 <meta property="og:image" content="">
-<meta property="og:image:alt" content="Golang 运行时（一） | Zer0kiriN" />
+<meta property="og:image:alt" content="Mysql 事务隔离等级和锁详解（一） | Zer0kiriN" />
 <meta property="og:site_name" content="Zer0kiriN">
 <meta property="og:locale" content="zh_CN">
-<meta property="tag" content="Golang 运行时（一） | Zer0kiriN" />
+<meta property="tag" content="Mysql 事务隔离等级和锁详解（一） | Zer0kiriN" />
 
 
 <script type="application/ld+json">
@@ -2306,11 +2266,11 @@ bss 未初始化区
 "@type": "BlogPosting",
 "mainEntityOfPage": {
   "@type": "WebPage",
-  "@id": "http://blog.zerokirin.online/post/golang-yun-xing-shi-yi/"
+  "@id": "http://blog.zerokirin.online/post/mysql-shi-wu-ge-chi-deng-ji-he-suo-xiang-jie-yi/"
 },
-"headline": "Golang 运行时（一） | Zer0kiriN",
-"datePublished": "Sat Apr 24 2021 00:36:28 GMT+0800",
-"dateModified": "Sat Apr 24 2021 00:36:28 GMT+0800",
+"headline": "Mysql 事务隔离等级和锁详解（一） | Zer0kiriN",
+"datePublished": "Sat May 29 2021 03:12:08 GMT+0800",
+"dateModified": "Sat May 29 2021 03:12:08 GMT+0800",
 "author": {
   "@type": "Person",
   "name": "破庙主任"
@@ -2326,25 +2286,15 @@ bss 未初始化区
 "image": [
 ""
 ],
-"description": "内存分区
-一个应用程序在运行的时候会分出对应的区域
+"description": "一致性
+我们都知道数据库原理中著名的ACID
 
+atomicity 原子性
+consistency 一致性
+isolation 隔离性
+durability 持久性
 
-text 代码区
-用于存放cpu执行的机器指令，只读
-
-
-data 数据区
-
-初始化后的全局变量
-初始化后的静态变量（包括全局和局部）
-常量
-
-
-
-bss 未初始化区
-
-未初始化的全局..."
+这其中一致性是通过原子性和隔离性保证的，如何保证一致性是数据库的最重要的..."
  }
 
 </script>
@@ -2360,8 +2310,8 @@ bss 未初始化区
     },{
       "@type": "ListItem", 
       "position": 2, 
-      "name": "Golang 运行时（一） | Zer0kiriN",
-      "item": "http://blog.zerokirin.online/post/golang-yun-xing-shi-yi/"  
+      "name": "Mysql 事务隔离等级和锁详解（一） | Zer0kiriN",
+      "item": "http://blog.zerokirin.online/post/mysql-shi-wu-ge-chi-deng-ji-he-suo-xiang-jie-yi/"  
     }]
   }
   </script>
@@ -2383,7 +2333,7 @@ bss 未初始化区
 
 <script async custom-element="amp-gist" src="https://cdn.ampproject.org/v0/amp-gist-0.1.js"></script>
 
-<link rel="alternate" type="application/atom+xml" title="Golang 运行时（一） | Zer0kiriN - Atom Feed" href="http://blog.zerokirin.online/atom.xml">
+<link rel="alternate" type="application/atom+xml" title="Mysql 事务隔离等级和锁详解（一） | Zer0kiriN - Atom Feed" href="http://blog.zerokirin.online/atom.xml">
 
 
 
@@ -2439,16 +2389,16 @@ bss 未初始化区
       <div class="article-info">
         
           <div class="flex-box meta-category">
-            <a class="post-cate" href="http://blog.zerokirin.online/tag/FGxA9Oea-/">运行时</a></div>
+            <a class="post-cate" href="http://blog.zerokirin.online/tag/RifrudM78/">事务隔离等级</a></div>
           
         <h2 class="article-title">
-          <a href="http://blog.zerokirin.online/post/golang-yun-xing-shi-yi/">Golang 运行时（一）</a>
+          <a href="http://blog.zerokirin.online/post/mysql-shi-wu-ge-chi-deng-ji-he-suo-xiang-jie-yi/">Mysql 事务隔离等级和锁详解（一）</a>
         </h2>
         <div class="flex-box">
           <div class="flex-box post-meta-box">
             <a class="post-meta" href="http://blog.zerokirin.online"><span
                 class="iconfont icon-mr-postmeta"></span>破庙主任</a>
-            <span class="post-meta"><span class="iconfont icon-mr-postmeta"></span>2021 年 04	月 24日</span>
+            <span class="post-meta"><span class="iconfont icon-mr-postmeta"></span>2021 年 05	月 29日</span>
             
 
 
@@ -2456,128 +2406,76 @@ bss 未初始化区
         </div>
       </div>
       <div class="content">
-        <h2 id="内存分区">内存分区</h2>
-<p>一个应用程序在运行的时候会分出对应的区域</p>
-<ol>
-<li>
-<p>text 代码区</p>
-<p>用于存放cpu执行的机器指令，只读</p>
-</li>
-<li>
-<p>data 数据区</p>
+        <h2 id="一致性">一致性</h2>
+<p>我们都知道数据库原理中著名的ACID</p>
 <ul>
-<li>初始化后的全局变量</li>
-<li>初始化后的静态变量（包括全局和局部）</li>
-<li>常量</li>
+<li>atomicity 原子性</li>
+<li>consistency 一致性</li>
+<li>isolation 隔离性</li>
+<li>durability 持久性</li>
 </ul>
-</li>
-<li>
-<p>bss 未初始化区</p>
+<p>这其中一致性是通过原子性和隔离性保证的，如何保证一致性是数据库的最重要的问题，这是一切的开头</p>
+<h2 id="并发一致性问题">并发一致性问题</h2>
+<p>这里借用下<a href="http://cyc2018.gitee.io/cs-notes/#/notes/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86">CS-Notes (gitee.io)</a>，过程就不写文字了，图很清楚</p>
+<h3 id="丢失修改">丢失修改</h3>
+<figure data-type="image" tabindex="1"><img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/image-20191207221744244.png" alt="img" loading="lazy"></figure>
+<h3 id="读脏数据">读脏数据</h3>
+<figure data-type="image" tabindex="2"><img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/image-20191207221920368.png" alt="img" loading="lazy"></figure>
+<h3 id="不可重复读">不可重复读</h3>
+<figure data-type="image" tabindex="3"><img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/image-20191207222102010.png" alt="img" loading="lazy"></figure>
+<h3 id="幻影读">幻影读</h3>
+<figure data-type="image" tabindex="4"><img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/image-20191207222134306.png" alt="img" loading="lazy"></figure>
+<p>幻影读这里需要解释下，他和不可重复读的区别在于，不可重复读指的是<strong>某个数据</strong>被更改，而幻影读的数据本身没有变化，变化的是<strong>数据范围及数据量</strong>，也就是说T1第一次算出来一共只有100个数据，但是在T1结束之前又插入了一个新的数据，而这个数据就会造成导致总数变成了101个，这就是幻影读的问题</p>
+<h2 id="事务隔离等级">事务隔离等级</h2>
 <ul>
-<li>未初始化的全局变量</li>
-<li>未初始化的静态变量</li>
+<li>read uncommitted   读未提交</li>
+<li>read committed   读已提交</li>
+<li>repeatable read   可重复读</li>
+<li>serializable   串行化</li>
 </ul>
-<p>尽管会被默认分配为零值，但仍属于未初始化区</p>
-</li>
-<li>
-<p>stack 栈区</p>
-<p>由编译器自动分配释放的，一般用于存储哈描述的参数值、返回值、局部变量等。一般只有1M，可自动扩充，基本上也就是函数运行的空间，所以无限递归会造成的是栈溢出</p>
-<p>分配的方式是从高地址向低地址</p>
-</li>
-<li>
-<p>heap 堆区</p>
-<p>由程序员手动分配，手动回收或者较高级语言有GC自动回收</p>
-<p>分配的地址是在栈区地址和.bss区之间</p>
-</li>
-</ol>
-<figure data-type="image" tabindex="1"><img src="https://github.com/overnote/over-golang/raw/master/images/go/runtime-02.svg" alt="img" loading="lazy"></figure>
-<h2 id="逃逸分析">逃逸分析</h2>
-<pre><code class="language-go">func toHeap() *int {
-	var x int
-	return &amp;x
-}
-
-func toStack() int {
-	y := new(int)
-	*y = 1
-	return *y
-}
-
-func main() {
-
-}
-</code></pre>
-<p>如果我们暂时忘记go，用C/C++语言的思维来看，上述的<code>toHeap()</code>函数就是一个典型的空指针错误，在函数内部创建了一个变量，调用结束后将指针返回，而该地址是随着函数的调用而被分配在函数栈上的，因此当调用结束后栈会被清空，该指针就成了一个野指针。而对于<code>toStack</code>函数来说，手动使用new从堆上分配了一块变量，直到使用对应的delete函数手动释放空间</p>
-<p>但是在go中，情况完全不同，go在一定程度上消除了堆栈的区别，在编译的时候会自动进行<strong>逃逸分析</strong>，将逃逸的对象放到堆上，不逃逸的对象放到栈上</p>
-<p>由于x是返回值，而这个指针会被函数外部进行操作，从外部是可以找到这个变量的，因此就可以说是变量逃逸</p>
-<p>第一种情况就可以说发生了逃逸，go会在编译阶段将x放到堆上，而y在函数结束后就无法访问了，因此分配到栈上，随着函数结束而消失</p>
-<p>Go的GC判断变量是否回收的实现思路：从每个包级的变量、每个当前运行的函数的局部变量开始，通过指针和引用的访问路径遍历，是否可以找到该变量，如果不存在这样的访问路径，那么说明该变量是不可达的，也就是说它是否存在并不会影响后续计算结果。</p>
-<h3 id="逃逸案例">逃逸案例</h3>
-<ol>
-<li>
-<p>指针逃逸</p>
-<pre><code class="language-go">func f() *int{
-    var i int
-    i = 1
-    return &amp;i
-}
-</code></pre>
-</li>
-<li>
-<p>局部变量大小过大</p>
-<pre><code class="language-go">s := make([]int, 0, 10000)//其实就是stack区不够分了，所以分到heap上
-</code></pre>
-</li>
-<li>
-<p>动态类型逃逸</p>
-<pre><code class="language-go">cap:= 20
-s := make([]int, 0, cap) //大小是动态的，不能确定，因此放入heap
-</code></pre>
-</li>
-<li>
-<p>闭包引用逃逸</p>
-<pre><code class="language-go">//闭包函数在这里声明了两个隐式变量a，b，当f()被多次调用的时候，其使用的是被Fibonacci()创建出来大的时候的a，b，因此a，b不会随着f()函数的结束而小时，因此会被分配到heap
-func Fibonacci() func() int { 
-    a, b := 0, 1
-	return func() int {
-		a, b = b, a+b
-		return a
-	}
-}
-
-f:= Fibonacci()
-</code></pre>
-</li>
-<li>
-<p>切片，map逃逸</p>
-<pre><code class="language-go">i := 1
-s := make([]*int, 0, 10) //m没有被转移给其他的函数调用，也没有分配过大的空间，也不是全局变量，因此没有必要分配到heap上
-s = append(s, &amp;i) //i被添加到m中，没有人知道什么时候会用到，因此无论有没有被用到，都会分配到heap上
-
-j := 1
-m := make(map[int]*int) //一个道理，也是分配在stack上
-m[1] = &amp;j //heap上
-</code></pre>
-</li>
-</ol>
-<h3 id="分配位置的原则">分配位置的原则</h3>
-<ul>
-<li>变量是否被取地址</li>
-<li>变量是否发生逃逸</li>
-</ul>
+<p>从上到下依次严格，每个隔离等级都解决了一个并行问题</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">隔离等级</th>
+<th>未解决的并发一致性问题</th>
+<th style="text-align:right">解决的并发一致性问题</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">读未提交</td>
+<td>幻影读，不可重复读，读脏数据</td>
+<td style="text-align:right">丢失修改</td>
+</tr>
+<tr>
+<td style="text-align:center">读已提交</td>
+<td>幻影读，不可重复读</td>
+<td style="text-align:right">读脏数据，丢失修改</td>
+</tr>
+<tr>
+<td style="text-align:center">可重复读</td>
+<td>幻影读</td>
+<td style="text-align:right">不可重复读，读脏数据，丢失修改</td>
+</tr>
+<tr>
+<td style="text-align:center">串行化</td>
+<td>串行化已经不是并行了，自然没问题</td>
+<td style="text-align:right">幻影读，不可重复读，读脏数据，丢失修改</td>
+</tr>
+</tbody>
+</table>
+<p>暂时先不要关注隔离等级，让我们先了解下实现他们的前置知识——锁<br>
+<s>锁这一节实在太长了，分成多个文章吧</s></p>
 
       </div>
 
       
       <nav class="post-nav">
         
-        <div class="nav-previous">
-          <a class="post-nav-link-active" title="如何在github上开源自己的包" href="http://blog.zerokirin.online/post/ru-he-zai-github-shang-kai-yuan-zi-ji-de-bao/">上一篇文章</a>
-        </div>
-        
         
         <div class="nav-next">
-          <a class="post-nav-link-active" title="Golang基础语法题" href="http://blog.zerokirin.online/post/golang-ji-chu-yu-fa-ti/">下一篇文章</a>
+          <a class="post-nav-link-active" title="Mysql基础回顾" href="http://blog.zerokirin.online/post/mysql-ji-chu-hui-gu/">下一篇文章</a>
           
 
         </div>
@@ -2617,13 +2515,11 @@ m[1] = &amp;j //heap上
 
       <div class="post-tags">
         
-        <a href="http://blog.zerokirin.online/tag/FGxA9Oea-/" rel="tag">运行时</a>        
+        <a href="http://blog.zerokirin.online/tag/RifrudM78/" rel="tag">事务隔离等级</a>        
         
-        <a href="http://blog.zerokirin.online/tag/a80OXa5tzp/" rel="tag">变量逃逸</a>        
+        <a href="http://blog.zerokirin.online/tag/tz57oQkTRp/" rel="tag">并发一致性问题</a>        
         
-        <a href="http://blog.zerokirin.online/tag/2n3c2auIY/" rel="tag">golang</a>        
-        
-        <a href="http://blog.zerokirin.online/tag/-Ep2xEDPKR/" rel="tag">笔记</a>        
+        <a href="http://blog.zerokirin.online/tag/M3QtfYt2dg/" rel="tag">mysql</a>        
                
       </div>
 

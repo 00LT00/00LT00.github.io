@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>http://blog.zerokirin.online</id>
     <title>Zer0kiriN</title>
-    <updated>2021-05-16T15:09:27.020Z</updated>
+    <updated>2021-05-28T19:15:29.143Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="http://blog.zerokirin.online"/>
     <link rel="self" href="http://blog.zerokirin.online/atom.xml"/>
@@ -10,6 +10,75 @@
     <logo>http://blog.zerokirin.online/images/avatar.png</logo>
     <icon>http://blog.zerokirin.online/favicon.ico</icon>
     <rights>All rights reserved 2021, Zer0kiriN</rights>
+    <entry>
+        <title type="html"><![CDATA[Mysql 事务隔离等级和锁详解（一）]]></title>
+        <id>http://blog.zerokirin.online/post/mysql-shi-wu-ge-chi-deng-ji-he-suo-xiang-jie-yi/</id>
+        <link href="http://blog.zerokirin.online/post/mysql-shi-wu-ge-chi-deng-ji-he-suo-xiang-jie-yi/">
+        </link>
+        <updated>2021-05-28T19:12:08.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="一致性">一致性</h2>
+<p>我们都知道数据库原理中著名的ACID</p>
+<ul>
+<li>atomicity 原子性</li>
+<li>consistency 一致性</li>
+<li>isolation 隔离性</li>
+<li>durability 持久性</li>
+</ul>
+<p>这其中一致性是通过原子性和隔离性保证的，如何保证一致性是数据库的最重要的问题，这是一切的开头</p>
+<h2 id="并发一致性问题">并发一致性问题</h2>
+<p>这里借用下<a href="http://cyc2018.gitee.io/cs-notes/#/notes/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86">CS-Notes (gitee.io)</a>，过程就不写文字了，图很清楚</p>
+<h3 id="丢失修改">丢失修改</h3>
+<figure data-type="image" tabindex="1"><img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/image-20191207221744244.png" alt="img" loading="lazy"></figure>
+<h3 id="读脏数据">读脏数据</h3>
+<figure data-type="image" tabindex="2"><img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/image-20191207221920368.png" alt="img" loading="lazy"></figure>
+<h3 id="不可重复读">不可重复读</h3>
+<figure data-type="image" tabindex="3"><img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/image-20191207222102010.png" alt="img" loading="lazy"></figure>
+<h3 id="幻影读">幻影读</h3>
+<figure data-type="image" tabindex="4"><img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/image-20191207222134306.png" alt="img" loading="lazy"></figure>
+<p>幻影读这里需要解释下，他和不可重复读的区别在于，不可重复读指的是<strong>某个数据</strong>被更改，而幻影读的数据本身没有变化，变化的是<strong>数据范围及数据量</strong>，也就是说T1第一次算出来一共只有100个数据，但是在T1结束之前又插入了一个新的数据，而这个数据就会造成导致总数变成了101个，这就是幻影读的问题</p>
+<h2 id="事务隔离等级">事务隔离等级</h2>
+<ul>
+<li>read uncommitted   读未提交</li>
+<li>read committed   读已提交</li>
+<li>repeatable read   可重复读</li>
+<li>serializable   串行化</li>
+</ul>
+<p>从上到下依次严格，每个隔离等级都解决了一个并行问题</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">隔离等级</th>
+<th>未解决的并发一致性问题</th>
+<th style="text-align:right">解决的并发一致性问题</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">读未提交</td>
+<td>幻影读，不可重复读，读脏数据</td>
+<td style="text-align:right">丢失修改</td>
+</tr>
+<tr>
+<td style="text-align:center">读已提交</td>
+<td>幻影读，不可重复读</td>
+<td style="text-align:right">读脏数据，丢失修改</td>
+</tr>
+<tr>
+<td style="text-align:center">可重复读</td>
+<td>幻影读</td>
+<td style="text-align:right">不可重复读，读脏数据，丢失修改</td>
+</tr>
+<tr>
+<td style="text-align:center">串行化</td>
+<td>串行化已经不是并行了，自然没问题</td>
+<td style="text-align:right">幻影读，不可重复读，读脏数据，丢失修改</td>
+</tr>
+</tbody>
+</table>
+<p>暂时先不要关注隔离等级，让我们先了解下实现他们的前置知识——锁<br>
+<s>锁这一节实在太长了，分成多个文章吧</s></p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Mysql基础回顾]]></title>
         <id>http://blog.zerokirin.online/post/mysql-ji-chu-hui-gu/</id>
@@ -2354,48 +2423,6 @@ func main(){
 <p>若没有数据则将自己挂起到接收队列等待被发送进程找到，也是创建一个sudog</p>
 </li>
 </ol>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[go语法基础巩固（string）]]></title>
-        <id>http://blog.zerokirin.online/post/go-yu-fa-ji-chu-gong-gu-string/</id>
-        <link href="http://blog.zerokirin.online/post/go-yu-fa-ji-chu-gong-gu-string/">
-        </link>
-        <updated>2021-03-18T11:39:34.000Z</updated>
-        <content type="html"><![CDATA[<h2 id="字符串不能用下标访问">字符串不能用下标访问</h2>
-<pre><code class="language-go">var str = &quot;Hello, 世界&quot;
-</code></pre>
-<p>在<code>golang</code>中，字符串几乎一定是<code>utf-8</code>编码的，而在<code>utf-8</code>中，中文有些是3个字节，有些是4个字节，英文是一个字节，而字符串这个类型的本质其实是一个字符slice，对str遍历可得</p>
-<pre><code class="language-go">func main() {
-
-	var str = &quot;Hello, 世界&quot;
-	for i := 0; i &lt; len(str); i++ {
-		fmt.Printf(&quot;%c &quot;, str[i])
-	}
-	fmt.Println()
-	for i := 0; i &lt; len(str); i++ {
-		fmt.Printf(&quot;%q &quot;, str[i])
-	}
-	fmt.Println()
-	for i := 0; i &lt; len(str); i++ {
-		fmt.Printf(&quot;%v &quot;, str[i])
-	}
-}
-</code></pre>
-<p>结果是</p>
-<pre><code>H e l l o ,   ä ¸  ç   
-'H' 'e' 'l' 'l' 'o' ',' ' ' 'ä' '¸' '\u0096' 'ç' '\u0095' '\u008c' 
-72 101 108 108 111 44 32 228 184 150 231 149 140 
-</code></pre>
-<p>根据v和q的值可以看到，对于能解析的会被q解析为字符，解析不了的直接输出<code>utf-8</code>编码过后的结果，因此无法直接通过下标访问，但是可以将字符串转为rune数组</p>
-<pre><code class="language-go">var str = &quot;Hello, 世界&quot;
-fmt.Println(string([]rune(str[7:])))
-//结果是 世界
-</code></pre>
-<p>go中对rune的定义是</p>
-<pre><code class="language-go">type rune = int32
-</code></pre>
-<p>在转为rune数组的过程中，会将单个字符的全部字节放入（32位正好是<code>utf-8</code>的可变字符范围)</p>
 ]]></content>
     </entry>
 </feed>
