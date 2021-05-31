@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>http://blog.zerokirin.online</id>
     <title>Zer0kiriN</title>
-    <updated>2021-05-28T19:15:29.143Z</updated>
+    <updated>2021-05-31T08:15:48.171Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="http://blog.zerokirin.online"/>
     <link rel="self" href="http://blog.zerokirin.online/atom.xml"/>
@@ -34,8 +34,134 @@
 <h3 id="不可重复读">不可重复读</h3>
 <figure data-type="image" tabindex="3"><img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/image-20191207222102010.png" alt="img" loading="lazy"></figure>
 <h3 id="幻影读">幻影读</h3>
-<figure data-type="image" tabindex="4"><img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/image-20191207222134306.png" alt="img" loading="lazy"></figure>
-<p>幻影读这里需要解释下，他和不可重复读的区别在于，不可重复读指的是<strong>某个数据</strong>被更改，而幻影读的数据本身没有变化，变化的是<strong>数据范围及数据量</strong>，也就是说T1第一次算出来一共只有100个数据，但是在T1结束之前又插入了一个新的数据，而这个数据就会造成导致总数变成了101个，这就是幻影读的问题</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">时间点</th>
+<th style="text-align:left">事务A</th>
+<th style="text-align:left">事务B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">1</td>
+<td style="text-align:left">开启事务</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left">2</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">开启事务</td>
+</tr>
+<tr>
+<td style="text-align:left">3</td>
+<td style="text-align:left">查询数据“老王”，不存在</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left">4</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">插入数据“老王”</td>
+</tr>
+<tr>
+<td style="text-align:left">5</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">提交事务</td>
+</tr>
+<tr>
+<td style="text-align:left">6</td>
+<td style="text-align:left">查询数据“老王”，不存在</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left">7</td>
+<td style="text-align:left">插入数据“老王”，不成功</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left">8</td>
+<td style="text-align:left">更新数据“老王”，成功 ？</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left">9</td>
+<td style="text-align:left">查询数据“老王”，成功 ？</td>
+<td style="text-align:left"></td>
+</tr>
+</tbody>
+</table>
+<p>官网对幻影读的讲解非常模糊，网上还有很多乱讲的东西，比如什么范围中间插入后，个数发生变化，错</p>
+<p>我们先看个例子：</p>
+<pre><code class="language-sql">--事务1
+mysql&gt; begin;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql&gt; select count(*) from gap;
++----------+
+| count(*) |
++----------+
+|        4 |
++----------+
+1 row in set (0.04 sec)
+
+mysql&gt; begin;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql&gt; select count(*) from gap;
++----------+
+| count(*) |
++----------+
+|        4 |
++----------+
+1 row in set (0.04 sec)
+
+--事务2
+mysql&gt; insert into gap values(8,'老王');
+Query OK, 1 row affected (0.05 sec)
+
+--事务1
+mysql&gt; select count(*) from gap;
++----------+
+| count(*) |
++----------+
+|        4 | --没有任何变化
++----------+
+1 row in set (0.00 sec)
+
+mysql&gt; select * from gap;
++----+------+
+| id | name |
++----+------+
+|  1 | 张三 |
+|  5 | 李四 |
+|  7 | 王五 |
+| 11 | 赵6  |
++----+------+
+4 rows in set (0.00 sec)
+</code></pre>
+<p>那么幻读幻到哪去了？继续看</p>
+<pre><code class="language-sql">--事务1
+mysql&gt; insert into gap values(8,'赵四');
+ERROR 1062 (23000): Duplicate entry '8' for key 'gap.PRIMARY'
+</code></pre>
+<p>看到了么，明明没有查到，但是却没法添加，但他却可以被更新</p>
+<pre><code class="language-sql">mysql&gt; update gap set name = '刘能' where id = 8;
+Query OK, 1 row affected (0.04 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql&gt; select * from gap;
++----+------+
+| id | name |
++----+------+
+|  1 | 张三 |
+|  5 | 李四 |
+|  7 | 王五 |
+|  8 | 刘能 |
+| 11 | 赵6  |
++----+------+
+5 rows in set (0.00 sec)
+</code></pre>
+<p>明明没有的数据，凭空冒了出来这才是幻读，和不可重复读有很大区别。</p>
 <h2 id="事务隔离等级">事务隔离等级</h2>
 <ul>
 <li>read uncommitted   读未提交</li>
@@ -75,8 +201,7 @@
 </tr>
 </tbody>
 </table>
-<p>暂时先不要关注隔离等级，让我们先了解下实现他们的前置知识——锁<br>
-<s>锁这一节实在太长了，分成多个文章吧</s></p>
+<p>暂时先不要关注隔离等级，让我们先了解下实现他们的前置知识——锁</p>
 ]]></content>
     </entry>
     <entry>
