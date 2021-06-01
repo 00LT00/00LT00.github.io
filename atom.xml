@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>http://blog.zerokirin.online</id>
     <title>Zer0kiriN</title>
-    <updated>2021-05-31T08:15:48.171Z</updated>
+    <updated>2021-06-01T20:52:25.482Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="http://blog.zerokirin.online"/>
     <link rel="self" href="http://blog.zerokirin.online/atom.xml"/>
@@ -10,6 +10,765 @@
     <logo>http://blog.zerokirin.online/images/avatar.png</logo>
     <icon>http://blog.zerokirin.online/favicon.ico</icon>
     <rights>All rights reserved 2021, Zer0kiriN</rights>
+    <entry>
+        <title type="html"><![CDATA[Mysql事务隔离等级和锁详解（二）]]></title>
+        <id>http://blog.zerokirin.online/post/mysql-shi-wu-ge-chi-deng-ji-he-suo-xiang-jie-er/</id>
+        <link href="http://blog.zerokirin.online/post/mysql-shi-wu-ge-chi-deng-ji-he-suo-xiang-jie-er/">
+        </link>
+        <updated>2021-06-01T20:50:18.000Z</updated>
+        <content type="html"><![CDATA[<p>书接上回，我们罗列了一下事务隔离等级和并发一致性问题，那么这一章就让我们看看锁是怎么工作的，又是怎么和事务联系起来的</p>
+<p>官方文档如下：</p>
+<ul>
+<li><a href="https://dev.mysql.com/doc/refman/8.0/en/innodb-locking.html#innodb-shared-exclusive-locks">Shared and Exclusive Locks</a> 共享锁和独占锁</li>
+<li><a href="https://dev.mysql.com/doc/refman/8.0/en/innodb-locking.html#innodb-intention-locks">Intention Locks</a> 意向锁</li>
+<li><a href="https://dev.mysql.com/doc/refman/8.0/en/innodb-locking.html#innodb-record-locks">Record Locks</a> 记录锁</li>
+<li><a href="https://dev.mysql.com/doc/refman/8.0/en/innodb-locking.html#innodb-gap-locks">Gap Locks</a> 间隙锁</li>
+<li><a href="https://dev.mysql.com/doc/refman/8.0/en/innodb-locking.html#innodb-next-key-locks">Next-Key Locks</a> 临键锁</li>
+<li><a href="https://dev.mysql.com/doc/refman/8.0/en/innodb-locking.html#innodb-insert-intention-locks">Insert Intention Locks</a> 插入意向锁</li>
+</ul>
+<h2 id="逻辑意义上的锁">逻辑意义上的锁</h2>
+<h3 id="共享锁和独占锁">共享锁和独占锁</h3>
+<p>换句话说就是读锁和写锁（互斥锁，排他锁），简称S和X，innoDB中的行级锁就是这两种锁</p>
+<ul>
+<li>读锁可以重复加，共享锁嘛</li>
+<li>写锁和读锁不能共存，也就是独占的意思，当有读锁存在的时候不能加写锁</li>
+</ul>
+<p><s>偷图<a href="https://draveness.me/mysql-innodb/">『浅入浅出』MySQL 和 InnoDB - 面向信仰编程 (draveness.me)</a></s></p>
+<figure data-type="image" tabindex="1"><img src="https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/Shared-Exclusive-Lock.jpg" alt="Shared-Exclusive-Lock" loading="lazy"></figure>
+<h3 id="意向锁">意向锁</h3>
+<p>刚刚我们说到，行级锁包括读锁和写锁，而mysql支持多粒度的锁，也就是说，存在表级别的读锁和写锁，这样就带来个问题，如果要对某个表加锁，那么就要判断它的每一行是否有锁，这是非常影响性能的，因此提出了意向锁的概念</p>
+<p>意向锁分为读写两种，简称IS和IX，是表级锁，他们之间是互相兼容的，<s>继续偷图</s></p>
+<figure data-type="image" tabindex="2"><img src="https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/Lock-Type-Compatibility-Matrix.jpg" alt="Lock-Type-Compatibility-Matrix" loading="lazy"></figure>
+<p>这里的几个锁都代表了表级锁，因为意向锁<strong>只有表级</strong>，不能把行级混进来</p>
+<ul>
+<li>要获取行级的S或X锁，必须先获取其表的意向锁</li>
+<li>获取表锁的时候不需要意向锁</li>
+</ul>
+<p>这样当我们要增加表级的S或X锁时，如果其中某行已经有了S或X锁，那么表上就会有对应的IS和IX锁，这样就不用每行都去检测了</p>
+<h2 id="物理意义上的锁">物理意义上的锁</h2>
+<h3 id="record-lock">record lock</h3>
+<p>record lock 记录锁是索引记录上的锁，也就是我们上述所说的行锁的实现，同样有S和X之分，它是后面的各种行锁的基础，也可以直接理解为，record lock就是行锁，因为innoDB用的是聚簇索引，所以所有的数据最后都是主键索引去找，锁住了主键索引也就代表锁住了这一行</p>
+<p>它通过对索引进行锁定，让我们举个小例子，假设锁的结构和索引如下：</p>
+<pre><code class="language-sql">mysql&gt; desc salaries;
++-----------+------+------+-----+---------+----------------+
+| Field     | Type | Null | Key | Default | Extra          |
++-----------+------+------+-----+---------+----------------+
+| id        | int  | NO   | PRI | NULL    | auto_increment |
+| emp_no    | int  | NO   | MUL | NULL    |                |
+| salary    | int  | NO   | MUL | NULL    |                |
+| from_date | date | NO   | MUL | NULL    |                |
+| to_date   | date | NO   |     | NULL    |                |
++-----------+------+------+-----+---------+----------------+
+5 rows in set (0.00 sec)
+
+mysql&gt; show index from salaries\G;
+*************************** 1. row ***************************
+        Table: salaries
+   Non_unique: 0
+     Key_name: PRIMARY
+ Seq_in_index: 1
+  Column_name: id
+    Collation: A
+  Cardinality: 2837536
+     Sub_part: NULL
+       Packed: NULL
+         Null:
+   Index_type: BTREE
+      Comment:
+Index_comment:
+      Visible: YES
+   Expression: NULL
+*************************** 2. row ***************************
+        Table: salaries
+   Non_unique: 0
+     Key_name: idx_emp_date
+ Seq_in_index: 1
+  Column_name: emp_no
+    Collation: A
+  Cardinality: 293002
+     Sub_part: NULL
+       Packed: NULL
+         Null:
+   Index_type: BTREE
+      Comment:
+Index_comment:
+      Visible: YES
+   Expression: NULL
+*************************** 3. row ***************************
+        Table: salaries
+   Non_unique: 0
+     Key_name: idx_emp_date
+ Seq_in_index: 2
+  Column_name: from_date
+    Collation: A
+  Cardinality: 2837536
+     Sub_part: NULL
+       Packed: NULL
+         Null:
+   Index_type: BTREE
+      Comment:
+Index_comment:
+      Visible: YES
+   Expression: NULL
+3 rows in set (0.00 sec)
+</code></pre>
+<p>对表中的第一行加共享类型的record锁</p>
+<pre><code class="language-sql">mysql&gt; begin;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql&gt; select * from salaries where id = 1 for share;
++----+--------+--------+------------+------------+
+| id | emp_no | salary | from_date  | to_date    |
++----+--------+--------+------------+------------+
+|  1 |  10001 |  60117 | 1986-06-26 | 1987-06-26 |
++----+--------+--------+------------+------------+
+1 row in set (0.00 sec)
+
+mysql&gt; select * from performance_schema.data_locks\G;
+*************************** 1. row ***************************
+               ENGINE: INNODB
+       ENGINE_LOCK_ID: 2835531521376:1215:2835495239768
+ENGINE_TRANSACTION_ID: 284310508232032
+            THREAD_ID: 274
+             EVENT_ID: 39
+        OBJECT_SCHEMA: employees
+          OBJECT_NAME: salaries
+       PARTITION_NAME: NULL
+    SUBPARTITION_NAME: NULL
+           INDEX_NAME: NULL
+OBJECT_INSTANCE_BEGIN: 2835495239768
+            LOCK_TYPE: TABLE --意向锁，因为要获取行锁，所以必须先加上意向锁
+            LOCK_MODE: IS
+          LOCK_STATUS: GRANTED
+            LOCK_DATA: NULL
+*************************** 2. row ***************************
+               ENGINE: INNODB
+       ENGINE_LOCK_ID: 2835531521376:157:9:2:2835495236984
+ENGINE_TRANSACTION_ID: 284310508232032
+            THREAD_ID: 274
+             EVENT_ID: 39
+        OBJECT_SCHEMA: employees
+          OBJECT_NAME: salaries
+       PARTITION_NAME: NULL
+    SUBPARTITION_NAME: NULL
+           INDEX_NAME: PRIMARY --主键索引
+OBJECT_INSTANCE_BEGIN: 2835495236984
+            LOCK_TYPE: RECORD --这里看到了吗，锁的类型是record
+            LOCK_MODE: S,REC_NOT_GAP --模式是S，是record锁而非gap锁（下文介绍）
+          LOCK_STATUS: GRANTED --以获取锁的意思
+            LOCK_DATA: 1 --锁定的数据是id=1的主键索引
+2 rows in set (0.00 sec)
+</code></pre>
+<p>可以看到，当我们通过主键索引找到数据的时候，会对该主键索引加锁，那么二级索引呢</p>
+<pre><code class="language-sql">mysql&gt; explain select * from salaries where emp_no = 10001 limit 1 for share\G;
+*************************** 1. row ***************************
+           id: 1
+  select_type: SIMPLE
+        table: salaries
+   partitions: NULL
+         type: ref
+possible_keys: idx_emp_date,idx_emp_no
+          key: idx_emp_date --用的是辅助索引
+      key_len: 4
+          ref: const
+         rows: 17
+     filtered: 100.00
+        Extra: NULL
+1 row in set, 1 warning (0.00 sec)
+
+ERROR:
+No query specified
+
+mysql&gt;  select * from salaries where emp_no = 10001 limit 1 for share;
++----+--------+--------+------------+------------+
+| id | emp_no | salary | from_date  | to_date    |
++----+--------+--------+------------+------------+
+|  1 |  10001 |  60117 | 1986-06-26 | 1987-06-26 |
++----+--------+--------+------------+------------+
+1 row in set (0.00 sec)
+
+mysql&gt; select * from performance_schema.data_locks\G;
+*************************** 1. row ***************************
+               ENGINE: INNODB
+       ENGINE_LOCK_ID: 2835531521376:1215:2835495239768
+ENGINE_TRANSACTION_ID: 284310508232032
+            THREAD_ID: 274
+             EVENT_ID: 39
+        OBJECT_SCHEMA: employees
+          OBJECT_NAME: salaries
+       PARTITION_NAME: NULL
+    SUBPARTITION_NAME: NULL
+           INDEX_NAME: NULL
+OBJECT_INSTANCE_BEGIN: 2835495239768
+            LOCK_TYPE: TABLE
+            LOCK_MODE: IS
+          LOCK_STATUS: GRANTED
+            LOCK_DATA: NULL
+*************************** 2. row ***************************
+               ENGINE: INNODB
+       ENGINE_LOCK_ID: 2835531521376:157:9:2:2835495236984
+ENGINE_TRANSACTION_ID: 284310508232032
+            THREAD_ID: 274
+             EVENT_ID: 39
+        OBJECT_SCHEMA: employees
+          OBJECT_NAME: salaries
+       PARTITION_NAME: NULL
+    SUBPARTITION_NAME: NULL
+           INDEX_NAME: PRIMARY
+OBJECT_INSTANCE_BEGIN: 2835495236984
+            LOCK_TYPE: RECORD
+            LOCK_MODE: S,REC_NOT_GAP
+          LOCK_STATUS: GRANTED
+            LOCK_DATA: 1
+*************************** 3. row ***************************
+               ENGINE: INNODB
+       ENGINE_LOCK_ID: 2835531521376:157:43:2:2835495237328
+ENGINE_TRANSACTION_ID: 284310508232032
+            THREAD_ID: 274
+             EVENT_ID: 41
+        OBJECT_SCHEMA: employees
+          OBJECT_NAME: salaries
+       PARTITION_NAME: NULL
+    SUBPARTITION_NAME: NULL
+           INDEX_NAME: idx_emp_date --看这里，第三个锁的是实际使用的索引
+OBJECT_INSTANCE_BEGIN: 2835495237328
+            LOCK_TYPE: RECORD
+            LOCK_MODE: S --共享模式
+          LOCK_STATUS: GRANTED
+            LOCK_DATA: 10001, 1017050, 1 --对应索引上被锁住的数据
+3 rows in set (0.00 sec)
+</code></pre>
+<p>上述可以看到，当我们使用辅助索引的时候就会对辅助索引加record锁，那么如果一开始就是用辅助索引呢？</p>
+<pre><code class="language-sql">mysql&gt; begin; --重开个事务
+Query OK, 0 rows affected (0.00 sec)
+
+mysql&gt; explain select * from salaries where emp_no = 10001 limit 1 for share\G;
+*************************** 1. row ***************************
+           id: 1
+  select_type: SIMPLE
+        table: salaries
+   partitions: NULL
+         type: ref
+possible_keys: idx_emp_date,idx_emp_no
+          key: idx_emp_date --用的是辅助索引
+      key_len: 4
+          ref: const
+         rows: 17
+     filtered: 100.00
+        Extra: NULL
+1 row in set, 1 warning (0.00 sec)
+
+ERROR:
+No query specified
+
+mysql&gt; select * from salaries where emp_no = 10001 limit 1 for share;
++----+--------+--------+------------+------------+
+| id | emp_no | salary | from_date  | to_date    |
++----+--------+--------+------------+------------+
+|  1 |  10001 |  60117 | 1986-06-26 | 1987-06-26 |
++----+--------+--------+------------+------------+
+1 row in set (0.00 sec)
+
+mysql&gt; select * from performance_schema.data_locks\G;
+*************************** 1. row ***************************
+               ENGINE: INNODB
+       ENGINE_LOCK_ID: 2835531521376:1215:2835495239768
+ENGINE_TRANSACTION_ID: 284310508232032
+            THREAD_ID: 274
+             EVENT_ID: 47
+        OBJECT_SCHEMA: employees
+          OBJECT_NAME: salaries
+       PARTITION_NAME: NULL
+    SUBPARTITION_NAME: NULL
+           INDEX_NAME: NULL
+OBJECT_INSTANCE_BEGIN: 2835495239768
+            LOCK_TYPE: TABLE
+            LOCK_MODE: IS
+          LOCK_STATUS: GRANTED
+            LOCK_DATA: NULL
+            
+--看这里，两个锁的顺序不一样了，对比上面的可以看到，这次是辅助索引在上
+*************************** 2. row ***************************
+               ENGINE: INNODB
+       ENGINE_LOCK_ID: 2835531521376:157:43:2:2835495236984
+ENGINE_TRANSACTION_ID: 284310508232032
+            THREAD_ID: 274
+             EVENT_ID: 47
+        OBJECT_SCHEMA: employees
+          OBJECT_NAME: salaries
+       PARTITION_NAME: NULL
+    SUBPARTITION_NAME: NULL
+           INDEX_NAME: idx_emp_date --先辅助索引
+OBJECT_INSTANCE_BEGIN: 2835495236984
+            LOCK_TYPE: RECORD
+            LOCK_MODE: S
+          LOCK_STATUS: GRANTED
+            LOCK_DATA: 10001, 1017050, 1 --锁住的值
+*************************** 3. row ***************************
+               ENGINE: INNODB
+       ENGINE_LOCK_ID: 2835531521376:157:9:2:2835495237328
+ENGINE_TRANSACTION_ID: 284310508232032
+            THREAD_ID: 274
+             EVENT_ID: 47
+        OBJECT_SCHEMA: employees
+          OBJECT_NAME: salaries
+       PARTITION_NAME: NULL
+    SUBPARTITION_NAME: NULL
+           INDEX_NAME: PRIMARY --然后才是主键索引
+OBJECT_INSTANCE_BEGIN: 2835495237328
+            LOCK_TYPE: RECORD
+            LOCK_MODE: S,REC_NOT_GAP
+          LOCK_STATUS: GRANTED
+            LOCK_DATA: 1
+3 rows in set (0.00 sec)
+</code></pre>
+<p>这也很好解释，先加意向锁，然后通过辅助索引找到主键索引，最后从主键索引那取数据</p>
+<p>那我们再加个互斥锁呢？</p>
+<pre><code class="language-sql">mysql&gt; select * from salaries where emp_no = 10001 limit 1 for update;
++----+--------+--------+------------+------------+
+| id | emp_no | salary | from_date  | to_date    |
++----+--------+--------+------------+------------+
+|  1 |  10001 |  60117 | 1986-06-26 | 1987-06-26 |
++----+--------+--------+------------+------------+
+1 row in set (0.00 sec)
+
+mysql&gt; select * from performance_schema.data_locks\G;
+*************************** 1. row ***************************
+               ENGINE: INNODB
+       ENGINE_LOCK_ID: 2835531521376:1215:2835495239768
+ENGINE_TRANSACTION_ID: 59891
+            THREAD_ID: 274
+             EVENT_ID: 47
+        OBJECT_SCHEMA: employees
+          OBJECT_NAME: salaries
+       PARTITION_NAME: NULL
+    SUBPARTITION_NAME: NULL
+           INDEX_NAME: NULL
+OBJECT_INSTANCE_BEGIN: 2835495239768
+            LOCK_TYPE: TABLE
+            LOCK_MODE: IS
+          LOCK_STATUS: GRANTED
+            LOCK_DATA: NULL
+*************************** 2. row ***************************
+               ENGINE: INNODB
+       ENGINE_LOCK_ID: 2835531521376:157:43:2:2835495236984
+ENGINE_TRANSACTION_ID: 59891
+            THREAD_ID: 274
+             EVENT_ID: 47
+        OBJECT_SCHEMA: employees
+          OBJECT_NAME: salaries
+       PARTITION_NAME: NULL
+    SUBPARTITION_NAME: NULL
+           INDEX_NAME: idx_emp_date
+OBJECT_INSTANCE_BEGIN: 2835495236984
+            LOCK_TYPE: RECORD
+            LOCK_MODE: S
+          LOCK_STATUS: GRANTED
+            LOCK_DATA: 10001, 1017050, 1
+*************************** 3. row ***************************
+               ENGINE: INNODB
+       ENGINE_LOCK_ID: 2835531521376:157:9:2:2835495237328
+ENGINE_TRANSACTION_ID: 59891
+            THREAD_ID: 274
+             EVENT_ID: 47
+        OBJECT_SCHEMA: employees
+          OBJECT_NAME: salaries
+       PARTITION_NAME: NULL
+    SUBPARTITION_NAME: NULL
+           INDEX_NAME: PRIMARY
+OBJECT_INSTANCE_BEGIN: 2835495237328
+            LOCK_TYPE: RECORD
+            LOCK_MODE: S,REC_NOT_GAP
+          LOCK_STATUS: GRANTED
+            LOCK_DATA: 1
+            
+--看这里，上面的和原来一样，共享锁的基础上加互斥锁并不意味着直接升级，而是额外加锁
+*************************** 4. row ***************************
+               ENGINE: INNODB
+       ENGINE_LOCK_ID: 2835531521376:1215:2835495239856
+ENGINE_TRANSACTION_ID: 59891
+            THREAD_ID: 274
+             EVENT_ID: 55
+        OBJECT_SCHEMA: employees
+          OBJECT_NAME: salaries
+       PARTITION_NAME: NULL
+    SUBPARTITION_NAME: NULL
+           INDEX_NAME: NULL
+OBJECT_INSTANCE_BEGIN: 2835495239856
+            LOCK_TYPE: TABLE
+            LOCK_MODE: IX
+          LOCK_STATUS: GRANTED
+            LOCK_DATA: NULL
+*************************** 5. row ***************************
+               ENGINE: INNODB
+       ENGINE_LOCK_ID: 2835531521376:157:43:2:2835495237672
+ENGINE_TRANSACTION_ID: 59891
+            THREAD_ID: 274
+             EVENT_ID: 55
+        OBJECT_SCHEMA: employees
+          OBJECT_NAME: salaries
+       PARTITION_NAME: NULL
+    SUBPARTITION_NAME: NULL
+           INDEX_NAME: idx_emp_date
+OBJECT_INSTANCE_BEGIN: 2835495237672
+            LOCK_TYPE: RECORD
+            LOCK_MODE: X
+          LOCK_STATUS: GRANTED
+            LOCK_DATA: 10001, 1017050, 1
+*************************** 6. row ***************************
+               ENGINE: INNODB
+       ENGINE_LOCK_ID: 2835531521376:157:9:2:2835495238016
+ENGINE_TRANSACTION_ID: 59891
+            THREAD_ID: 274
+             EVENT_ID: 55
+        OBJECT_SCHEMA: employees
+          OBJECT_NAME: salaries
+       PARTITION_NAME: NULL
+    SUBPARTITION_NAME: NULL
+           INDEX_NAME: PRIMARY
+OBJECT_INSTANCE_BEGIN: 2835495238016
+            LOCK_TYPE: RECORD
+            LOCK_MODE: X,REC_NOT_GAP
+          LOCK_STATUS: GRANTED
+            LOCK_DATA: 1
+6 rows in set (0.00 sec)
+</code></pre>
+<p>如果先加互斥锁再加共享锁呢</p>
+<pre><code class="language-sql">--互斥锁
+mysql&gt; select * from salaries where emp_no = 10001 limit 1 for update;
++----+--------+--------+------------+------------+
+| id | emp_no | salary | from_date  | to_date    |
++----+--------+--------+------------+------------+
+|  1 |  10001 |  60117 | 1986-06-26 | 1987-06-26 |
++----+--------+--------+------------+------------+
+1 row in set (0.00 sec)
+
+--共享锁
+mysql&gt; select * from salaries where emp_no = 10001 limit 1 for share;
++----+--------+--------+------------+------------+
+| id | emp_no | salary | from_date  | to_date    |
++----+--------+--------+------------+------------+
+|  1 |  10001 |  60117 | 1986-06-26 | 1987-06-26 |
++----+--------+--------+------------+------------+
+1 row in set (0.00 sec)
+
+mysql&gt; select * from performance_schema.data_locks\G;
+*************************** 1. row ***************************
+               ENGINE: INNODB
+       ENGINE_LOCK_ID: 2835531521376:1215:2835495239768
+ENGINE_TRANSACTION_ID: 59892
+            THREAD_ID: 274
+             EVENT_ID: 62
+        OBJECT_SCHEMA: employees
+          OBJECT_NAME: salaries
+       PARTITION_NAME: NULL
+    SUBPARTITION_NAME: NULL
+           INDEX_NAME: NULL
+OBJECT_INSTANCE_BEGIN: 2835495239768
+            LOCK_TYPE: TABLE
+            LOCK_MODE: IX --意向锁
+          LOCK_STATUS: GRANTED
+            LOCK_DATA: NULL
+*************************** 2. row ***************************
+               ENGINE: INNODB
+       ENGINE_LOCK_ID: 2835531521376:157:43:2:2835495236984
+ENGINE_TRANSACTION_ID: 59892
+            THREAD_ID: 274
+             EVENT_ID: 62
+        OBJECT_SCHEMA: employees
+          OBJECT_NAME: salaries
+       PARTITION_NAME: NULL
+    SUBPARTITION_NAME: NULL
+           INDEX_NAME: idx_emp_date
+OBJECT_INSTANCE_BEGIN: 2835495236984
+            LOCK_TYPE: RECORD
+            LOCK_MODE: X --互斥锁
+          LOCK_STATUS: GRANTED
+            LOCK_DATA: 10001, 1017050, 1
+*************************** 3. row ***************************
+               ENGINE: INNODB
+       ENGINE_LOCK_ID: 2835531521376:157:9:2:2835495237328
+ENGINE_TRANSACTION_ID: 59892
+            THREAD_ID: 274
+             EVENT_ID: 62
+        OBJECT_SCHEMA: employees
+          OBJECT_NAME: salaries
+       PARTITION_NAME: NULL
+    SUBPARTITION_NAME: NULL
+           INDEX_NAME: PRIMARY
+OBJECT_INSTANCE_BEGIN: 2835495237328
+            LOCK_TYPE: RECORD
+            LOCK_MODE: X,REC_NOT_GAP
+          LOCK_STATUS: GRANTED
+            LOCK_DATA: 1
+3 rows in set (0.00 sec)
+</code></pre>
+<p>可以看到，当我们拥有了互斥锁后，再加共享锁就没有意义了，我们也可以称，互斥锁是比共享锁更高级别的锁定</p>
+<h3 id="gap-lock">Gap lock</h3>
+<p>间隙锁，这个锁<strong>只</strong>存在于<strong>可重复读</strong>这一隔离级别，同时这个锁不分S和X，它锁住的是一个区间，其他事务在这个区间内的插入删除更新操作都会被阻塞</p>
+<p>同时它很特别的一点是，加多个Gap锁不会阻塞，可以有多个事务同时添加Gaplock，因为本质上他是为了保护一个区间不会插入，而不是为了锁定具体的数据</p>
+<p>让我们看个小例子，先建表：</p>
+<pre><code class="language-sql">mysql&gt; CREATE TABLE `gap` (
+    -&gt;   `id` int(1) NOT NULL AUTO_INCREMENT,
+    -&gt;   `name` varchar(8) DEFAULT NULL,
+    -&gt;   PRIMARY KEY (`id`)
+    -&gt; ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+Query OK, 0 rows affected, 2 warnings (0.03 sec)
+
+mysql&gt;
+mysql&gt; INSERT INTO `gap` VALUES ('1', '张三');
+Query OK, 1 row affected (0.01 sec)
+
+mysql&gt; INSERT INTO `gap` VALUES ('5', '李四');
+Query OK, 1 row affected (0.00 sec)
+
+mysql&gt; INSERT INTO `gap` VALUES ('7', '王五');
+Query OK, 1 row affected (0.00 sec)
+
+mysql&gt; INSERT INTO `gap` VALUES ('11', '赵六');
+Query OK, 1 row affected (0.00 sec)
+</code></pre>
+<p>让我们对其中一部分数据加锁：</p>
+<pre><code class="language-sql">mysql&gt; begin;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql&gt; select * from gap where id between 3 and 8 for share;
++----+------+
+| id | name |
++----+------+
+|  5 | 李四 |
+|  7 | 王五 |
++----+------+
+2 rows in set (0.00 sec)
+
+--查看锁
+mysql&gt; select * from performance_schema.data_locks\G;
+*************************** 1. row ***************************
+               ENGINE: INNODB
+       ENGINE_LOCK_ID: 2835531521376:1216:2835495239768
+ENGINE_TRANSACTION_ID: 284310508232032
+            THREAD_ID: 274
+             EVENT_ID: 288
+        OBJECT_SCHEMA: employees
+          OBJECT_NAME: gap
+       PARTITION_NAME: NULL
+    SUBPARTITION_NAME: NULL
+           INDEX_NAME: NULL
+OBJECT_INSTANCE_BEGIN: 2835495239768
+            LOCK_TYPE: TABLE
+            LOCK_MODE: IS
+          LOCK_STATUS: GRANTED
+            LOCK_DATA: NULL
+*************************** 2. row ***************************
+               ENGINE: INNODB
+       ENGINE_LOCK_ID: 2835531521376:158:4:3:2835495236984
+ENGINE_TRANSACTION_ID: 284310508232032
+            THREAD_ID: 274
+             EVENT_ID: 288
+        OBJECT_SCHEMA: employees
+          OBJECT_NAME: gap
+       PARTITION_NAME: NULL
+    SUBPARTITION_NAME: NULL
+           INDEX_NAME: PRIMARY
+OBJECT_INSTANCE_BEGIN: 2835495236984
+            LOCK_TYPE: RECORD
+            LOCK_MODE: S
+          LOCK_STATUS: GRANTED
+            LOCK_DATA: 5
+*************************** 3. row ***************************
+               ENGINE: INNODB
+       ENGINE_LOCK_ID: 2835531521376:158:4:4:2835495236984
+ENGINE_TRANSACTION_ID: 284310508232032
+            THREAD_ID: 274
+             EVENT_ID: 288
+        OBJECT_SCHEMA: employees
+          OBJECT_NAME: gap
+       PARTITION_NAME: NULL
+    SUBPARTITION_NAME: NULL
+           INDEX_NAME: PRIMARY
+OBJECT_INSTANCE_BEGIN: 2835495236984
+            LOCK_TYPE: RECORD
+            LOCK_MODE: S
+          LOCK_STATUS: GRANTED
+            LOCK_DATA: 7
+            
+--上面的都是正常记录锁，可以不看
+*************************** 4. row ***************************
+               ENGINE: INNODB
+       ENGINE_LOCK_ID: 2835531521376:158:4:5:2835495237328
+ENGINE_TRANSACTION_ID: 284310508232032
+            THREAD_ID: 274
+             EVENT_ID: 289
+        OBJECT_SCHEMA: employees
+          OBJECT_NAME: gap
+       PARTITION_NAME: NULL
+    SUBPARTITION_NAME: NULL
+           INDEX_NAME: PRIMARY
+OBJECT_INSTANCE_BEGIN: 2835495237328
+            LOCK_TYPE: RECORD --行锁，所以类型是record锁
+            LOCK_MODE: S,GAP --看这里，Gap锁出现了，S和X没有意义，因为11本身没有被锁
+          LOCK_STATUS: GRANTED
+            LOCK_DATA: 11 --看GAP锁到底锁到了哪一行？
+4 rows in set (0.00 sec)
+</code></pre>
+<p>看最后我们会发现，明明锁定的id区间是3-8，但最后却锁到了11头上，最后的这个Gap锁意味着，从他以前直到上一条record锁的所有数据都会被锁定，插入操作都会被阻塞</p>
+<p>其实是这样，表里的记录有1,5,7,11，而8没有对应的记录，因此它会按照索引向后找到第一个记录（如果没有就不设置Gap锁了），然后给它添加Gap锁也就是11，而这样就代表锁住了 (7,11) 的区间</p>
+<p>所以<strong>Gap锁最大的缺点</strong>是，即便我们查询的数据范围并不大，只有3-8，但他却把9,10这两个<strong>无辜的行也占住</strong>了，在事务释放之前不能进行插入操作</p>
+<p>想起了上文提到过的记录锁吗</p>
+<pre><code class="language-sql">*************************** 2. row ***************************
+            LOCK_TYPE: RECORD --这里看到了吗，锁的类型是record
+            LOCK_MODE: S,REC_NOT_GAP --模式是S，是record锁而非gap锁（下文介绍）
+</code></pre>
+<p>我们已经见过的LOCK_MODE的值现在有（X和S暂时不去管他）：</p>
+<ul>
+<li>S</li>
+<li>S,GAP</li>
+<li>S,REC_NOT_GAP</li>
+</ul>
+<p>暂时先放着，等我们把next-key locks讲完就能串起来了</p>
+<h3 id="next-key-lock">Next-Key lock</h3>
+<p>临键锁，next-key lock = record lock + Gap lock</p>
+<p>这玩意在data_locks中都找不到，因为它其实也不是什么物理上的锁，而是一个锁机制，它和Gap一样都是只存在于<strong>可重复读</strong>的隔离级别，它存在的意义是为了<strong>解决幻影读</strong>的问题，让我们接着上面的例子看看</p>
+<pre><code class="language-sql">mysql&gt; select * from gap;
++----+------+
+| id | name |
++----+------+
+|  1 | 张三 |
+|  7 | 王五 |
+|  8 | 赵四 |
+| 11 | 刘能 |
++----+------+
+4 rows in set (0.00 sec)
+
+mysql&gt; begin;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql&gt; select * from gap where id between 5 and 9 for update; --锁的是5-9
++----+------+
+| id | name |
++----+------+
+|  7 | 王五 |
+|  8 | 赵四 |
++----+------+
+2 rows in set (0.03 sec)
+</code></pre>
+<p>现在id上一共有4个区间 (1,7],(7,8],(8,11],(11,+∞)，看看锁有哪些啊</p>
+<pre><code class="language-sql">mysql&gt; SELECT event_id,OBJECT_NAME,index_name,LOCK_TYPE,LOCK_MODE,LOCK_STATUS,LOCK_DATA FROM performance_schema.data_locks;
++----------+-------------+------------+-----------+-----------+-------------+-----------+
+| event_id | OBJECT_NAME | index_name | LOCK_TYPE | LOCK_MODE | LOCK_STATUS | LOCK_DATA |
++----------+-------------+------------+-----------+-----------+-------------+-----------+
+|       19 | gap         | NULL       | TABLE     | IX        | GRANTED     | NULL      |
+|       19 | gap         | PRIMARY    | RECORD    | X         | GRANTED     | 7         |
+|       19 | gap         | PRIMARY    | RECORD    | X         | GRANTED     | 8         |
+|       19 | gap         | PRIMARY    | RECORD    | X,GAP     | GRANTED     | 11        |
++----------+-------------+------------+-----------+-----------+-------------+-----------+
+4 rows in set (0.00 sec)
+</code></pre>
+<p>我们锁的区间是5-9，但是行锁分别是7，8，11，最后一个Gap锁上面讲过了不再赘述</p>
+<p>那么，前面的(5,7)这个是怎么锁的呢？插入下看看</p>
+<pre><code class="language-sql">mysql&gt; insert into gap values(6,'随便吧');
+ERROR 1205 (HY000): Lock wait timeout exceeded; try restarting transaction
+
+mysql&gt; SELECT event_id,index_name,LOCK_TYPE,LOCK_MODE,LOCK_STATUS,LOCK_DATA FROM performance_schema.data_locks; --省略了表名，方便排版
++----------+------------+-----------+------------------------+-------------+-----------+
+| event_id | index_name | LOCK_TYPE | LOCK_MODE              | LOCK_STATUS | LOCK_DATA |
++----------+------------+-----------+------------------------+-------------+-----------+
+|       11 | NULL       | TABLE     | IX                     | GRANTED     | NULL      |
+|       11 | PRIMARY    | RECORD    | X,GAP,INSERT_INTENTION | WAITING     | 7         |
+|       19 | NULL       | TABLE     | IX                     | GRANTED     | NULL      |
+|       19 | PRIMARY    | RECORD    | X                      | GRANTED     | 7         |
+|       19 | PRIMARY    | RECORD    | X                      | GRANTED     | 8         |
+|       19 | PRIMARY    | RECORD    | X,GAP                  | GRANTED     | 11        |
++----------+------------+-----------+------------------------+-------------+-----------+
+6 rows in set (0.00 sec)
+</code></pre>
+<p>看看看，插不进去，而且查看锁的时候会发现一个新的event_id，它多出来了个等待中的锁，lock_mode待会讲</p>
+<p>为什么6也被阻止了？试试看4</p>
+<pre><code class="language-sql">mysql&gt; insert into gap values(4,'随便吧');
+ERROR 1205 (HY000): Lock wait timeout exceeded; try restarting transaction
+</code></pre>
+<p>怎么4也插不进去了？？？？这就是next-lock在起作用了，让我们再看看锁定7-11会怎么样</p>
+<pre><code class="language-sql">mysql&gt; select * from gap where id between 7 and 11 for update;
++----+------+
+| id | name |
++----+------+
+|  7 | 王五 |
+|  8 | 赵四 |
+| 11 | 刘能 |
++----+------+
+3 rows in set (0.04 sec)
+
+mysql&gt; SELECT event_id,index_name,LOCK_TYPE,LOCK_MODE,LOCK_STATUS,LOCK_DATA FROM performance_schema.data_locks;
++----------+------------+-----------+---------------+-------------+------------------------+
+| event_id | index_name | LOCK_TYPE | LOCK_MODE     | LOCK_STATUS | LOCK_DATA              |
++----------+------------+-----------+---------------+-------------+------------------------+
+|       23 | NULL       | TABLE     | IX            | GRANTED     | NULL                   |
+|       23 | PRIMARY    | RECORD    | X,REC_NOT_GAP | GRANTED     | 7                      |
+|       23 | PRIMARY    | RECORD    | X             | GRANTED     | supremum pseudo-record |
+|       23 | PRIMARY    | RECORD    | X             | GRANTED     | 8                      |
+|       23 | PRIMARY    | RECORD    | X             | GRANTED     | 11                     |
++----------+------------+-----------+---------------+-------------+------------------------+
+5 rows in set (0.00 sec)
+</code></pre>
+<p>再插入4呢</p>
+<pre><code class="language-sql">mysql&gt; insert into gap values(4,'随便吧');
+Query OK, 1 row affected (0.01 sec)
+</code></pre>
+<p>成功了，why?那个lock_data的<code>supremum pseudo-record</code>是什么？</p>
+<p>好的让我们把三个锁串起来看吧，看看上文说的lock_mode的区别，假设有上个记录和当前记录分别是 <code>prev,cur</code></p>
+<table>
+<thead>
+<tr>
+<th>LOCK_MODE</th>
+<th>锁模式</th>
+<th>锁住的范围</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>X</td>
+<td>next-key lock</td>
+<td>(prev,cur]</td>
+</tr>
+<tr>
+<td>X,GAP</td>
+<td>gap lock</td>
+<td>(prev,cur)</td>
+</tr>
+<tr>
+<td>X,REC_NOT_GAP</td>
+<td>record lock</td>
+<td>cur</td>
+</tr>
+</tbody>
+</table>
+<p>X就代表了一个next-lock锁，他会锁住从它到上一个节点中间的所有记录，和gap非常像，区别是，gap并不会对当前记录加锁，而next-lock会，所以还记得开头怎么说的吗 <code>next-key lock = record lock + Gap lock</code>！</p>
+<p>那么它的缺点也是，把本来无辜的数据行也锁住了，比如上面的id=4就插不进去</p>
+<p><code>supremum pseudo-record</code> 中文翻译叫做，上限 虚拟记录，很直白，就是一个表示了上限的虚拟记录，当我们锁定7-11的时候，11已经是当前的最大记录了，因此他的后面就是这个虚拟记录，对他加next-key lock就可以保证从11到正无穷的区间都会被锁住</p>
+<p><s>总算快讲完了</s></p>
+<h3 id="insert-intention-locks">Insert Intention Locks</h3>
+<p>插入意向锁，其实和意向锁没关系，他更像是Gap锁的一个分支</p>
+<pre><code class="language-sql">|       11 | PRIMARY    | RECORD    | X,GAP,INSERT_INTENTION | WAITING     | 7         |
+</code></pre>
+<p>这是上文插入时，等待中的锁，这就是个插入意向锁，看他的LOCK_MODE其实和Gap差不多</p>
+<p>当有插入操作的时候，他会通过Gap先锁住当前要插入的区间，和Gap不同的是，Gap没有S和X的区别，同一区间的Gap是不会阻塞的，但当Gap变成了插入意向锁的时候就不一样了，因为插入操作一定是个互斥的X锁，所以如果当前区间已经存在了一个Gap锁或者Next-key锁的话他就会被阻塞，也就实现了对区间插入的限制</p>
+<h3 id="注意事项">注意事项</h3>
+<p>以上所有的测试都是建立在主键或者唯一索引的基础上，如果是个普通索引那么情况会有所不同，但其实区别不大，主要是record锁的区别，当我们通过where能够直接找到记录行的时候</p>
+<ul>
+<li>如果是通过唯一索引，那么只会有一个record类型的锁，并不会锁住其他区间</li>
+<li>如果是普通索引，那么他会给自己添加next-key锁以及它下一个索引记录添加gap锁，人话就是从 (prev,cur]，(cur,next)这两个区间都会被锁（next这个记录要和主键一起才能确定是否被锁）</li>
+</ul>
+<p>我们知道innoDB是聚簇索引，所以二级索引最终都是通过主键索引去访问数据的，也因此当我们查找到了主键索引后，会给主键索引添加一个record锁（X,REC_NOT_GAP），匹配到几个主键索引就添加几个，不会在主键上添加其他任何锁</p>
+<p>如果没有主键？不可能的小伙子，只是你没有显示指出主键而已，要存数据肯定是有个隐式的虚拟主键的</p>
+<h2 id="总结">总结</h2>
+<p>锁有两种模式，S和X，读写不兼容，表锁行锁都有；</p>
+<p>意向锁是为了减少扫描次数，当有IS和IX的时候肯定不能对表加X锁</p>
+<p>行锁的本质是record lock，但它只锁具体的行</p>
+<p>范围锁Gap的本质是对它下一个索引记录添加行锁（record锁），表示锁住这个区间</p>
+<p>next-key锁真的就是record和gap的结合，真的就是这个意思</p>
+<p>两章也只是讲了锁，下一章总算可以把事务和锁结合起来了</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Mysql 事务隔离等级和锁详解（一）]]></title>
         <id>http://blog.zerokirin.online/post/mysql-shi-wu-ge-chi-deng-ji-he-suo-xiang-jie-yi/</id>
@@ -2383,169 +3142,6 @@ FIN：终止比特，1bit，用来释放一个连接。当FIN=1 时，表明此�
 <p>G8 创建了 G9，假如 G8 进行了<strong>非阻塞系统调用</strong>。</p>
 <figure data-type="image" tabindex="16"><img src="https://cdn.learnku.com/uploads/images/202003/12/58489/zBvpl8ENSb.png!large" alt="11" loading="lazy"></figure>
 <p>M2 和 P2 会解绑，但 M2 会记住 P2，然后 G8 和 M2 进入系统调用状态。当 G8 和 M2 退出系统调用时，会尝试获取 P2，如果无法获取，则获取空闲的 P，如果依然没有，G8 会被记为可运行状态，并加入到全局队列，M2 因为没有 P 的绑定而变成休眠状态 (长时间休眠等待 GC 回收销毁)。</p>
-</li>
-</ol>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[go语法基础巩固（channel）]]></title>
-        <id>http://blog.zerokirin.online/post/go-yu-fa-ji-chu-gong-gu-channel/</id>
-        <link href="http://blog.zerokirin.online/post/go-yu-fa-ji-chu-gong-gu-channel/">
-        </link>
-        <updated>2021-03-20T21:37:01.000Z</updated>
-        <content type="html"><![CDATA[<h2 id="channel分为有缓冲和无缓冲">channel分为有缓冲和无缓冲</h2>
-<p>channel有两种定义方式</p>
-<pre><code class="language-go">var c1 = make(chan int) //无缓冲
-var c2 = make(chan int,n) //有缓冲
-close(c2)
-</code></pre>
-<ul>
-<li>对无缓冲的c1的操作是同步的
-<ul>
-<li>必须同时存在接收者和发送者才会执行，否则会阻塞</li>
-</ul>
-</li>
-<li>对有缓冲的c2是存在异步操作的
-<ul>
-<li>缓冲区满了则无法继续写入，进入阻塞，未满之前不阻塞程序</li>
-<li>缓冲区空了则无法读取，进入阻塞，没有空之前不阻塞</li>
-</ul>
-</li>
-</ul>
-<h2 id="close关闭一个channel">close关闭一个channel</h2>
-<ul>
-<li>不能对一个关闭了的，或者本来就未通过make()初始化的channel执行关闭操作，会panic</li>
-<li>关闭channel在某种角度上讲只是不允许继续写入，对于已经存入缓冲的数据还是可以读取的</li>
-</ul>
-<pre><code class="language-go">func main() {
-	c1 := make(chan int, 5)
-	for i := 0; i &lt; 5; i++ {
-		c1 &lt;- i
-	}
-	close(c1)
-	for i := 0; i &lt; 6; i++ {
-		m, ok := &lt;-c1
-		fmt.Println(m, ok)
-	}
-}
-//结果：
-//0 true
-//1 true
-//2 true
-//3 true
-//4 true
-//0 false， 只有到这一步才因为没有数据而返回了默认的零值
-</code></pre>
-<p>总结一下：</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:center">操作\对象</th>
-<th style="text-align:center">nil channel</th>
-<th style="text-align:center">closed channel</th>
-<th style="text-align:center">not nil, not closed channel</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">close</td>
-<td style="text-align:center">panic</td>
-<td style="text-align:center">panic</td>
-<td style="text-align:center">正常关闭</td>
-</tr>
-<tr>
-<td style="text-align:center">读 &lt;- ch</td>
-<td style="text-align:center">阻塞</td>
-<td style="text-align:center">读到对应类型的零值</td>
-<td style="text-align:center">阻塞或正常读取数据。缓冲型 channel 为空或非缓冲型 channel 没有等待发送者时会阻塞</td>
-</tr>
-<tr>
-<td style="text-align:center">写 ch &lt;-</td>
-<td style="text-align:center">阻塞</td>
-<td style="text-align:center">panic</td>
-<td style="text-align:center">阻塞或正常写入数据。非缓冲型 channel 没有等待接收者或缓冲型 channel buf 满时会被阻塞</td>
-</tr>
-</tbody>
-</table>
-<h2 id="channel的实现原理">channel的实现原理</h2>
-<blockquote>
-<p><a href="https://segmentfault.com/a/1190000019839546">深度解密Go语言之channel - SegmentFault 思否</a></p>
-</blockquote>
-<p>以下内容均为个人转述总结，仅作笔记使用，参考出处如上</p>
-<h3 id="channel结构">channel结构</h3>
-<pre><code class="language-go">type hchan struct {
-    // chan 里元素数量
-    qcount   uint
-    // chan 底层循环数组的长度
-    dataqsiz uint
-    // 指向底层循环数组的指针
-    // 只针对有缓冲的 channel
-    buf      unsafe.Pointer
-    // chan 中元素大小
-    elemsize uint16
-    // chan 是否被关闭的标志
-    closed   uint32
-    // chan 中元素类型
-    elemtype *_type // element type
-    // 已发送元素在循环数组中的索引
-    sendx    uint   // send index
-    // 已接收元素在循环数组中的索引
-    recvx    uint   // receive index
-    // 等待接收的 goroutine 队列
-    recvq    waitq  // list of recv waiters
-    // 等待发送的 goroutine 队列
-    sendq    waitq  // list of send waiters
-
-    // 保护 hchan 中所有字段
-    lock mutex
-}
-
-type waitq struct {
-    first *sudog //对goroutine的封装
-    last  *sudog //对goroutine的封装
-}
-</code></pre>
-<p>和map一样，底层实际上是一个hchan结构体，调用了makechan()来创建channel，根据创建的时候是否有缓冲决定了buf指针是否有意义，sendx和recvx均为缓冲数组服务</p>
-<pre><code class="language-go">func goroutine(a &lt;-chan int) {
-    val := &lt;- a
-    fmt.Println(&quot;received data: &quot;, val)
-    return
-}
-func main(){
-	var ch = make(chan int, 10)
-    go goroutine(ch) //隐式转换为只读channel
-    go goroutine(ch) //隐式转换为只读channel
-    time.Sleep(time.Second)
-}
-
-</code></pre>
-<p>上面go出去了两个读取ch的goroutine，所以此时接收队列应该是两个，结构如下（图源参考文章）</p>
-<figure data-type="image" tabindex="1"><img src="https://image-static.segmentfault.com/311/648/3116484337-5d35b2f0069a8_article732" alt="recvq" loading="lazy"></figure>
-<p>可以看到G1，G2其实就是个sudog结构的双向循环列表，recvq分别通过first和last指向了头尾</p>
-<p>发送队列也是个wait结构，因此和接收队列几乎一致</p>
-<h3 id="写入">写入</h3>
-<ol>
-<li>
-<p>先判断是否有接收队列，如果有则直接拷贝到接收队列中，不复制到buf</p>
-</li>
-<li>
-<p>对于有缓冲的channel，若还有空间，则将数据拷贝到buf中，同时更改相应的index</p>
-</li>
-<li>
-<p>若没有空间或非缓冲则阻塞，然后创建一个sudog（sudog实际上是goroutine的封装，因此新的sudog实际就是包括了执行函数的这个goroutine</p>
-<p>将新的sudog加入发送队列，当前goroutine被系统挂起，等待接受进程唤醒</p>
-</li>
-</ol>
-<h3 id="读取">读取</h3>
-<ol>
-<li>
-<p>先判断是否有缓冲，若无缓冲则直接从发送者的栈拷贝到接收者的栈，发送者是通过遍历sendq找到的</p>
-</li>
-<li>
-<p>若有缓冲则从buf所指的空间拷贝数据（只要不为空就会一直有数据写入，不会有主动寻找sendq的时机）</p>
-</li>
-<li>
-<p>若没有数据则将自己挂起到接收队列等待被发送进程找到，也是创建一个sudog</p>
 </li>
 </ol>
 ]]></content>
