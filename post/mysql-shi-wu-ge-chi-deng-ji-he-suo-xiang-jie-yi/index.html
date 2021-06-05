@@ -16,7 +16,7 @@ durability 持久性
 <link rel="preload" as="script" href="https://cdn.ampproject.org/v0.js">
 <link rel="preconnect dns-prefetch" href="https://cdn.jsdelivr.net/" crossorigin>
 <script async src="https://cdn.ampproject.org/v0.js"></script>
-<title>Mysql 事务隔离等级和锁详解（一） | Zer0kiriN</title>
+<title>Mysql 并发控制详解（一） | Zer0kiriN</title>
 
 
   
@@ -2210,11 +2210,11 @@ durability 持久性
 <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style>
 <noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
 <link rel="canonical" href="http://blog.zerokirin.online/post/mysql-shi-wu-ge-chi-deng-ji-he-suo-xiang-jie-yi/" />
-<link rel="shortcut icon" href="http://blog.zerokirin.online/favicon.ico?v=1622892702481">
+<link rel="shortcut icon" href="http://blog.zerokirin.online/favicon.ico?v=1622922474820">
 
 <meta name="author" content="破庙主任">
 
-<meta itemprop="name" content="Mysql 事务隔离等级和锁详解（一） | Zer0kiriN">
+<meta itemprop="name" content="Mysql 并发控制详解（一） | Zer0kiriN">
 <meta itemprop="description" content="一致性
 我们都知道数据库原理中著名的ACID
 
@@ -2227,7 +2227,7 @@ durability 持久性
 <meta itemprop="image" content="">
 
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Mysql 事务隔离等级和锁详解（一） | Zer0kiriN">
+<meta name="twitter:title" content="Mysql 并发控制详解（一） | Zer0kiriN">
 <meta name="twitter:description" content="一致性
 我们都知道数据库原理中著名的ACID
 
@@ -2238,12 +2238,12 @@ durability 持久性
 
 这其中一致性是通过原子性和隔离性保证的，如何保证一致性是数据库的最重要的...">
 <meta name="twitter:image" content="" />
-<meta name="twitter:image:alt" content="Mysql 事务隔离等级和锁详解（一） | Zer0kiriN" />
+<meta name="twitter:image:alt" content="Mysql 并发控制详解（一） | Zer0kiriN" />
 
 
 <meta property="og:type" content="website">
 <meta property="og:url" content="http://blog.zerokirin.online/post/mysql-shi-wu-ge-chi-deng-ji-he-suo-xiang-jie-yi/">
-<meta property="og:title" content="Mysql 事务隔离等级和锁详解（一） | Zer0kiriN">
+<meta property="og:title" content="Mysql 并发控制详解（一） | Zer0kiriN">
 <meta property="og:description" content="一致性
 我们都知道数据库原理中著名的ACID
 
@@ -2254,10 +2254,10 @@ durability 持久性
 
 这其中一致性是通过原子性和隔离性保证的，如何保证一致性是数据库的最重要的...">
 <meta property="og:image" content="">
-<meta property="og:image:alt" content="Mysql 事务隔离等级和锁详解（一） | Zer0kiriN" />
+<meta property="og:image:alt" content="Mysql 并发控制详解（一） | Zer0kiriN" />
 <meta property="og:site_name" content="Zer0kiriN">
 <meta property="og:locale" content="zh_CN">
-<meta property="tag" content="Mysql 事务隔离等级和锁详解（一） | Zer0kiriN" />
+<meta property="tag" content="Mysql 并发控制详解（一） | Zer0kiriN" />
 
 
 <script type="application/ld+json">
@@ -2268,7 +2268,7 @@ durability 持久性
   "@type": "WebPage",
   "@id": "http://blog.zerokirin.online/post/mysql-shi-wu-ge-chi-deng-ji-he-suo-xiang-jie-yi/"
 },
-"headline": "Mysql 事务隔离等级和锁详解（一） | Zer0kiriN",
+"headline": "Mysql 并发控制详解（一） | Zer0kiriN",
 "datePublished": "Sat May 29 2021 03:12:08 GMT+0800",
 "dateModified": "Sat May 29 2021 03:12:08 GMT+0800",
 "author": {
@@ -2310,7 +2310,7 @@ durability 持久性
     },{
       "@type": "ListItem", 
       "position": 2, 
-      "name": "Mysql 事务隔离等级和锁详解（一） | Zer0kiriN",
+      "name": "Mysql 并发控制详解（一） | Zer0kiriN",
       "item": "http://blog.zerokirin.online/post/mysql-shi-wu-ge-chi-deng-ji-he-suo-xiang-jie-yi/"  
     }]
   }
@@ -2333,7 +2333,7 @@ durability 持久性
 
 <script async custom-element="amp-gist" src="https://cdn.ampproject.org/v0/amp-gist-0.1.js"></script>
 
-<link rel="alternate" type="application/atom+xml" title="Mysql 事务隔离等级和锁详解（一） | Zer0kiriN - Atom Feed" href="http://blog.zerokirin.online/atom.xml">
+<link rel="alternate" type="application/atom+xml" title="Mysql 并发控制详解（一） | Zer0kiriN - Atom Feed" href="http://blog.zerokirin.online/atom.xml">
 
 
 
@@ -2389,10 +2389,10 @@ durability 持久性
       <div class="article-info">
         
           <div class="flex-box meta-category">
-            <a class="post-cate" href="http://blog.zerokirin.online/tag/RifrudM78/">事务隔离等级</a></div>
+            <a class="post-cate" href="http://blog.zerokirin.online/tag/dc4Gx9uLG/">丢失修改</a></div>
           
         <h2 class="article-title">
-          <a href="http://blog.zerokirin.online/post/mysql-shi-wu-ge-chi-deng-ji-he-suo-xiang-jie-yi/">Mysql 事务隔离等级和锁详解（一）</a>
+          <a href="http://blog.zerokirin.online/post/mysql-shi-wu-ge-chi-deng-ji-he-suo-xiang-jie-yi/">Mysql 并发控制详解（一）</a>
         </h2>
         <div class="flex-box">
           <div class="flex-box post-meta-box">
@@ -2416,13 +2416,134 @@ durability 持久性
 </ul>
 <p>这其中一致性是通过原子性和隔离性保证的，如何保证一致性是数据库的最重要的问题，这是一切的开头</p>
 <h2 id="并发一致性问题">并发一致性问题</h2>
-<p>这里借用下<a href="http://cyc2018.gitee.io/cs-notes/#/notes/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86">CS-Notes (gitee.io)</a>，过程就不写文字了，图很清楚</p>
+<p>这里借用下<a href="http://cyc2018.gitee.io/cs-notes/#/notes/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86">CS-Notes (gitee.io)</a>的图，图很清楚，但是有几个地方有明显问题</p>
 <h3 id="丢失修改">丢失修改</h3>
-<figure data-type="image" tabindex="1"><img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/image-20191207221744244.png" alt="img" loading="lazy"></figure>
+<p>emmm丢失修改有两类，名字很粗暴的叫做第一类和第二类</p>
+<ul>
+<li>
+<p>第一类丢失修改，当前所有的主流数据库都不允许这件事发生，如果事务A回滚了，那么数据库的最新版本就是1100元</p>
+<p>（这个我也不知道数据库是怎么实现的，我已经尽可能地搜了(中-english)，但是都是干巴巴的一句话，说什么即便是最低的读未提交也不会这样，那就把它当个特性吧，反正他已经消失在历史舞台了）</p>
+<table>
+<thead>
+<tr>
+<th>时间</th>
+<th>取款事务A</th>
+<th>转账事务B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>T1</td>
+<td><strong>开始事务</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>T2</td>
+<td></td>
+<td><strong>开始事务</strong></td>
+</tr>
+<tr>
+<td>T3</td>
+<td>查询账户余额为1000元</td>
+<td></td>
+</tr>
+<tr>
+<td>T4</td>
+<td></td>
+<td>查询账户余额为1000元</td>
+</tr>
+<tr>
+<td>T5</td>
+<td></td>
+<td>汇入100元把余额改为1100元</td>
+</tr>
+<tr>
+<td>T6</td>
+<td></td>
+<td><strong>提交事务</strong></td>
+</tr>
+<tr>
+<td>T7</td>
+<td>取出100元把余额改为900元</td>
+<td></td>
+</tr>
+<tr>
+<td>T8</td>
+<td><strong>撤销事务</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>T9</td>
+<td>余额恢复为1000 元（<strong>丢失更新</strong>）</td>
+<td>（这个不会发生，回滚了也是1100）</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>第二类丢失修改，严格来说这个不能算是数据库自身的bug，更像是不可重复读的一个特殊例子，但也不能算作是不可重复读，这里先描述现象，后面我们再详解</p>
+<table>
+<thead>
+<tr>
+<th>时间</th>
+<th>转账事务A</th>
+<th>取款事务B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>T1</td>
+<td></td>
+<td><strong>开始事务</strong></td>
+</tr>
+<tr>
+<td>T2</td>
+<td><strong>开始事务</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>T3</td>
+<td></td>
+<td>查询账户余额为1000元</td>
+</tr>
+<tr>
+<td>T4</td>
+<td>查询账户余额为1000元</td>
+<td></td>
+</tr>
+<tr>
+<td>T5</td>
+<td></td>
+<td>取出100元把余额改为900元</td>
+</tr>
+<tr>
+<td>T6</td>
+<td></td>
+<td><strong>提交事务</strong></td>
+</tr>
+<tr>
+<td>T7</td>
+<td>汇入100元</td>
+<td></td>
+</tr>
+<tr>
+<td>T8</td>
+<td><strong>提交事务</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>T9</td>
+<td><strong>把余额改为1100</strong> <strong>元（丢失更新）</strong></td>
+<td>（这个是真的会变成1100，白嫖100）</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
 <h3 id="读脏数据">读脏数据</h3>
-<figure data-type="image" tabindex="2"><img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/image-20191207221920368.png" alt="img" loading="lazy"></figure>
+<figure data-type="image" tabindex="1"><img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/image-20191207221920368.png" alt="img" loading="lazy"></figure>
 <h3 id="不可重复读">不可重复读</h3>
-<figure data-type="image" tabindex="3"><img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/image-20191207222102010.png" alt="img" loading="lazy"></figure>
+<figure data-type="image" tabindex="2"><img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/image-20191207222102010.png" alt="img" loading="lazy"></figure>
 <h3 id="幻影读">幻影读</h3>
 <table>
 <thead>
@@ -2571,27 +2692,27 @@ mysql&gt; select * from gap;
 <tbody>
 <tr>
 <td style="text-align:center">读未提交</td>
-<td>幻影读，不可重复读，读脏数据</td>
-<td style="text-align:right">丢失修改</td>
+<td>幻影读，不可重复读，读脏数据，第二类丢失修改</td>
+<td style="text-align:right">第一类丢失修改</td>
 </tr>
 <tr>
 <td style="text-align:center">读已提交</td>
-<td>幻影读，不可重复读</td>
-<td style="text-align:right">读脏数据，丢失修改</td>
+<td>幻影读，不可重复读，第二类丢失修改</td>
+<td style="text-align:right">读脏数据，第一类丢失修改</td>
 </tr>
 <tr>
 <td style="text-align:center">可重复读</td>
-<td>幻影读</td>
-<td style="text-align:right">不可重复读，读脏数据，丢失修改</td>
+<td>幻影读，第二类丢失修改（具体类型具体分析）</td>
+<td style="text-align:right">不可重复读，读脏数据，第一类丢失修改</td>
 </tr>
 <tr>
 <td style="text-align:center">串行化</td>
-<td>串行化已经不是并行了，自然没问题</td>
-<td style="text-align:right">幻影读，不可重复读，读脏数据，丢失修改</td>
+<td></td>
+<td style="text-align:right">幻影读，不可重复读，读脏数据，两类丢失修改</td>
 </tr>
 </tbody>
 </table>
-<p>暂时先不要关注隔离等级，让我们先了解下实现他们的前置知识——锁</p>
+<p>暂时先不要关注隔离等级，让我们先了解下实现他们的前置知识——锁和MVCC</p>
 
       </div>
 
@@ -2599,7 +2720,7 @@ mysql&gt; select * from gap;
       <nav class="post-nav">
         
         <div class="nav-previous">
-          <a class="post-nav-link-active" title="Mysql事务隔离等级和锁详解（二）" href="http://blog.zerokirin.online/post/mysql-shi-wu-ge-chi-deng-ji-he-suo-xiang-jie-er/">上一篇文章</a>
+          <a class="post-nav-link-active" title="Mysql 并发控制详解（二）——锁" href="http://blog.zerokirin.online/post/mysql-shi-wu-ge-chi-deng-ji-he-suo-xiang-jie-er/">上一篇文章</a>
         </div>
         
         
@@ -2644,9 +2765,15 @@ mysql&gt; select * from gap;
 
       <div class="post-tags">
         
-        <a href="http://blog.zerokirin.online/tag/RifrudM78/" rel="tag">事务隔离等级</a>        
+        <a href="http://blog.zerokirin.online/tag/dc4Gx9uLG/" rel="tag">丢失修改</a>        
         
-        <a href="http://blog.zerokirin.online/tag/tz57oQkTRp/" rel="tag">并发一致性问题</a>        
+        <a href="http://blog.zerokirin.online/tag/hI-pOeKlB2/" rel="tag">脏读</a>        
+        
+        <a href="http://blog.zerokirin.online/tag/IFNiHkHN6k/" rel="tag">幻影读</a>        
+        
+        <a href="http://blog.zerokirin.online/tag/1AHUHZuG3U/" rel="tag">不可重复读</a>        
+        
+        <a href="http://blog.zerokirin.online/tag/RifrudM78/" rel="tag">事务隔离等级</a>        
         
         <a href="http://blog.zerokirin.online/tag/M3QtfYt2dg/" rel="tag">mysql</a>        
                
@@ -2661,7 +2788,7 @@ mysql&gt; select * from gap;
   <aside id="profile-2" class="widget widget_profile">
     <div class="profile-box">
       <div class="profile-avatar">
-        <amp-img src="http://blog.zerokirin.online/images/avatar.png?v=1622892702481" alt="avatar"
+        <amp-img src="http://blog.zerokirin.online/images/avatar.png?v=1622922474820" alt="avatar"
           layout="fill"></amp-img>
       </div>
       <div class="profile-content">
@@ -2691,19 +2818,19 @@ mysql&gt; select * from gap;
           
             
           <li>
-           <a href="http://blog.zerokirin.online/post/mysql-mvcc-qian-xi/" aria-current="page">Mysql Mvcc浅析</a>
+           <a href="http://blog.zerokirin.online/post/mysql-mvcc-qian-xi/" aria-current="page">Mysql 并发控制详解（三）——MVCC</a>
           </li>
           
           
             
           <li>
-           <a href="http://blog.zerokirin.online/post/mysql-shi-wu-ge-chi-deng-ji-he-suo-xiang-jie-er/" aria-current="page">Mysql事务隔离等级和锁详解（二）</a>
+           <a href="http://blog.zerokirin.online/post/mysql-shi-wu-ge-chi-deng-ji-he-suo-xiang-jie-er/" aria-current="page">Mysql 并发控制详解（二）——锁</a>
           </li>
           
           
             
           <li>
-           <a href="http://blog.zerokirin.online/post/mysql-shi-wu-ge-chi-deng-ji-he-suo-xiang-jie-yi/" aria-current="page">Mysql 事务隔离等级和锁详解（一）</a>
+           <a href="http://blog.zerokirin.online/post/mysql-shi-wu-ge-chi-deng-ji-he-suo-xiang-jie-yi/" aria-current="page">Mysql 并发控制详解（一）</a>
           </li>
           
           
@@ -2792,8 +2919,20 @@ mysql&gt; select * from gap;
               mysql
             </a>
             
-              <li class="cat-item"><a href="http://blog.zerokirin.online/tag/tz57oQkTRp/">
-              并发一致性问题
+              <li class="cat-item"><a href="http://blog.zerokirin.online/tag/dc4Gx9uLG/">
+              丢失修改
+            </a>
+            
+              <li class="cat-item"><a href="http://blog.zerokirin.online/tag/hI-pOeKlB2/">
+              脏读
+            </a>
+            
+              <li class="cat-item"><a href="http://blog.zerokirin.online/tag/IFNiHkHN6k/">
+              幻影读
+            </a>
+            
+              <li class="cat-item"><a href="http://blog.zerokirin.online/tag/1AHUHZuG3U/">
+              不可重复读
             </a>
             
               <li class="cat-item"><a href="http://blog.zerokirin.online/tag/QlWdPOjLh/">

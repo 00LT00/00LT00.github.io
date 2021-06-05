@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>http://blog.zerokirin.online</id>
     <title>Zer0kiriN</title>
-    <updated>2021-06-05T11:31:47.611Z</updated>
+    <updated>2021-06-05T19:50:12.508Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="http://blog.zerokirin.online"/>
     <link rel="self" href="http://blog.zerokirin.online/atom.xml"/>
@@ -11,14 +11,13 @@
     <icon>http://blog.zerokirin.online/favicon.ico</icon>
     <rights>All rights reserved 2021, Zer0kiriN</rights>
     <entry>
-        <title type="html"><![CDATA[Mysql Mvcc浅析]]></title>
+        <title type="html"><![CDATA[Mysql 并发控制详解（三）——MVCC]]></title>
         <id>http://blog.zerokirin.online/post/mysql-mvcc-qian-xi/</id>
         <link href="http://blog.zerokirin.online/post/mysql-mvcc-qian-xi/">
         </link>
         <updated>2021-06-05T11:29:19.000Z</updated>
         <content type="html"><![CDATA[<h2 id="multi-version-concurrency-control">Multi-version concurrency control</h2>
-<p>多版本并发控制，一看这名字就知道和事务脱不了关系，所以本文也是上一篇文章的重要补充</p>
-<p>首先我们先来问个问题，为什么要用MVCC？</p>
+<p>多版本并发控制，首先我们先来问个问题，为什么要用MVCC？</p>
 <p>我们都知道mysql有四个事务隔离等级</p>
 <ul>
 <li>
@@ -105,7 +104,7 @@
 ]]></content>
     </entry>
     <entry>
-        <title type="html"><![CDATA[Mysql事务隔离等级和锁详解（二）]]></title>
+        <title type="html"><![CDATA[Mysql 并发控制详解（二）——锁]]></title>
         <id>http://blog.zerokirin.online/post/mysql-shi-wu-ge-chi-deng-ji-he-suo-xiang-jie-er/</id>
         <link href="http://blog.zerokirin.online/post/mysql-shi-wu-ge-chi-deng-ji-he-suo-xiang-jie-er/">
         </link>
@@ -860,11 +859,11 @@ Query OK, 1 row affected (0.01 sec)
 <p>行锁的本质是record lock，但它只锁具体的行</p>
 <p>范围锁Gap的本质是对它下一个索引记录添加行锁（record锁），表示锁住这个区间</p>
 <p>next-key锁真的就是record和gap的结合，真的就是这个意思</p>
-<p>两章也只是讲了锁，下一章总算可以把事务和锁结合起来了</p>
+<p>两章也只是讲了锁，下一章还有个关键内容——MVCC</p>
 ]]></content>
     </entry>
     <entry>
-        <title type="html"><![CDATA[Mysql 事务隔离等级和锁详解（一）]]></title>
+        <title type="html"><![CDATA[Mysql 并发控制详解（一）]]></title>
         <id>http://blog.zerokirin.online/post/mysql-shi-wu-ge-chi-deng-ji-he-suo-xiang-jie-yi/</id>
         <link href="http://blog.zerokirin.online/post/mysql-shi-wu-ge-chi-deng-ji-he-suo-xiang-jie-yi/">
         </link>
@@ -879,13 +878,134 @@ Query OK, 1 row affected (0.01 sec)
 </ul>
 <p>这其中一致性是通过原子性和隔离性保证的，如何保证一致性是数据库的最重要的问题，这是一切的开头</p>
 <h2 id="并发一致性问题">并发一致性问题</h2>
-<p>这里借用下<a href="http://cyc2018.gitee.io/cs-notes/#/notes/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86">CS-Notes (gitee.io)</a>，过程就不写文字了，图很清楚</p>
+<p>这里借用下<a href="http://cyc2018.gitee.io/cs-notes/#/notes/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86">CS-Notes (gitee.io)</a>的图，图很清楚，但是有几个地方有明显问题</p>
 <h3 id="丢失修改">丢失修改</h3>
-<figure data-type="image" tabindex="1"><img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/image-20191207221744244.png" alt="img" loading="lazy"></figure>
+<p>emmm丢失修改有两类，名字很粗暴的叫做第一类和第二类</p>
+<ul>
+<li>
+<p>第一类丢失修改，当前所有的主流数据库都不允许这件事发生，如果事务A回滚了，那么数据库的最新版本就是1100元</p>
+<p>（这个我也不知道数据库是怎么实现的，我已经尽可能地搜了(中-english)，但是都是干巴巴的一句话，说什么即便是最低的读未提交也不会这样，那就把它当个特性吧，反正他已经消失在历史舞台了）</p>
+<table>
+<thead>
+<tr>
+<th>时间</th>
+<th>取款事务A</th>
+<th>转账事务B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>T1</td>
+<td><strong>开始事务</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>T2</td>
+<td></td>
+<td><strong>开始事务</strong></td>
+</tr>
+<tr>
+<td>T3</td>
+<td>查询账户余额为1000元</td>
+<td></td>
+</tr>
+<tr>
+<td>T4</td>
+<td></td>
+<td>查询账户余额为1000元</td>
+</tr>
+<tr>
+<td>T5</td>
+<td></td>
+<td>汇入100元把余额改为1100元</td>
+</tr>
+<tr>
+<td>T6</td>
+<td></td>
+<td><strong>提交事务</strong></td>
+</tr>
+<tr>
+<td>T7</td>
+<td>取出100元把余额改为900元</td>
+<td></td>
+</tr>
+<tr>
+<td>T8</td>
+<td><strong>撤销事务</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>T9</td>
+<td>余额恢复为1000 元（<strong>丢失更新</strong>）</td>
+<td>（这个不会发生，回滚了也是1100）</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>第二类丢失修改，严格来说这个不能算是数据库自身的bug，更像是不可重复读的一个特殊例子，但也不能算作是不可重复读，这里先描述现象，后面我们再详解</p>
+<table>
+<thead>
+<tr>
+<th>时间</th>
+<th>转账事务A</th>
+<th>取款事务B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>T1</td>
+<td></td>
+<td><strong>开始事务</strong></td>
+</tr>
+<tr>
+<td>T2</td>
+<td><strong>开始事务</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>T3</td>
+<td></td>
+<td>查询账户余额为1000元</td>
+</tr>
+<tr>
+<td>T4</td>
+<td>查询账户余额为1000元</td>
+<td></td>
+</tr>
+<tr>
+<td>T5</td>
+<td></td>
+<td>取出100元把余额改为900元</td>
+</tr>
+<tr>
+<td>T6</td>
+<td></td>
+<td><strong>提交事务</strong></td>
+</tr>
+<tr>
+<td>T7</td>
+<td>汇入100元</td>
+<td></td>
+</tr>
+<tr>
+<td>T8</td>
+<td><strong>提交事务</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>T9</td>
+<td><strong>把余额改为1100</strong> <strong>元（丢失更新）</strong></td>
+<td>（这个是真的会变成1100，白嫖100）</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
 <h3 id="读脏数据">读脏数据</h3>
-<figure data-type="image" tabindex="2"><img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/image-20191207221920368.png" alt="img" loading="lazy"></figure>
+<figure data-type="image" tabindex="1"><img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/image-20191207221920368.png" alt="img" loading="lazy"></figure>
 <h3 id="不可重复读">不可重复读</h3>
-<figure data-type="image" tabindex="3"><img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/image-20191207222102010.png" alt="img" loading="lazy"></figure>
+<figure data-type="image" tabindex="2"><img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/image-20191207222102010.png" alt="img" loading="lazy"></figure>
 <h3 id="幻影读">幻影读</h3>
 <table>
 <thead>
@@ -1034,27 +1154,27 @@ mysql&gt; select * from gap;
 <tbody>
 <tr>
 <td style="text-align:center">读未提交</td>
-<td>幻影读，不可重复读，读脏数据</td>
-<td style="text-align:right">丢失修改</td>
+<td>幻影读，不可重复读，读脏数据，第二类丢失修改</td>
+<td style="text-align:right">第一类丢失修改</td>
 </tr>
 <tr>
 <td style="text-align:center">读已提交</td>
-<td>幻影读，不可重复读</td>
-<td style="text-align:right">读脏数据，丢失修改</td>
+<td>幻影读，不可重复读，第二类丢失修改</td>
+<td style="text-align:right">读脏数据，第一类丢失修改</td>
 </tr>
 <tr>
 <td style="text-align:center">可重复读</td>
-<td>幻影读</td>
-<td style="text-align:right">不可重复读，读脏数据，丢失修改</td>
+<td>幻影读，第二类丢失修改（具体类型具体分析）</td>
+<td style="text-align:right">不可重复读，读脏数据，第一类丢失修改</td>
 </tr>
 <tr>
 <td style="text-align:center">串行化</td>
-<td>串行化已经不是并行了，自然没问题</td>
-<td style="text-align:right">幻影读，不可重复读，读脏数据，丢失修改</td>
+<td></td>
+<td style="text-align:right">幻影读，不可重复读，读脏数据，两类丢失修改</td>
 </tr>
 </tbody>
 </table>
-<p>暂时先不要关注隔离等级，让我们先了解下实现他们的前置知识——锁</p>
+<p>暂时先不要关注隔离等级，让我们先了解下实现他们的前置知识——锁和MVCC</p>
 ]]></content>
     </entry>
     <entry>

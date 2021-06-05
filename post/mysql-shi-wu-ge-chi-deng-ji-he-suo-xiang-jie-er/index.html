@@ -12,7 +12,7 @@ Intention Locks 意..." />
 <link rel="preload" as="script" href="https://cdn.ampproject.org/v0.js">
 <link rel="preconnect dns-prefetch" href="https://cdn.jsdelivr.net/" crossorigin>
 <script async src="https://cdn.ampproject.org/v0.js"></script>
-<title>Mysql事务隔离等级和锁详解（二） | Zer0kiriN</title>
+<title>Mysql 并发控制详解（二）——锁 | Zer0kiriN</title>
 
 
   
@@ -2206,11 +2206,11 @@ Intention Locks 意..." />
 <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style>
 <noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
 <link rel="canonical" href="http://blog.zerokirin.online/post/mysql-shi-wu-ge-chi-deng-ji-he-suo-xiang-jie-er/" />
-<link rel="shortcut icon" href="http://blog.zerokirin.online/favicon.ico?v=1622892702481">
+<link rel="shortcut icon" href="http://blog.zerokirin.online/favicon.ico?v=1622922474820">
 
 <meta name="author" content="破庙主任">
 
-<meta itemprop="name" content="Mysql事务隔离等级和锁详解（二） | Zer0kiriN">
+<meta itemprop="name" content="Mysql 并发控制详解（二）——锁 | Zer0kiriN">
 <meta itemprop="description" content="书接上回，我们罗列了一下事务隔离等级和并发一致性问题，那么这一章就让我们看看锁是怎么工作的，又是怎么和事务联系起来的
 官方文档如下：
 
@@ -2219,29 +2219,29 @@ Intention Locks 意...">
 <meta itemprop="image" content="">
 
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Mysql事务隔离等级和锁详解（二） | Zer0kiriN">
+<meta name="twitter:title" content="Mysql 并发控制详解（二）——锁 | Zer0kiriN">
 <meta name="twitter:description" content="书接上回，我们罗列了一下事务隔离等级和并发一致性问题，那么这一章就让我们看看锁是怎么工作的，又是怎么和事务联系起来的
 官方文档如下：
 
 Shared and Exclusive Locks 共享锁和独占锁
 Intention Locks 意...">
 <meta name="twitter:image" content="" />
-<meta name="twitter:image:alt" content="Mysql事务隔离等级和锁详解（二） | Zer0kiriN" />
+<meta name="twitter:image:alt" content="Mysql 并发控制详解（二）——锁 | Zer0kiriN" />
 
 
 <meta property="og:type" content="website">
 <meta property="og:url" content="http://blog.zerokirin.online/post/mysql-shi-wu-ge-chi-deng-ji-he-suo-xiang-jie-er/">
-<meta property="og:title" content="Mysql事务隔离等级和锁详解（二） | Zer0kiriN">
+<meta property="og:title" content="Mysql 并发控制详解（二）——锁 | Zer0kiriN">
 <meta property="og:description" content="书接上回，我们罗列了一下事务隔离等级和并发一致性问题，那么这一章就让我们看看锁是怎么工作的，又是怎么和事务联系起来的
 官方文档如下：
 
 Shared and Exclusive Locks 共享锁和独占锁
 Intention Locks 意...">
 <meta property="og:image" content="">
-<meta property="og:image:alt" content="Mysql事务隔离等级和锁详解（二） | Zer0kiriN" />
+<meta property="og:image:alt" content="Mysql 并发控制详解（二）——锁 | Zer0kiriN" />
 <meta property="og:site_name" content="Zer0kiriN">
 <meta property="og:locale" content="zh_CN">
-<meta property="tag" content="Mysql事务隔离等级和锁详解（二） | Zer0kiriN" />
+<meta property="tag" content="Mysql 并发控制详解（二）——锁 | Zer0kiriN" />
 
 
 <script type="application/ld+json">
@@ -2252,7 +2252,7 @@ Intention Locks 意...">
   "@type": "WebPage",
   "@id": "http://blog.zerokirin.online/post/mysql-shi-wu-ge-chi-deng-ji-he-suo-xiang-jie-er/"
 },
-"headline": "Mysql事务隔离等级和锁详解（二） | Zer0kiriN",
+"headline": "Mysql 并发控制详解（二）——锁 | Zer0kiriN",
 "datePublished": "Wed Jun 02 2021 04:50:18 GMT+0800",
 "dateModified": "Wed Jun 02 2021 04:50:18 GMT+0800",
 "author": {
@@ -2290,7 +2290,7 @@ Intention Locks 意..."
     },{
       "@type": "ListItem", 
       "position": 2, 
-      "name": "Mysql事务隔离等级和锁详解（二） | Zer0kiriN",
+      "name": "Mysql 并发控制详解（二）——锁 | Zer0kiriN",
       "item": "http://blog.zerokirin.online/post/mysql-shi-wu-ge-chi-deng-ji-he-suo-xiang-jie-er/"  
     }]
   }
@@ -2313,7 +2313,7 @@ Intention Locks 意..."
 
 <script async custom-element="amp-gist" src="https://cdn.ampproject.org/v0/amp-gist-0.1.js"></script>
 
-<link rel="alternate" type="application/atom+xml" title="Mysql事务隔离等级和锁详解（二） | Zer0kiriN - Atom Feed" href="http://blog.zerokirin.online/atom.xml">
+<link rel="alternate" type="application/atom+xml" title="Mysql 并发控制详解（二）——锁 | Zer0kiriN - Atom Feed" href="http://blog.zerokirin.online/atom.xml">
 
 
 
@@ -2372,7 +2372,7 @@ Intention Locks 意..."
             <a class="post-cate" href="http://blog.zerokirin.online/tag/o4wETGfLZ/">gap lock</a></div>
           
         <h2 class="article-title">
-          <a href="http://blog.zerokirin.online/post/mysql-shi-wu-ge-chi-deng-ji-he-suo-xiang-jie-er/">Mysql事务隔离等级和锁详解（二）</a>
+          <a href="http://blog.zerokirin.online/post/mysql-shi-wu-ge-chi-deng-ji-he-suo-xiang-jie-er/">Mysql 并发控制详解（二）——锁</a>
         </h2>
         <div class="flex-box">
           <div class="flex-box post-meta-box">
@@ -3136,7 +3136,7 @@ Query OK, 1 row affected (0.01 sec)
 <p>行锁的本质是record lock，但它只锁具体的行</p>
 <p>范围锁Gap的本质是对它下一个索引记录添加行锁（record锁），表示锁住这个区间</p>
 <p>next-key锁真的就是record和gap的结合，真的就是这个意思</p>
-<p>两章也只是讲了锁，下一章总算可以把事务和锁结合起来了</p>
+<p>两章也只是讲了锁，下一章还有个关键内容——MVCC</p>
 
       </div>
 
@@ -3144,12 +3144,12 @@ Query OK, 1 row affected (0.01 sec)
       <nav class="post-nav">
         
         <div class="nav-previous">
-          <a class="post-nav-link-active" title="Mysql Mvcc浅析" href="http://blog.zerokirin.online/post/mysql-mvcc-qian-xi/">上一篇文章</a>
+          <a class="post-nav-link-active" title="Mysql 并发控制详解（三）——MVCC" href="http://blog.zerokirin.online/post/mysql-mvcc-qian-xi/">上一篇文章</a>
         </div>
         
         
         <div class="nav-next">
-          <a class="post-nav-link-active" title="Mysql 事务隔离等级和锁详解（一）" href="http://blog.zerokirin.online/post/mysql-shi-wu-ge-chi-deng-ji-he-suo-xiang-jie-yi/">下一篇文章</a>
+          <a class="post-nav-link-active" title="Mysql 并发控制详解（一）" href="http://blog.zerokirin.online/post/mysql-shi-wu-ge-chi-deng-ji-he-suo-xiang-jie-yi/">下一篇文章</a>
           
 
         </div>
@@ -3216,7 +3216,7 @@ Query OK, 1 row affected (0.01 sec)
   <aside id="profile-2" class="widget widget_profile">
     <div class="profile-box">
       <div class="profile-avatar">
-        <amp-img src="http://blog.zerokirin.online/images/avatar.png?v=1622892702481" alt="avatar"
+        <amp-img src="http://blog.zerokirin.online/images/avatar.png?v=1622922474820" alt="avatar"
           layout="fill"></amp-img>
       </div>
       <div class="profile-content">
@@ -3246,19 +3246,19 @@ Query OK, 1 row affected (0.01 sec)
           
             
           <li>
-           <a href="http://blog.zerokirin.online/post/mysql-mvcc-qian-xi/" aria-current="page">Mysql Mvcc浅析</a>
+           <a href="http://blog.zerokirin.online/post/mysql-mvcc-qian-xi/" aria-current="page">Mysql 并发控制详解（三）——MVCC</a>
           </li>
           
           
             
           <li>
-           <a href="http://blog.zerokirin.online/post/mysql-shi-wu-ge-chi-deng-ji-he-suo-xiang-jie-er/" aria-current="page">Mysql事务隔离等级和锁详解（二）</a>
+           <a href="http://blog.zerokirin.online/post/mysql-shi-wu-ge-chi-deng-ji-he-suo-xiang-jie-er/" aria-current="page">Mysql 并发控制详解（二）——锁</a>
           </li>
           
           
             
           <li>
-           <a href="http://blog.zerokirin.online/post/mysql-shi-wu-ge-chi-deng-ji-he-suo-xiang-jie-yi/" aria-current="page">Mysql 事务隔离等级和锁详解（一）</a>
+           <a href="http://blog.zerokirin.online/post/mysql-shi-wu-ge-chi-deng-ji-he-suo-xiang-jie-yi/" aria-current="page">Mysql 并发控制详解（一）</a>
           </li>
           
           
@@ -3347,8 +3347,20 @@ Query OK, 1 row affected (0.01 sec)
               mysql
             </a>
             
-              <li class="cat-item"><a href="http://blog.zerokirin.online/tag/tz57oQkTRp/">
-              并发一致性问题
+              <li class="cat-item"><a href="http://blog.zerokirin.online/tag/dc4Gx9uLG/">
+              丢失修改
+            </a>
+            
+              <li class="cat-item"><a href="http://blog.zerokirin.online/tag/hI-pOeKlB2/">
+              脏读
+            </a>
+            
+              <li class="cat-item"><a href="http://blog.zerokirin.online/tag/IFNiHkHN6k/">
+              幻影读
+            </a>
+            
+              <li class="cat-item"><a href="http://blog.zerokirin.online/tag/1AHUHZuG3U/">
+              不可重复读
             </a>
             
               <li class="cat-item"><a href="http://blog.zerokirin.online/tag/QlWdPOjLh/">
