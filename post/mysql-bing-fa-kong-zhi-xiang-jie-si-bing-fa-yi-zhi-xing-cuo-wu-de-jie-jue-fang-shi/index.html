@@ -4,29 +4,19 @@
 <head>
   <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="内存分区
-一个应用程序在运行的时候会分出对应的区域
-
-
-text 代码区
-用于存放cpu执行的机器指令，只读
-
-
-data 数据区
-
-初始化后的全局变量
-初始化后的静态变量（包括全局和局部）
-常量
+<meta name="description" content="至此我们讲完了锁和MVCC，对数据库事务方面的理解应该更深了，还记得第一章我们讲的并发一致性问题吗，现在就让我们逐个分析
+（读未提交和第一类丢失修改就不了，这个暂时真没搞明白）
 
 
 
-bss 未初始化区
-
-未初始化的全局..." />
+隔离等级
+未解决的并发一致性问题
+解决的并发一致性问题
+..." />
 <link rel="preload" as="script" href="https://cdn.ampproject.org/v0.js">
 <link rel="preconnect dns-prefetch" href="https://cdn.jsdelivr.net/" crossorigin>
 <script async src="https://cdn.ampproject.org/v0.js"></script>
-<title>Golang 运行时（一） | Zer0kiriN</title>
+<title>Mysql 并发控制详解（四）——并发一致性错误的解决方式 | Zer0kiriN</title>
 
 
   
@@ -2219,85 +2209,55 @@ bss 未初始化区
 
 <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style>
 <noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
-<link rel="canonical" href="http://blog.zerokirin.online/post/golang-yun-xing-shi-yi/" />
+<link rel="canonical" href="http://blog.zerokirin.online/post/mysql-bing-fa-kong-zhi-xiang-jie-si-bing-fa-yi-zhi-xing-cuo-wu-de-jie-jue-fang-shi/" />
 <link rel="shortcut icon" href="http://blog.zerokirin.online/favicon.ico?v=1623038306600">
 
 <meta name="author" content="破庙主任">
 
-<meta itemprop="name" content="Golang 运行时（一） | Zer0kiriN">
-<meta itemprop="description" content="内存分区
-一个应用程序在运行的时候会分出对应的区域
-
-
-text 代码区
-用于存放cpu执行的机器指令，只读
-
-
-data 数据区
-
-初始化后的全局变量
-初始化后的静态变量（包括全局和局部）
-常量
+<meta itemprop="name" content="Mysql 并发控制详解（四）——并发一致性错误的解决方式 | Zer0kiriN">
+<meta itemprop="description" content="至此我们讲完了锁和MVCC，对数据库事务方面的理解应该更深了，还记得第一章我们讲的并发一致性问题吗，现在就让我们逐个分析
+（读未提交和第一类丢失修改就不了，这个暂时真没搞明白）
 
 
 
-bss 未初始化区
-
-未初始化的全局...">
+隔离等级
+未解决的并发一致性问题
+解决的并发一致性问题
+...">
 <meta itemprop="image" content="">
 
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Golang 运行时（一） | Zer0kiriN">
-<meta name="twitter:description" content="内存分区
-一个应用程序在运行的时候会分出对应的区域
-
-
-text 代码区
-用于存放cpu执行的机器指令，只读
-
-
-data 数据区
-
-初始化后的全局变量
-初始化后的静态变量（包括全局和局部）
-常量
+<meta name="twitter:title" content="Mysql 并发控制详解（四）——并发一致性错误的解决方式 | Zer0kiriN">
+<meta name="twitter:description" content="至此我们讲完了锁和MVCC，对数据库事务方面的理解应该更深了，还记得第一章我们讲的并发一致性问题吗，现在就让我们逐个分析
+（读未提交和第一类丢失修改就不了，这个暂时真没搞明白）
 
 
 
-bss 未初始化区
-
-未初始化的全局...">
+隔离等级
+未解决的并发一致性问题
+解决的并发一致性问题
+...">
 <meta name="twitter:image" content="" />
-<meta name="twitter:image:alt" content="Golang 运行时（一） | Zer0kiriN" />
+<meta name="twitter:image:alt" content="Mysql 并发控制详解（四）——并发一致性错误的解决方式 | Zer0kiriN" />
 
 
 <meta property="og:type" content="website">
-<meta property="og:url" content="http://blog.zerokirin.online/post/golang-yun-xing-shi-yi/">
-<meta property="og:title" content="Golang 运行时（一） | Zer0kiriN">
-<meta property="og:description" content="内存分区
-一个应用程序在运行的时候会分出对应的区域
-
-
-text 代码区
-用于存放cpu执行的机器指令，只读
-
-
-data 数据区
-
-初始化后的全局变量
-初始化后的静态变量（包括全局和局部）
-常量
+<meta property="og:url" content="http://blog.zerokirin.online/post/mysql-bing-fa-kong-zhi-xiang-jie-si-bing-fa-yi-zhi-xing-cuo-wu-de-jie-jue-fang-shi/">
+<meta property="og:title" content="Mysql 并发控制详解（四）——并发一致性错误的解决方式 | Zer0kiriN">
+<meta property="og:description" content="至此我们讲完了锁和MVCC，对数据库事务方面的理解应该更深了，还记得第一章我们讲的并发一致性问题吗，现在就让我们逐个分析
+（读未提交和第一类丢失修改就不了，这个暂时真没搞明白）
 
 
 
-bss 未初始化区
-
-未初始化的全局...">
+隔离等级
+未解决的并发一致性问题
+解决的并发一致性问题
+...">
 <meta property="og:image" content="">
-<meta property="og:image:alt" content="Golang 运行时（一） | Zer0kiriN" />
+<meta property="og:image:alt" content="Mysql 并发控制详解（四）——并发一致性错误的解决方式 | Zer0kiriN" />
 <meta property="og:site_name" content="Zer0kiriN">
 <meta property="og:locale" content="zh_CN">
-<meta property="tag" content="Golang 运行时（一） | Zer0kiriN" />
+<meta property="tag" content="Mysql 并发控制详解（四）——并发一致性错误的解决方式 | Zer0kiriN" />
 
 
 <script type="application/ld+json">
@@ -2306,11 +2266,11 @@ bss 未初始化区
 "@type": "BlogPosting",
 "mainEntityOfPage": {
   "@type": "WebPage",
-  "@id": "http://blog.zerokirin.online/post/golang-yun-xing-shi-yi/"
+  "@id": "http://blog.zerokirin.online/post/mysql-bing-fa-kong-zhi-xiang-jie-si-bing-fa-yi-zhi-xing-cuo-wu-de-jie-jue-fang-shi/"
 },
-"headline": "Golang 运行时（一） | Zer0kiriN",
-"datePublished": "Sat Apr 24 2021 00:36:28 GMT+0800",
-"dateModified": "Sat Apr 24 2021 00:36:28 GMT+0800",
+"headline": "Mysql 并发控制详解（四）——并发一致性错误的解决方式 | Zer0kiriN",
+"datePublished": "Mon Jun 07 2021 11:55:15 GMT+0800",
+"dateModified": "Mon Jun 07 2021 11:55:15 GMT+0800",
 "author": {
   "@type": "Person",
   "name": "破庙主任"
@@ -2326,25 +2286,15 @@ bss 未初始化区
 "image": [
 ""
 ],
-"description": "内存分区
-一个应用程序在运行的时候会分出对应的区域
-
-
-text 代码区
-用于存放cpu执行的机器指令，只读
-
-
-data 数据区
-
-初始化后的全局变量
-初始化后的静态变量（包括全局和局部）
-常量
+"description": "至此我们讲完了锁和MVCC，对数据库事务方面的理解应该更深了，还记得第一章我们讲的并发一致性问题吗，现在就让我们逐个分析
+（读未提交和第一类丢失修改就不了，这个暂时真没搞明白）
 
 
 
-bss 未初始化区
-
-未初始化的全局..."
+隔离等级
+未解决的并发一致性问题
+解决的并发一致性问题
+..."
  }
 
 </script>
@@ -2360,8 +2310,8 @@ bss 未初始化区
     },{
       "@type": "ListItem", 
       "position": 2, 
-      "name": "Golang 运行时（一） | Zer0kiriN",
-      "item": "http://blog.zerokirin.online/post/golang-yun-xing-shi-yi/"  
+      "name": "Mysql 并发控制详解（四）——并发一致性错误的解决方式 | Zer0kiriN",
+      "item": "http://blog.zerokirin.online/post/mysql-bing-fa-kong-zhi-xiang-jie-si-bing-fa-yi-zhi-xing-cuo-wu-de-jie-jue-fang-shi/"  
     }]
   }
   </script>
@@ -2383,7 +2333,7 @@ bss 未初始化区
 
 <script async custom-element="amp-gist" src="https://cdn.ampproject.org/v0/amp-gist-0.1.js"></script>
 
-<link rel="alternate" type="application/atom+xml" title="Golang 运行时（一） | Zer0kiriN - Atom Feed" href="http://blog.zerokirin.online/atom.xml">
+<link rel="alternate" type="application/atom+xml" title="Mysql 并发控制详解（四）——并发一致性错误的解决方式 | Zer0kiriN - Atom Feed" href="http://blog.zerokirin.online/atom.xml">
 
 
 
@@ -2439,16 +2389,16 @@ bss 未初始化区
       <div class="article-info">
         
           <div class="flex-box meta-category">
-            <a class="post-cate" href="http://blog.zerokirin.online/tag/FGxA9Oea-/">运行时</a></div>
+            <a class="post-cate" href="http://blog.zerokirin.online/tag/dc4Gx9uLG/">丢失修改</a></div>
           
         <h2 class="article-title">
-          <a href="http://blog.zerokirin.online/post/golang-yun-xing-shi-yi/">Golang 运行时（一）</a>
+          <a href="http://blog.zerokirin.online/post/mysql-bing-fa-kong-zhi-xiang-jie-si-bing-fa-yi-zhi-xing-cuo-wu-de-jie-jue-fang-shi/">Mysql 并发控制详解（四）——并发一致性错误的解决方式</a>
         </h2>
         <div class="flex-box">
           <div class="flex-box post-meta-box">
             <a class="post-meta" href="http://blog.zerokirin.online"><span
                 class="iconfont icon-mr-postmeta"></span>破庙主任</a>
-            <span class="post-meta"><span class="iconfont icon-mr-postmeta"></span>2021 年 04	月 24日</span>
+            <span class="post-meta"><span class="iconfont icon-mr-postmeta"></span>2021 年 06	月 7日</span>
             
 
 
@@ -2456,128 +2406,508 @@ bss 未初始化区
         </div>
       </div>
       <div class="content">
-        <h2 id="内存分区">内存分区</h2>
-<p>一个应用程序在运行的时候会分出对应的区域</p>
-<ol>
+        <p>至此我们讲完了锁和MVCC，对数据库事务方面的理解应该更深了，还记得第一章我们讲的并发一致性问题吗，现在就让我们逐个分析</p>
+<p><s>（读未提交和第一类丢失修改就不了，这个暂时真没搞明白）</s></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">隔离等级</th>
+<th>未解决的并发一致性问题</th>
+<th style="text-align:right">解决的并发一致性问题</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">读未提交</td>
+<td>幻影读，不可重复读，读脏数据，第二类丢失修改</td>
+<td style="text-align:right">第一类丢失修改</td>
+</tr>
+<tr>
+<td style="text-align:center">读已提交</td>
+<td>幻影读，不可重复读，第二类丢失修改</td>
+<td style="text-align:right">读脏数据，第一类丢失修改</td>
+</tr>
+<tr>
+<td style="text-align:center">可重复读</td>
+<td>幻影读，第二类丢失修改（具体类型具体分析）</td>
+<td style="text-align:right">不可重复读，读脏数据，第一类丢失修改</td>
+</tr>
+<tr>
+<td style="text-align:center">串行化</td>
+<td></td>
+<td style="text-align:right">幻影读，不可重复读，读脏数据，两类丢失修改</td>
+</tr>
+</tbody>
+</table>
+<h2 id="封锁协议">封锁协议</h2>
+<p>讲之前发现还得把这个说清楚了，有三级封锁协议和两段锁协议，这个指的是数据库如何利用前面讲到的锁</p>
+<p>三级封锁协议：</p>
+<ul>
+<li>一级封锁协议	任何写操作需要加X锁，直到事务结束</li>
+<li>二级封锁协议	在一级封锁协议的基础上，读取数据时必须加S锁，读取完<strong>马上</strong>释放S锁</li>
+<li>三级封锁协议	在一级封锁协议的基础上，读取数据时必须加S锁，<strong>直到事务结束</strong>才释放</li>
+</ul>
+<p>两段锁协议：</p>
+<ul>
 <li>
-<p>text 代码区</p>
-<p>用于存放cpu执行的机器指令，只读</p>
+<p>多个事务们的加锁和解锁分为两个阶段，要么一起加要么一起解</p>
 </li>
 <li>
-<p>data 数据区</p>
+<p>两段锁协议保证了加锁过程是可串行化调度（和那个串行化级别无关），是充分条件，也就是两段锁一定保证可串行化，但可串行化不一定要两段锁，例如</p>
 <ul>
-<li>初始化后的全局变量</li>
-<li>初始化后的静态变量（包括全局和局部）</li>
-<li>常量</li>
+<li>
+<pre><code>lock-x(A)...lock-s(B)...lock-s(C)...unlock(A)...unlock(C)...unlock(B)
+两段锁协议，先一起加锁后一起解锁
+</code></pre>
+</li>
+<li>
+<pre><code>lock-x(A)...unlock(A)...lock-s(B)...unlock(B)...lock-s(C)...unlock(C)
+分开加解锁，但它依然是可串行化调度
+</code></pre>
+</li>
 </ul>
 </li>
-<li>
-<p>bss 未初始化区</p>
-<ul>
-<li>未初始化的全局变量</li>
-<li>未初始化的静态变量</li>
 </ul>
-<p>尽管会被默认分配为零值，但仍属于未初始化区</p>
-</li>
-<li>
-<p>stack 栈区</p>
-<p>由编译器自动分配释放的，一般用于存储哈描述的参数值、返回值、局部变量等。一般只有1M，可自动扩充，基本上也就是函数运行的空间，所以无限递归会造成的是栈溢出</p>
-<p>分配的方式是从高地址向低地址</p>
-</li>
-<li>
-<p>heap 堆区</p>
-<p>由程序员手动分配，手动回收或者较高级语言有GC自动回收</p>
-<p>分配的地址是在栈区地址和.bss区之间</p>
-</li>
-</ol>
-<figure data-type="image" tabindex="1"><img src="https://github.com/overnote/over-golang/raw/master/images/go/runtime-02.svg" alt="img" loading="lazy"></figure>
-<h2 id="逃逸分析">逃逸分析</h2>
-<pre><code class="language-go">func toHeap() *int {
-	var x int
-	return &amp;x
-}
+<h2 id="一级封锁协议协议-和-读未提交">一级封锁协议协议 和 读未提交</h2>
+<p>举个例子，我们把mysql降为读未提交的级别，然后看看锁</p>
+<pre><code class="language-sql">--事务A
+mysql&gt; begin;
+Query OK, 0 rows affected (0.00 sec)
 
-func toStack() int {
-	y := new(int)
-	*y = 1
-	return *y
-}
+mysql&gt; select * from gap;
++----+------+
+| id | name |
++----+------+
+|  1 | 张三 |
+|  4 | 王哥 |
+|  7 | 王五 |
+|  8 | 赵四 |
+| 11 | 刘能 |
++----+------+
+5 rows in set (0.01 sec)
 
-func main() {
+--事务B
+mysql&gt; begin;
+Query OK, 0 rows affected (0.00 sec)
 
-}
-</code></pre>
-<p>如果我们暂时忘记go，用C/C++语言的思维来看，上述的<code>toHeap()</code>函数就是一个典型的空指针错误，在函数内部创建了一个变量，调用结束后将指针返回，而该地址是随着函数的调用而被分配在函数栈上的，因此当调用结束后栈会被清空，该指针就成了一个野指针。而对于<code>toStack</code>函数来说，手动使用new从堆上分配了一块变量，直到使用对应的delete函数手动释放空间</p>
-<p>但是在go中，情况完全不同，go在一定程度上消除了堆栈的区别，在编译的时候会自动进行<strong>逃逸分析</strong>，将逃逸的对象放到堆上，不逃逸的对象放到栈上</p>
-<p>由于x是返回值，而这个指针会被函数外部进行操作，从外部是可以找到这个变量的，因此就可以说是变量逃逸</p>
-<p>第一种情况就可以说发生了逃逸，go会在编译阶段将x放到堆上，而y在函数结束后就无法访问了，因此分配到栈上，随着函数结束而消失</p>
-<p>Go的GC判断变量是否回收的实现思路：从每个包级的变量、每个当前运行的函数的局部变量开始，通过指针和引用的访问路径遍历，是否可以找到该变量，如果不存在这样的访问路径，那么说明该变量是不可达的，也就是说它是否存在并不会影响后续计算结果。</p>
-<h3 id="逃逸案例">逃逸案例</h3>
-<ol>
-<li>
-<p>指针逃逸</p>
-<pre><code class="language-go">func f() *int{
-    var i int
-    i = 1
-    return &amp;i
-}
-</code></pre>
-</li>
-<li>
-<p>局部变量大小过大</p>
-<pre><code class="language-go">s := make([]int, 0, 10000)//其实就是stack区不够分了，所以分到heap上
-</code></pre>
-</li>
-<li>
-<p>动态类型逃逸</p>
-<pre><code class="language-go">cap:= 20
-s := make([]int, 0, cap) //大小是动态的，不能确定，因此放入heap
-</code></pre>
-</li>
-<li>
-<p>闭包引用逃逸</p>
-<pre><code class="language-go">//闭包函数在这里声明了两个隐式变量a，b，当f()被多次调用的时候，其使用的是被Fibonacci()创建出来大的时候的a，b，因此a，b不会随着f()函数的结束而小时，因此会被分配到heap
-func Fibonacci() func() int { 
-    a, b := 0, 1
-	return func() int {
-		a, b = b, a+b
-		return a
-	}
-}
+mysql&gt; update gap set name = '老王比' where id = 4;
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+--注意这里B还没提交
 
-f:= Fibonacci()
-</code></pre>
-</li>
-<li>
-<p>切片，map逃逸</p>
-<pre><code class="language-go">i := 1
-s := make([]*int, 0, 10) //m没有被转移给其他的函数调用，也没有分配过大的空间，也不是全局变量，因此没有必要分配到heap上
-s = append(s, &amp;i) //i被添加到m中，没有人知道什么时候会用到，因此无论有没有被用到，都会分配到heap上
+--事务A
+mysql&gt; select * from gap;
++----+--------+
+| id | name   |
++----+--------+
+|  1 | 张三   |
+|  4 | 老王比 | --虽然没提交但是已经查到了变化了
+|  7 | 王五   |
+|  8 | 赵四   |
+| 11 | 刘能   |
++----+--------+
+5 rows in set (0.01 sec)
 
-j := 1
-m := make(map[int]*int) //一个道理，也是分配在stack上
-m[1] = &amp;j //heap上
+--再看看锁
+mysql&gt; SELECT event_id,OBJECT_NAME,index_name,LOCK_TYPE,LOCK_MODE,LOCK_STATUS,LOCK_DATA FROM performance_schema.data_locks\G;
+*************************** 1. row ***************************
+   event_id: 13
+OBJECT_NAME: gap
+ index_name: NULL
+  LOCK_TYPE: TABLE
+  LOCK_MODE: IX --意向锁
+LOCK_STATUS: GRANTED
+  LOCK_DATA: NULL
+*************************** 2. row ***************************
+   event_id: 13
+OBJECT_NAME: gap
+ index_name: PRIMARY
+  LOCK_TYPE: RECORD
+  LOCK_MODE: X,REC_NOT_GAP --一级封锁协议中提到的，更改的时候增加X锁
+LOCK_STATUS: GRANTED
+  LOCK_DATA: 4
+2 rows in set (0.00 sec)
 </code></pre>
-</li>
-</ol>
-<h3 id="分配位置的原则">分配位置的原则</h3>
-<ul>
-<li>变量是否被取地址</li>
-<li>变量是否发生逃逸</li>
-</ul>
+<p>可以看到这里只有个记录锁和意向锁，可以浅显的理解为，读未提交是一级封锁协议的实现</p>
+<p>同时它还可以解决第一类丢失修改，这个就不演示了，确实没有，为啥呢，等我问完老师再说</p>
+<h2 id="读已提交和脏读">读已提交和脏读</h2>
+<p>脏读就是上面演示过的，明明没提交，就已经被看到了，那么这个隔离级别是怎么避免的呢？</p>
+<p>我们看二级封锁协议的定义，每个读取都要先添加S锁，那么实际上呢？</p>
+<p>同样，我们把mysql降到读已提交</p>
+<pre><code class="language-sql">mysql&gt; show variables like '%isolation%';
++-----------------------+----------------+
+| Variable_name         | Value          |
++-----------------------+----------------+
+| transaction_isolation | READ-COMMITTED |
++-----------------------+----------------+
+1 row in set, 1 warning (0.00 sec)
+
+--事务B
+mysql&gt; begin;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql&gt; update gap set name = '老王比' where id &gt; 4; --即便是范围，但因为是RC等级，所以不存在gap锁，只有record锁
+Query OK, 3 rows affected (0.04 sec)
+Rows matched: 3  Changed: 3  Warnings: 0
+
+--这里看都是加了X锁的
+mysql&gt; SELECT event_id,OBJECT_NAME,index_name,LOCK_TYPE,LOCK_MODE,LOCK_STATUS,LOCK_DATA FROM performance_schema.data_locks\G;
+*************************** 1. row ***************************
+   event_id: 8
+OBJECT_NAME: gap
+ index_name: NULL
+  LOCK_TYPE: TABLE
+  LOCK_MODE: IX
+LOCK_STATUS: GRANTED
+  LOCK_DATA: NULL
+*************************** 2. row ***************************
+   event_id: 8
+OBJECT_NAME: gap
+ index_name: PRIMARY
+  LOCK_TYPE: RECORD
+  LOCK_MODE: X,REC_NOT_GAP
+LOCK_STATUS: GRANTED
+  LOCK_DATA: 7
+*************************** 3. row ***************************
+   event_id: 8
+OBJECT_NAME: gap
+ index_name: PRIMARY
+  LOCK_TYPE: RECORD
+  LOCK_MODE: X,REC_NOT_GAP
+LOCK_STATUS: GRANTED
+  LOCK_DATA: 8
+*************************** 4. row ***************************
+   event_id: 8
+OBJECT_NAME: gap
+ index_name: PRIMARY
+  LOCK_TYPE: RECORD
+  LOCK_MODE: X,REC_NOT_GAP
+LOCK_STATUS: GRANTED
+  LOCK_DATA: 11
+4 rows in set (0.00 sec)
+
+--事务A
+mysql&gt; begin;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql&gt; select * from gap;
++----+------+
+| id | name |
++----+------+
+|  1 | 张三 |
+|  4 | 王哥 |
+|  7 | 王五 |
+|  8 | 赵四 |
+| 11 | 刘能 |
++----+------+
+5 rows in set (0.00 sec)
+</code></pre>
+<p>很显然，事务A在读取的过程中并没有加S锁，因为有X锁存在的前提下，S是无法加锁的，那么读取操作必然会被阻塞</p>
+<p>所以读已提交并不是通过二级封锁协议实现的，而是通过MVCC实现的，说的好听些叫做<strong>一致性非锁定读</strong></p>
+<p>我们上一章讲过，在事务没有结束的时候，它的内部对外是不可见的，因此其它事务只能根据read view读取该行之前的版本，脏读问题自然没有了</p>
+<p>但是封锁协议只是一种思想，而它的核心思想在于，读取完立即释放S锁，在MVCC的实现过程中就变成了每次select都创建一个新的read view</p>
+<p>可以把二级封锁协议看作是读未提交的悲观锁实现方式，MVCC是乐观锁方式</p>
+<p>悲观锁的问题就是并发量不足，这也是为什么会用MVCC去实现的原因</p>
+<h2 id="可重复读下的非锁定读">可重复读下的非锁定读</h2>
+<p>其实这个所谓的非锁定读，就是正常使用select语句不带for update或for share的读，也是mysql默认的隔离级别中所说的哪个可重复读，同样是通过MVCC实现的</p>
+<p>它和RC的区别就是，它的select生成的read view 是第一个select 生成，一直到事务结束的</p>
+<p>看看三级封锁协议，是不是很像，三级封锁协议也是，直到事务结束才释放锁，所以三级封锁协议和MVCC的实现方式都可以避免不可重复读的问题</p>
+<p>和RC一样，可以把三级封锁协议看作是悲观锁版本，MVCC是乐观锁版本</p>
+<p>既然是MVCC的实现方式，为什么我要把它专门分出来一个非锁定读？</p>
+<p>因为它没有解决我们之前提到过的，第二类丢失修改，和另一个很重要的错误，幻影读</p>
+<h3 id="错误的第二类丢失修改">错误的第二类丢失修改</h3>
+<p>我们先来看一个错误的实例</p>
+<table>
+<thead>
+<tr>
+<th>时间</th>
+<th>转账事务A</th>
+<th>取款事务B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>T1</td>
+<td></td>
+<td><strong>开始事务</strong></td>
+</tr>
+<tr>
+<td>T2</td>
+<td><strong>开始事务</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>T3</td>
+<td></td>
+<td>查询账户余额为1000元</td>
+</tr>
+<tr>
+<td>T4</td>
+<td>查询账户余额为1000元</td>
+<td></td>
+</tr>
+<tr>
+<td>T5</td>
+<td></td>
+<td>取出100元把余额<strong>减少100元</strong></td>
+</tr>
+<tr>
+<td>T6</td>
+<td></td>
+<td><strong>提交事务</strong></td>
+</tr>
+<tr>
+<td>T7</td>
+<td>汇入100元，把余额<strong>增加100</strong>元</td>
+<td></td>
+</tr>
+<tr>
+<td>T8</td>
+<td><strong>提交事务</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>T9</td>
+<td>余额是1000元，无白嫖</td>
+<td>（这里的正确答案是1000元，并没有出错）</td>
+</tr>
+</tbody>
+</table>
+<p>这个错误的例子常被人拿来宣称“RR的隔离级别可以解决第二类丢失修改”</p>
+<p>这是彻头彻尾的胡扯，上一章讲MVCC的文章中说过，这种非锁定读也称作快照读，相对应的还有个叫做当前读，当前读是完全不受MVCC的限制的</p>
+<p>而更改这个操作在它生成临时表的那一刻用的就是<strong>当前读</strong></p>
+<p>上述这个错误的例子中，即便T6时刻它仍然会显示余额为1000（因为MVCC），但是在T7，更改时它读出的临时表中，余额是900，<strong>因为他是当前读查出来的结果</strong></p>
+<p>那有人会说为什么不干脆就这么写了呢，为什么还要select呢？因为会有各种意外啊，而且直接这么写，某种程度上就是主动把隔离级别降到了RC，反而把这个问题变成了不可重复读的问题，简直是开倒车了</p>
+<p>那趁着这个错误的例子，我们来讲讲幻影读</p>
+<h3 id="幻影读">幻影读</h3>
+<p>第一章就说过了，幻影读不是不可重复读，它的本质是当你使用select 和增删改操作时，手动混合了当前读和快照读，导致一致性失效，而不可重复读是read view 的创建时机不同</p>
+<p>把第一章的例子拿出来分析</p>
+<pre><code class="language-sql">--事务1
+mysql&gt; begin;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql&gt; select count(*) from gap;
++----------+
+| count(*) |
++----------+
+|        4 |
++----------+
+1 row in set (0.04 sec)
+
+mysql&gt; begin;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql&gt; select count(*) from gap;
++----------+
+| count(*) |
++----------+
+|        4 |
++----------+
+1 row in set (0.04 sec)
+
+--事务2
+mysql&gt; insert into gap values(8,'老王');
+Query OK, 1 row affected (0.05 sec)
+
+--事务1
+mysql&gt; select count(*) from gap;
++----------+
+| count(*) |
++----------+
+|        4 | --没有任何变化
++----------+
+1 row in set (0.00 sec)
+
+mysql&gt; select * from gap;
++----+------+
+| id | name |
++----+------+
+|  1 | 张三 |
+|  5 | 李四 |
+|  7 | 王五 |
+| 11 | 赵6  |
++----+------+
+4 rows in set (0.00 sec)
+
+--事务1
+mysql&gt; insert into gap values(8,'赵四');
+ERROR 1062 (23000): Duplicate entry '8' for key 'gap.PRIMARY'
+
+mysql&gt; update gap set name = '刘能' where id = 8;
+Query OK, 1 row affected (0.04 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql&gt; select * from gap;
++----+------+
+| id | name |
++----+------+
+|  1 | 张三 |
+|  5 | 李四 |
+|  7 | 王五 |
+|  8 | 刘能 |
+| 11 | 赵6  |
++----+------+
+5 rows in set (0.00 sec)
+</code></pre>
+<p>由于是可重复读级别，默认查询使用的是快照读，在第一个select的时候生成的read view直到事务结束才失效，所以插入后再查是找不到的（这不就是可重复读的基本定义嘛）</p>
+<p>但插入和更新的时候会变成当前读，因此插入报错，那么更新后为什么能搜到呢？</p>
+<p>注意看上一章我们讲的MVCC，更新后它的隐藏列会更新是哪个事务更改了他，而那个事务ID正是当前的事务ID，所以在查询的时候，curr_trx_id == DB_TRX_ID，满足展示条件，就显示了出来</p>
+<p>所以RR并没有解决幻影读，而上文讲的那个错误的第二类丢失更新本质上和幻影读一样，都是当前读和快照读发生了冲突</p>
+<h3 id="真正的第二类丢失修改">真正的第二类丢失修改</h3>
+<p>第二类的丢失修改流程是这样的</p>
+<table>
+<thead>
+<tr>
+<th>时间</th>
+<th>转账事务A</th>
+<th>取款事务B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>T1</td>
+<td></td>
+<td><strong>开始事务</strong></td>
+</tr>
+<tr>
+<td>T2</td>
+<td><strong>开始事务</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>T3</td>
+<td></td>
+<td>查询账户余额为1000元</td>
+</tr>
+<tr>
+<td>T4</td>
+<td>查询账户余额为1000元</td>
+<td></td>
+</tr>
+<tr>
+<td>T5</td>
+<td></td>
+<td>取出100元<strong>把余额改为900元</strong></td>
+</tr>
+<tr>
+<td>T6</td>
+<td></td>
+<td><strong>提交事务</strong></td>
+</tr>
+<tr>
+<td>T7</td>
+<td>汇入100元<strong>把余额改为1100 元</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>T8</td>
+<td><strong>提交事务</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>T9</td>
+<td>最后结果是1100元</td>
+<td>（这个是真的会变成1100，白嫖100）</td>
+</tr>
+</tbody>
+</table>
+<p>看到了吗，两个update 操作都是直接更新成了一个我们计算好的数值，而仅仅通过MVCC是无法避免这种错误的</p>
+<p>这种操作会在该记录行上增加两个undo log，1100的回滚指针指向的是900而不是1000，因为在更新的时候是当前读，所以在T7时刻，innoDB是很清楚当前值已经被更改为900了</p>
+<p>上一个案例我们知道，900+100又变回了1000，但是这次我们是手动写值的，这就意味着我们在业务代码中判断的更新的值是错误的，因此innoDB会看着你把900变成了1100，这波貌似不能怪mysql？</p>
+<p>在innoDB看来这是你自己写错了，和他没半毛钱关系，都不能算是卡了个MVCC的bug。。。</p>
+<p>这也是为什么很多博客都在说，其实RR级别不能解决第二类丢失修改，因为这本来就不是MVCC应该控制的问题</p>
+<p>那么怎么解决这类丢失修改和幻影读问题呢？还记得上面说过，MVCC是RR的乐观锁版本，而基于三级封锁协议的它的悲观锁版本就是最好的答案</p>
+<h2 id="rr-with-next-key">RR with next-key</h2>
+<p>MVCC的RR被称作一致性非锁定读，那么这个使用了next-key的RR就是一致性锁定读，也可以理解成它实现了三级封锁协议，是RR的悲观锁版本</p>
+<p>前文中我们详细介绍了record lock，gap lock，next-key lock的锁定范围及使用方法，还有什么时候会加这些锁，而我们所有的实例中几乎都是</p>
+<pre><code class="language-sql">select * from ...... for [update|share]
+</code></pre>
+<p>通过加上<code>for update</code>，select就变成了一致性锁定读，也就是三级封锁协议的描述，读取数据时必须加S锁，<strong>直到事务结束</strong>才释放，此时将不再通过MVCC去判断展示的数据</p>
+<h3 id="幻读">幻读</h3>
+<p>由于我们的select ... for update 会给搜索到的数据添加next-key和gap锁，而插入操作的时候会先获取插入意向锁（实际上是个X的gap锁）</p>
+<p>当该范围内有锁的时候，插入意向锁没法添加，所以就保证了我们搜索到的范围内不会被插入新的数据，从根本上避免了幻读的出现</p>
+<h3 id="第二类丢失修改">第二类丢失修改</h3>
+<p>上面我们说过，这类错误是innoDB允许的，是他看着你自己改错了，那么要想避免这个错误，就要通过<code>for update</code> 通知innoDB，“帮我锁定下，我待会要根据这个查询出来的值更新”</p>
+<p>innoDB就会给查到的行增加X类型的锁，其他事务的查询就要等该事务结束后才能继续，这样就避免了查询出来后的值和改的时候不一样，也就是当前读和快照读的冲突</p>
+<p>再把流程展示一下</p>
+<table>
+<thead>
+<tr>
+<th>时间</th>
+<th>转账事务A</th>
+<th>取款事务B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>T1</td>
+<td></td>
+<td><strong>开始事务</strong></td>
+</tr>
+<tr>
+<td>T2</td>
+<td><strong>开始事务</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>T3</td>
+<td></td>
+<td>查询账户余额为1000元 for update 加了X锁</td>
+</tr>
+<tr>
+<td>T4</td>
+<td>查询账户余额为？元 for update 加X锁等待中</td>
+<td></td>
+</tr>
+<tr>
+<td>T5</td>
+<td></td>
+<td>取出100元<strong>把余额改为900元</strong></td>
+</tr>
+<tr>
+<td>T6</td>
+<td></td>
+<td><strong>提交事务</strong> 释放X锁</td>
+</tr>
+<tr>
+<td>T7</td>
+<td>查询账户余额为900元 for update 获取了X锁</td>
+<td></td>
+</tr>
+<tr>
+<td>T8</td>
+<td>汇入100元<strong>把余额改为1000 元</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>T9</td>
+<td><strong>提交事务</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>T10</td>
+<td>最后结果是1000元</td>
+<td>（白嫖失败，这次一定）</td>
+</tr>
+</tbody>
+</table>
+<p>这样我们就通过带有next-key的RR级别，避免了丢失修改，但这种方法也有很大的缺点，如果需要频繁的对该表修改，这种方式就会频繁的加锁解锁，并发性能就会受到很大的影响</p>
+<p>所以当前常用的做法是给该表增加一个显示的版本行，当更新写回的时候判断版本号是否更改过，如果改过则回滚，也就是我们所说的乐观锁，这样查询可以利用innoDB的MVCC，更新的时候用自己做的MVCC，避免了频繁加锁解锁导致的事务等待而浪费性能</p>
+<h2 id="总结">总结</h2>
+<p>至此，我们所有的并发一致性错误已经全部解决了（其实还有很多新世代发现的错误，但这里笔者能力实在过于菜，无力顾及了）</p>
+<p>四个事务隔离级别我们也讲了三个，最后一个串行化已经不能算并发了</p>
+<p>通过三级封锁协议的思想和MVCC的实现，尽最大可能的保证了RC和RR的并发</p>
+<p>另外两个超出MVCC能力的并发错误也通过next-key等锁解决了</p>
+<p>事务，并发，锁，MVCC，封锁协议的问题暂时就告一段落<s>同时十分感谢各位被偷图的老板</s></p>
 
       </div>
 
       
       <nav class="post-nav">
         
-        <div class="nav-previous">
-          <a class="post-nav-link-active" title="如何在github上开源自己的包" href="http://blog.zerokirin.online/post/ru-he-zai-github-shang-kai-yuan-zi-ji-de-bao/">上一篇文章</a>
-        </div>
-        
         
         <div class="nav-next">
-          <a class="post-nav-link-active" title="Golang基础语法题" href="http://blog.zerokirin.online/post/golang-ji-chu-yu-fa-ti/">下一篇文章</a>
+          <a class="post-nav-link-active" title="Mysql 并发控制详解（三）——MVCC" href="http://blog.zerokirin.online/post/mysql-mvcc-qian-xi/">下一篇文章</a>
           
 
         </div>
@@ -2617,13 +2947,37 @@ m[1] = &amp;j //heap上
 
       <div class="post-tags">
         
-        <a href="http://blog.zerokirin.online/tag/FGxA9Oea-/" rel="tag">运行时</a>        
+        <a href="http://blog.zerokirin.online/tag/dc4Gx9uLG/" rel="tag">丢失修改</a>        
         
-        <a href="http://blog.zerokirin.online/tag/a80OXa5tzp/" rel="tag">变量逃逸</a>        
+        <a href="http://blog.zerokirin.online/tag/hI-pOeKlB2/" rel="tag">脏读</a>        
         
-        <a href="http://blog.zerokirin.online/tag/2n3c2auIY/" rel="tag">golang</a>        
+        <a href="http://blog.zerokirin.online/tag/IFNiHkHN6k/" rel="tag">幻影读</a>        
         
-        <a href="http://blog.zerokirin.online/tag/-Ep2xEDPKR/" rel="tag">笔记</a>        
+        <a href="http://blog.zerokirin.online/tag/1AHUHZuG3U/" rel="tag">不可重复读</a>        
+        
+        <a href="http://blog.zerokirin.online/tag/5O7kpY_3x/" rel="tag">mvcc</a>        
+        
+        <a href="http://blog.zerokirin.online/tag/QzNMfzp5RZ/" rel="tag">read view</a>        
+        
+        <a href="http://blog.zerokirin.online/tag/ySqWPGbpzz/" rel="tag">快照读</a>        
+        
+        <a href="http://blog.zerokirin.online/tag/o4wETGfLZ/" rel="tag">gap lock</a>        
+        
+        <a href="http://blog.zerokirin.online/tag/ui3yFrilL_/" rel="tag">record lock</a>        
+        
+        <a href="http://blog.zerokirin.online/tag/SFQS0SpY1O/" rel="tag">next-key lock</a>        
+        
+        <a href="http://blog.zerokirin.online/tag/NL9exrDn0b/" rel="tag">Insert Intention Locks</a>        
+        
+        <a href="http://blog.zerokirin.online/tag/EvUavYLoh4/" rel="tag">共享锁</a>        
+        
+        <a href="http://blog.zerokirin.online/tag/QATRrTuM4h/" rel="tag">互斥锁</a>        
+        
+        <a href="http://blog.zerokirin.online/tag/RifrudM78/" rel="tag">事务隔离等级</a>        
+        
+        <a href="http://blog.zerokirin.online/tag/QlWdPOjLh/" rel="tag">select</a>        
+        
+        <a href="http://blog.zerokirin.online/tag/M3QtfYt2dg/" rel="tag">mysql</a>        
                
       </div>
 
