@@ -4,29 +4,16 @@
 <head>
   <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="内存分区
-一个应用程序在运行的时候会分出对应的区域
+<meta name="description" content="
+每日一问系列（一）
 
-
-text 代码区
-用于存放cpu执行的机器指令，只读
-
-
-data 数据区
-
-初始化后的全局变量
-初始化后的静态变量（包括全局和局部）
-常量
-
-
-
-bss 未初始化区
-
-未初始化的全局..." />
+我们都知道，channel在缓冲区满或者无缓冲的时候，发送数据会阻塞，缓冲区空或无缓冲的实话，接受也会阻塞
+那么这个阻塞，是怎么实现的呢？
+之前我们只是粗略的讲解了channel的实现的结构体，这次我们详细的看看发送..." />
 <link rel="preload" as="script" href="https://cdn.ampproject.org/v0.js">
 <link rel="preconnect dns-prefetch" href="https://cdn.jsdelivr.net/" crossorigin>
 <script async src="https://cdn.ampproject.org/v0.js"></script>
-<title>Golang 运行时（一） | Zer0kiriN</title>
+<title>Channel底层如何实现阻塞的 | Zer0kiriN</title>
 
 
   
@@ -2219,85 +2206,46 @@ bss 未初始化区
 
 <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style>
 <noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
-<link rel="canonical" href="http://blog.zerokirin.online/post/golang-yun-xing-shi-yi/" />
+<link rel="canonical" href="http://blog.zerokirin.online/post/channel-di-ceng-ru-he-shi-xian-zu-sai-de/" />
 <link rel="shortcut icon" href="http://blog.zerokirin.online/favicon.ico?v=1624948005117">
 
 <meta name="author" content="破庙主任">
 
-<meta itemprop="name" content="Golang 运行时（一） | Zer0kiriN">
-<meta itemprop="description" content="内存分区
-一个应用程序在运行的时候会分出对应的区域
+<meta itemprop="name" content="Channel底层如何实现阻塞的 | Zer0kiriN">
+<meta itemprop="description" content="
+每日一问系列（一）
 
-
-text 代码区
-用于存放cpu执行的机器指令，只读
-
-
-data 数据区
-
-初始化后的全局变量
-初始化后的静态变量（包括全局和局部）
-常量
-
-
-
-bss 未初始化区
-
-未初始化的全局...">
+我们都知道，channel在缓冲区满或者无缓冲的时候，发送数据会阻塞，缓冲区空或无缓冲的实话，接受也会阻塞
+那么这个阻塞，是怎么实现的呢？
+之前我们只是粗略的讲解了channel的实现的结构体，这次我们详细的看看发送...">
 <meta itemprop="image" content="">
 
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Golang 运行时（一） | Zer0kiriN">
-<meta name="twitter:description" content="内存分区
-一个应用程序在运行的时候会分出对应的区域
+<meta name="twitter:title" content="Channel底层如何实现阻塞的 | Zer0kiriN">
+<meta name="twitter:description" content="
+每日一问系列（一）
 
-
-text 代码区
-用于存放cpu执行的机器指令，只读
-
-
-data 数据区
-
-初始化后的全局变量
-初始化后的静态变量（包括全局和局部）
-常量
-
-
-
-bss 未初始化区
-
-未初始化的全局...">
+我们都知道，channel在缓冲区满或者无缓冲的时候，发送数据会阻塞，缓冲区空或无缓冲的实话，接受也会阻塞
+那么这个阻塞，是怎么实现的呢？
+之前我们只是粗略的讲解了channel的实现的结构体，这次我们详细的看看发送...">
 <meta name="twitter:image" content="" />
-<meta name="twitter:image:alt" content="Golang 运行时（一） | Zer0kiriN" />
+<meta name="twitter:image:alt" content="Channel底层如何实现阻塞的 | Zer0kiriN" />
 
 
 <meta property="og:type" content="website">
-<meta property="og:url" content="http://blog.zerokirin.online/post/golang-yun-xing-shi-yi/">
-<meta property="og:title" content="Golang 运行时（一） | Zer0kiriN">
-<meta property="og:description" content="内存分区
-一个应用程序在运行的时候会分出对应的区域
+<meta property="og:url" content="http://blog.zerokirin.online/post/channel-di-ceng-ru-he-shi-xian-zu-sai-de/">
+<meta property="og:title" content="Channel底层如何实现阻塞的 | Zer0kiriN">
+<meta property="og:description" content="
+每日一问系列（一）
 
-
-text 代码区
-用于存放cpu执行的机器指令，只读
-
-
-data 数据区
-
-初始化后的全局变量
-初始化后的静态变量（包括全局和局部）
-常量
-
-
-
-bss 未初始化区
-
-未初始化的全局...">
+我们都知道，channel在缓冲区满或者无缓冲的时候，发送数据会阻塞，缓冲区空或无缓冲的实话，接受也会阻塞
+那么这个阻塞，是怎么实现的呢？
+之前我们只是粗略的讲解了channel的实现的结构体，这次我们详细的看看发送...">
 <meta property="og:image" content="">
-<meta property="og:image:alt" content="Golang 运行时（一） | Zer0kiriN" />
+<meta property="og:image:alt" content="Channel底层如何实现阻塞的 | Zer0kiriN" />
 <meta property="og:site_name" content="Zer0kiriN">
 <meta property="og:locale" content="zh_CN">
-<meta property="tag" content="Golang 运行时（一） | Zer0kiriN" />
+<meta property="tag" content="Channel底层如何实现阻塞的 | Zer0kiriN" />
 
 
 <script type="application/ld+json">
@@ -2306,11 +2254,11 @@ bss 未初始化区
 "@type": "BlogPosting",
 "mainEntityOfPage": {
   "@type": "WebPage",
-  "@id": "http://blog.zerokirin.online/post/golang-yun-xing-shi-yi/"
+  "@id": "http://blog.zerokirin.online/post/channel-di-ceng-ru-he-shi-xian-zu-sai-de/"
 },
-"headline": "Golang 运行时（一） | Zer0kiriN",
-"datePublished": "Sat Apr 24 2021 00:36:28 GMT+0800",
-"dateModified": "Sat Apr 24 2021 00:36:28 GMT+0800",
+"headline": "Channel底层如何实现阻塞的 | Zer0kiriN",
+"datePublished": "Tue Jun 29 2021 14:24:06 GMT+0800",
+"dateModified": "Tue Jun 29 2021 14:24:06 GMT+0800",
 "author": {
   "@type": "Person",
   "name": "破庙主任"
@@ -2326,25 +2274,12 @@ bss 未初始化区
 "image": [
 ""
 ],
-"description": "内存分区
-一个应用程序在运行的时候会分出对应的区域
+"description": "
+每日一问系列（一）
 
-
-text 代码区
-用于存放cpu执行的机器指令，只读
-
-
-data 数据区
-
-初始化后的全局变量
-初始化后的静态变量（包括全局和局部）
-常量
-
-
-
-bss 未初始化区
-
-未初始化的全局..."
+我们都知道，channel在缓冲区满或者无缓冲的时候，发送数据会阻塞，缓冲区空或无缓冲的实话，接受也会阻塞
+那么这个阻塞，是怎么实现的呢？
+之前我们只是粗略的讲解了channel的实现的结构体，这次我们详细的看看发送..."
  }
 
 </script>
@@ -2360,8 +2295,8 @@ bss 未初始化区
     },{
       "@type": "ListItem", 
       "position": 2, 
-      "name": "Golang 运行时（一） | Zer0kiriN",
-      "item": "http://blog.zerokirin.online/post/golang-yun-xing-shi-yi/"  
+      "name": "Channel底层如何实现阻塞的 | Zer0kiriN",
+      "item": "http://blog.zerokirin.online/post/channel-di-ceng-ru-he-shi-xian-zu-sai-de/"  
     }]
   }
   </script>
@@ -2383,7 +2318,7 @@ bss 未初始化区
 
 <script async custom-element="amp-gist" src="https://cdn.ampproject.org/v0/amp-gist-0.1.js"></script>
 
-<link rel="alternate" type="application/atom+xml" title="Golang 运行时（一） | Zer0kiriN - Atom Feed" href="http://blog.zerokirin.online/atom.xml">
+<link rel="alternate" type="application/atom+xml" title="Channel底层如何实现阻塞的 | Zer0kiriN - Atom Feed" href="http://blog.zerokirin.online/atom.xml">
 
 
 
@@ -2439,16 +2374,16 @@ bss 未初始化区
       <div class="article-info">
         
           <div class="flex-box meta-category">
-            <a class="post-cate" href="http://blog.zerokirin.online/tag/FGxA9Oea-/">运行时</a></div>
+            <a class="post-cate" href="http://blog.zerokirin.online/tag/OAbnOVw0j/">每日一问</a></div>
           
         <h2 class="article-title">
-          <a href="http://blog.zerokirin.online/post/golang-yun-xing-shi-yi/">Golang 运行时（一）</a>
+          <a href="http://blog.zerokirin.online/post/channel-di-ceng-ru-he-shi-xian-zu-sai-de/">Channel底层如何实现阻塞的</a>
         </h2>
         <div class="flex-box">
           <div class="flex-box post-meta-box">
             <a class="post-meta" href="http://blog.zerokirin.online"><span
                 class="iconfont icon-mr-postmeta"></span>破庙主任</a>
-            <span class="post-meta"><span class="iconfont icon-mr-postmeta"></span>2021 年 04	月 24日</span>
+            <span class="post-meta"><span class="iconfont icon-mr-postmeta"></span>2021 年 06	月 29日</span>
             
 
 
@@ -2456,128 +2391,526 @@ bss 未初始化区
         </div>
       </div>
       <div class="content">
-        <h2 id="内存分区">内存分区</h2>
-<p>一个应用程序在运行的时候会分出对应的区域</p>
-<ol>
-<li>
-<p>text 代码区</p>
-<p>用于存放cpu执行的机器指令，只读</p>
-</li>
-<li>
-<p>data 数据区</p>
-<ul>
-<li>初始化后的全局变量</li>
-<li>初始化后的静态变量（包括全局和局部）</li>
-<li>常量</li>
-</ul>
-</li>
-<li>
-<p>bss 未初始化区</p>
-<ul>
-<li>未初始化的全局变量</li>
-<li>未初始化的静态变量</li>
-</ul>
-<p>尽管会被默认分配为零值，但仍属于未初始化区</p>
-</li>
-<li>
-<p>stack 栈区</p>
-<p>由编译器自动分配释放的，一般用于存储哈描述的参数值、返回值、局部变量等。一般只有1M，可自动扩充，基本上也就是函数运行的空间，所以无限递归会造成的是栈溢出</p>
-<p>分配的方式是从高地址向低地址</p>
-</li>
-<li>
-<p>heap 堆区</p>
-<p>由程序员手动分配，手动回收或者较高级语言有GC自动回收</p>
-<p>分配的地址是在栈区地址和.bss区之间</p>
-</li>
-</ol>
-<figure data-type="image" tabindex="1"><img src="https://github.com/overnote/over-golang/raw/master/images/go/runtime-02.svg" alt="img" loading="lazy"></figure>
-<h2 id="逃逸分析">逃逸分析</h2>
-<pre><code class="language-go">func toHeap() *int {
-	var x int
-	return &amp;x
+        <blockquote>
+<p>每日一问系列（一）</p>
+</blockquote>
+<p>我们都知道，channel在缓冲区满或者无缓冲的时候，发送数据会阻塞，缓冲区空或无缓冲的实话，接受也会阻塞</p>
+<p>那么这个阻塞，是怎么实现的呢？</p>
+<p>之前我们只是粗略的讲解了channel的实现的结构体，这次我们详细的看看发送和接受的源码</p>
+<p>源码位于<code>go 1.15.4 src/runtime/chan.go</code></p>
+<h2 id="读取的两种方式">读取的两种方式</h2>
+<pre><code class="language-go">ch := make(chan int, 10)
+a := &lt;-ch
+b,ok := &lt;-ch
+</code></pre>
+<p>golang有两种读取channel 的方式，</p>
+<pre><code class="language-go">// entry points for &lt;- c from compiled code
+//go:nosplit
+func chanrecv1(c *hchan, elem unsafe.Pointer) {
+	chanrecv(c, elem, true)
 }
 
-func toStack() int {
-	y := new(int)
-	*y = 1
-	return *y
+//go:nosplit
+func chanrecv2(c *hchan, elem unsafe.Pointer) (received bool) { //看这里多了个返回值，received
+	_, received = chanrecv(c, elem, true)
+	return
+}
+</code></pre>
+<p>这两个函数也就是读取的两个方法，第二个带有一个名为received的返回值</p>
+<p>他们同时都调用了<code>chanrecv</code>函数，所以重点就在这个函数中</p>
+<h2 id="读取函数">读取函数</h2>
+<p>函数原型</p>
+<pre><code class="language-go">// chanrecv receives on channel c and writes the received data to ep.
+// ep may be nil, in which case received data is ignored.
+// If block == false and no elements are available, returns (false, false).
+***重点在这，如果block是false，且无法获取到数据，则直接返回(false,false)
+***这个的另一个意思就是，即便缓冲区buf为空，也不会阻塞，而是直接返回，那么这个的使用场景是？
+// Otherwise, if c is closed, zeros *ep and returns (true, false).
+// Otherwise, fills in *ep with an element and returns (true, true).
+// A non-nil ep must point to the heap or the caller's stack.
+func chanrecv(c *hchan, ep unsafe.Pointer, block bool) (selected, received bool)
+</code></pre>
+<p>上面调用chanrecv的函数里面都是写死了block为true，那么什么时候是false呢？</p>
+<pre><code class="language-go">// compiler implements
+//
+//	select {
+//	case v = &lt;-c:
+//		... foo
+//	default:
+//		... bar
+//	}
+//
+// as
+//
+//	if selectnbrecv(&amp;v, c) {
+//		... foo
+//	} else {
+//		... bar
+//	}
+//
+func selectnbrecv(elem unsafe.Pointer, c *hchan) (selected bool) {
+	selected, _ = chanrecv(c, elem, false)
+	return
 }
 
-func main() {
-
+// compiler implements
+//
+//	select {
+//	case v, ok = &lt;-c:
+//		... foo
+//	default:
+//		... bar
+//	}
+//
+// as
+//
+//	if c != nil &amp;&amp; selectnbrecv2(&amp;v, &amp;ok, c) {
+//		... foo
+//	} else {
+//		... bar
+//	}
+//
+func selectnbrecv2(elem unsafe.Pointer, received *bool, c *hchan) (selected bool) {
+	// TODO(khr): just return 2 values from this function, now that it is in Go.
+	selected, *received = chanrecv(c, elem, false)
+	return
 }
 </code></pre>
-<p>如果我们暂时忘记go，用C/C++语言的思维来看，上述的<code>toHeap()</code>函数就是一个典型的空指针错误，在函数内部创建了一个变量，调用结束后将指针返回，而该地址是随着函数的调用而被分配在函数栈上的，因此当调用结束后栈会被清空，该指针就成了一个野指针。而对于<code>toStack</code>函数来说，手动使用new从堆上分配了一块变量，直到使用对应的delete函数手动释放空间</p>
-<p>但是在go中，情况完全不同，go在一定程度上消除了堆栈的区别，在编译的时候会自动进行<strong>逃逸分析</strong>，将逃逸的对象放到堆上，不逃逸的对象放到栈上</p>
-<p>由于x是返回值，而这个指针会被函数外部进行操作，从外部是可以找到这个变量的，因此就可以说是变量逃逸</p>
-<p>第一种情况就可以说发生了逃逸，go会在编译阶段将x放到堆上，而y在函数结束后就无法访问了，因此分配到栈上，随着函数结束而消失</p>
-<p>Go的GC判断变量是否回收的实现思路：从每个包级的变量、每个当前运行的函数的局部变量开始，通过指针和引用的访问路径遍历，是否可以找到该变量，如果不存在这样的访问路径，那么说明该变量是不可达的，也就是说它是否存在并不会影响后续计算结果。</p>
-<h3 id="逃逸案例">逃逸案例</h3>
-<ol>
-<li>
-<p>指针逃逸</p>
-<pre><code class="language-go">func f() *int{
-    var i int
-    i = 1
-    return &amp;i
-}
-</code></pre>
-</li>
-<li>
-<p>局部变量大小过大</p>
-<pre><code class="language-go">s := make([]int, 0, 10000)//其实就是stack区不够分了，所以分到heap上
-</code></pre>
-</li>
-<li>
-<p>动态类型逃逸</p>
-<pre><code class="language-go">cap:= 20
-s := make([]int, 0, cap) //大小是动态的，不能确定，因此放入heap
-</code></pre>
-</li>
-<li>
-<p>闭包引用逃逸</p>
-<pre><code class="language-go">//闭包函数在这里声明了两个隐式变量a，b，当f()被多次调用的时候，其使用的是被Fibonacci()创建出来大的时候的a，b，因此a，b不会随着f()函数的结束而小时，因此会被分配到heap
-func Fibonacci() func() int { 
-    a, b := 0, 1
-	return func() int {
-		a, b = b, a+b
-		return a
+<p>select的用法就是，哪个可以取到数据就执行哪个case，而如果无法读取到则不会执行，所以肯定不能是阻塞的，所以两个用法的block的都是false</p>
+<p>chanrecv的返回值名字也很直白，selected和received</p>
+<p>selected只在执行select语句的时候判断case是否可以执行，至于数据是否获取到，则要看第二个参数received</p>
+<p>那么我们详细来看chanrecv的内容吧，过程中我删掉了部分race检测的代码以及原有的英文注释</p>
+<pre><code class="language-go">//原子操作检测是否能读取或者缓冲是否为空
+func empty(c *hchan) bool {
+	// c.dataqsiz is immutable.
+	if c.dataqsiz == 0 { //无缓冲，检测发送队列是否是nil
+		return atomic.Loadp(unsafe.Pointer(&amp;c.sendq.first)) == nil
 	}
+    //有缓冲，检测当前数量有多少
+	return atomic.Loaduint(&amp;c.qcount) == 0
 }
 
-f:= Fibonacci()
-</code></pre>
-</li>
-<li>
-<p>切片，map逃逸</p>
-<pre><code class="language-go">i := 1
-s := make([]*int, 0, 10) //m没有被转移给其他的函数调用，也没有分配过大的空间，也不是全局变量，因此没有必要分配到heap上
-s = append(s, &amp;i) //i被添加到m中，没有人知道什么时候会用到，因此无论有没有被用到，都会分配到heap上
+func chanrecv(c *hchan, ep unsafe.Pointer, block bool) (selected, received bool) {
+    //如果是nil
+	if c == nil {
+        //在select语句中block是false，所以会在这直接返回(false,false)，也就是说select永远不会进入一个对nil的chan操作的步骤
+        if !block { 
+			return
+		}
+        //阻塞了，所以读取nil并不会直接报错
+		gopark(nil, nil, waitReasonChanReceiveNilChan, traceEvGoStop, 2)
+		throw(&quot;unreachable&quot;)
+	}
 
-j := 1
-m := make(map[int]*int) //一个道理，也是分配在stack上
-m[1] = &amp;j //heap上
+	// chan中是空的，没有办法直接获取值，且在select中，无需等待取值
+	if !block &amp;&amp; empty(c) {
+		//这里官方用了很长一段来描述为什么会这么写，大意是说
+        //在竞争检测关闭时，可能会有多个goroutine对channel进行操作
+        //比如说，一开始是，没有close的，非空的
+        //后来被关闭了，然后把数据排空了
+        //这时候由于检测语句的不合理安排以及并发访问
+        //很有可能会得出一个，没有close的，空了的结果
+        //所以对empty和closed都是原子操作去检测
+        
+		if atomic.Load(&amp;c.closed) == 0 { //未关闭
+			//由于channel不能关了再开，所以如果检测到未关闭
+            //则证明在一开始就是未关闭的
+            //返回false，false
+            //select不会继续下去，因为他还有收到值的可能性
+			return
+		}
+		
+        //执行到这一定是closed的了，再检测一次empty是因为
+        //有可能在上面判断closed之前，有了新的数据，那么可能会是closed和非空
+		if empty(c) {
+			//确定是空，若接受体不为空，也就是不用_抛弃，则直接置为0值
+			if ep != nil {
+				typedmemclr(c.elemtype, ep)
+			}
+            //selected，可以执行这条路，但是v,ok=&lt;-ch的ok是false
+			return true, false
+		}
+	}
+
+    //后文初始化sudog的条件（暂时看不懂干嘛的，下次研究）
+	var t0 int64
+	if blockprofilerate &gt; 0 {
+		t0 = cputicks()
+	}
+
+    //加锁
+	lock(&amp;c.lock)
+
+    //closed，且 缓冲buf 是空的
+    //无论有无缓冲区，都是这个流程
+	if c.closed != 0 &amp;&amp; c.qcount == 0 {
+		unlock(&amp;c.lock)
+		if ep != nil { //清空接收者
+			typedmemclr(c.elemtype, ep)
+		}
+		return true, false
+	}
+
+    //如果发送队列不为空的话执行，注意
+    //也就是要么无缓冲，要么缓冲buf满了，两种情况处理方法不一样，recv函数待会再讲
+	if sg := c.sendq.dequeue(); sg != nil {
+		recv(c, sg, ep, func() { unlock(&amp;c.lock) }, 3)
+		return true, true
+	}
+
+    //数据个数大于0，那肯定是有缓冲类型的
+	if c.qcount &gt; 0 {
+        //通过这个chanbuf，获取到数据地址，存到qp中
+		qp := chanbuf(c, c.recvx)
+        //把qp移动到ep中
+		if ep != nil {
+			typedmemmove(c.elemtype, ep, qp)
+		}
+        //原来的数据置空
+        //还有一点就是，如果上一个ep是nil，也就是用_忽略了的话，这一步也会把数据清掉
+		typedmemclr(c.elemtype, qp)
+        //循环链表，所以下标正常增长
+		c.recvx++
+        //涨到最大值后变为0，循环嘛
+		if c.recvx == c.dataqsiz {
+			c.recvx = 0
+		}
+        //取数据了，所以肯定要减小
+		c.qcount--
+		unlock(&amp;c.lock)
+		return true, true
+	}
+
+    /*	前面我们已经排除了
+    *	closed的，有发送队列的（缓冲类型溢出了，无缓冲类型有被阻塞的发送），缓冲区有值的
+    *	剩下的就是，未closed的，缓冲区没数据且发送队列空的
+    *	人话就是，轮到阻塞等待有缘人发送数据了
+    */
+    
+    //select中没必要阻塞，直接就略过了
+	if !block {
+		unlock(&amp;c.lock)
+		return false, false
+	}
+
+	//从这里开始就是阻塞的流程
+    
+    //获取当前运行的g的指针
+	gp := getg()
+    //获取一个sudog结构体
+	mysg := acquireSudog()
+	mysg.releasetime = 0
+	if t0 != 0 {
+		mysg.releasetime = -1
+	}
+	// No stack splits between assigning elem and enqueuing mysg
+	// on gp.waiting where copystack can find it.
+	mysg.elem = ep
+	mysg.waitlink = nil
+    //当前g正在等待的sudog
+	gp.waiting = mysg
+    //对应的g
+	mysg.g = gp
+    //是否在select语句中
+	mysg.isSelect = false
+    //标识是哪个chan
+	mysg.c = c
+    //唤醒时传递的参数，一般都是空
+	gp.param = nil
+    //将这个sudog放到接收队列中，等待唤醒
+	c.recvq.enqueue(mysg)
+	// Signal to anyone trying to shrink our stack that we're about
+	// to park on a channel. The window between when this G's status
+	// changes and when we set gp.activeStackChans is not safe for
+	// stack shrinking.
+    //这里设置个标志位，通知任何想要缩小栈空间情况，告诉他们这个g现在在等待channel的唤醒
+    //这里会有线程安全问题，所以用atomic操作
+	atomic.Store8(&amp;gp.parkingOnChan, 1)
+    //暂停当前g，也就是实质上的阻塞，函数原型放在最后
+	gopark(chanparkcommit, unsafe.Pointer(&amp;c.lock), waitReasonChanReceive, traceEvGoBlockRecv, 2)
+
+	// someone woke us up
+    //唤醒，检查下有没有呗错误唤醒
+	if mysg != gp.waiting {
+		throw(&quot;G waiting list is corrupted&quot;)
+	}
+    //等待的置空
+	gp.waiting = nil
+	gp.activeStackChans = false
+	if mysg.releasetime &gt; 0 {
+		blockevent(mysg.releasetime-t0, 2)
+	}
+	closed := gp.param == nil
+	gp.param = nil
+	mysg.c = nil
+    //释放sudog
+	releaseSudog(mysg)
+	return true, !closed
+}
+
+// Puts the current goroutine into a waiting state and calls unlockf.
+// If unlockf returns false, the goroutine is resumed.
+// unlockf must not access this G's stack, as it may be moved between
+// the call to gopark and the call to unlockf.
+// Reason explains why the goroutine has been parked.
+// It is displayed in stack traces and heap dumps.
+// Reasons should be unique and descriptive.
+// Do not re-use reasons, add new ones.
+func gopark(unlockf func(*g, unsafe.Pointer) bool, lock unsafe.Pointer, reason waitReason, traceEv byte, traceskip int) 
 </code></pre>
-</li>
-</ol>
-<h3 id="分配位置的原则">分配位置的原则</h3>
-<ul>
-<li>变量是否被取地址</li>
-<li>变量是否发生逃逸</li>
-</ul>
+<p>再来让我们看看上面说的recv函数，上面的调用方式是这样的</p>
+<p><code>recv(c, sg, ep, func() { unlock(&amp;c.lock) }, 3)</code></p>
+<pre><code class="language-go">// recv processes a receive operation on a full channel c.
+// There are 2 parts:
+// 1) The value sent by the sender sg is put into the channel
+//    and the sender is woken up to go on its merry way.
+// 2) The value received by the receiver (the current G) is
+//    written to ep.
+// For synchronous channels, both values are the same.
+// For asynchronous channels, the receiver gets its data from
+// the channel buffer and the sender's data is put in the
+// channel buffer.
+// Channel c must be full and locked. recv unlocks c with unlockf.
+// sg must already be dequeued from c.
+// A non-nil ep must point to the heap or the caller's stack.
+
+//上面注释写的很清楚，两个情况，一个是缓冲区满了，一个是没有缓冲区的
+//总归都是sg不为空，也就是发送队列有人在等着发送数据
+func recv(c *hchan, sg *sudog, ep unsafe.Pointer, unlockf func(), skip int) {
+    //缓冲区0，也就是无缓冲
+   if c.dataqsiz == 0 {
+      if ep != nil {
+         // copy data from sender
+          //直接从发送者的sg中提取内容
+         recvDirect(c.elemtype, sg, ep)
+      }
+   } else {
+      // Queue is full. Take the item at the
+      // head of the queue. Make the sender enqueue
+      // its item at the tail of the queue. Since the
+      // queue is full, those are both the same slot.
+      //缓冲区满了
+      //计算出当前应该提取的内容的位置
+      qp := chanbuf(c, c.recvx)
+      // copy data from queue to receiver
+      //这里校验ep是因为有可能有 &lt;-ch 直接取值的情况存在
+      if ep != nil {
+          //将数据从刚刚计算好的位置拿出来
+         typedmemmove(c.elemtype, ep, qp)
+      }
+      // copy data from sender to queue
+      //把发送队列的东西复制到刚刚拿走了的位置
+      typedmemmove(c.elemtype, qp, sg.elem)
+      //下标加一，满了就置0
+      c.recvx++
+      if c.recvx == c.dataqsiz {
+         c.recvx = 0
+      }
+      //设置一下已经发送的位置到哪了
+      //也就是新数据该往哪放了
+      c.sendx = c.recvx // c.sendx = (c.sendx+1) % c.dataqsiz
+   }
+   //发送完了就卸磨杀驴，该请的要清了
+   sg.elem = nil
+   //把发送的g的信息保存一下
+   gp := sg.g
+    //解锁函数，一般来说都是unlock(&amp;c.lock)
+   unlockf()
+   gp.param = unsafe.Pointer(sg)
+   if sg.releasetime != 0 {
+      sg.releasetime = cputicks()
+   }
+   //唤醒这个发送者，因为他的数据已经发送完成了，就没必要阻塞了
+   goready(gp, skip+1)
+}
+</code></pre>
+<h2 id="发送过程">发送过程</h2>
+<p>和接受过程几乎一样，快速的看一下</p>
+<pre><code class="language-go">/*
+ * generic single channel send/recv
+ * If block is not nil,
+ * then the protocol will not
+ * sleep but return if it could
+ * not complete.
+ *
+ * sleep can wake up with g.param == nil
+ * when a channel involved in the sleep has
+ * been closed.  it is easiest to loop and re-run
+ * the operation; we'll see that it's now closed.
+ */
+func chansend(c *hchan, ep unsafe.Pointer, block bool, callerpc uintptr) bool {
+	if c == nil {
+		if !block {
+			return false
+		}
+		gopark(nil, nil, waitReasonChanSendNilChan, traceEvGoStop, 2)
+		throw(&quot;unreachable&quot;)
+	}
+
+	// Fast path: check for failed non-blocking operation without acquiring the lock.
+	//
+	// After observing that the channel is not closed, we observe that the channel is
+	// not ready for sending. Each of these observations is a single word-sized read
+	// (first c.closed and second full()).
+	// Because a closed channel cannot transition from 'ready for sending' to
+	// 'not ready for sending', even if the channel is closed between the two observations,
+	// they imply a moment between the two when the channel was both not yet closed
+	// and not ready for sending. We behave as if we observed the channel at that moment,
+	// and report that the send cannot proceed.
+	//
+	// It is okay if the reads are reordered here: if we observe that the channel is not
+	// ready for sending and then observe that it is not closed, that implies that the
+	// channel wasn't closed during the first observation. However, nothing here
+	// guarantees forward progress. We rely on the side effects of lock release in
+	// chanrecv() and closechan() to update this thread's view of c.closed and full().
+    
+    //上面一大串的注释就是告诉你，如何在不获取锁的情况下判断是否准备好发送数据了，先判断close和和先判断full(c)都是正确的
+    
+	if !block &amp;&amp; c.closed == 0 &amp;&amp; full(c) {
+		return false
+	}
+
+	var t0 int64
+	if blockprofilerate &gt; 0 {
+		t0 = cputicks()
+	}
+
+	lock(&amp;c.lock)
+	
+    //已经关闭了，所以要panic，不能继续发送了
+	if c.closed != 0 {
+		unlock(&amp;c.lock)
+		panic(plainError(&quot;send on closed channel&quot;))
+	}
+
+    //接收队列有东西，要么是缓冲区满了，要么是没有缓冲区
+	if sg := c.recvq.dequeue(); sg != nil {
+		// Found a waiting receiver. We pass the value we want to send
+		// directly to the receiver, bypassing the channel buffer (if any).
+        //下文详细讲下这个函数
+		send(c, sg, ep, func() { unlock(&amp;c.lock) }, 3)
+		return true
+	}
+
+    //缓冲区还没满，这里dataqsiz至少大于0，所以是有缓冲的
+	if c.qcount &lt; c.dataqsiz {
+		// Space is available in the channel buffer. Enqueue the element to send.
+        //确定好应该存放的地址
+		qp := chanbuf(c, c.sendx)
+		typedmemmove(c.elemtype, qp, ep)
+		c.sendx++
+		if c.sendx == c.dataqsiz {
+			c.sendx = 0
+		}
+		c.qcount++
+		unlock(&amp;c.lock)
+		return true
+	}
+
+    //没有能放的位置了，只能阻塞了
+    //select中，非阻塞的直接返回了
+	if !block {
+		unlock(&amp;c.lock)
+		return false
+	}
+
+	// Block on the channel. Some receiver will complete our operation for us.
+	gp := getg()
+	mysg := acquireSudog()
+	mysg.releasetime = 0
+	if t0 != 0 {
+		mysg.releasetime = -1
+	}
+	// No stack splits between assigning elem and enqueuing mysg
+	// on gp.waiting where copystack can find it.
+	mysg.elem = ep
+	mysg.waitlink = nil
+	mysg.g = gp
+	mysg.isSelect = false
+	mysg.c = c
+	gp.waiting = mysg
+	gp.param = nil
+    //把自己放到发送队列中
+	c.sendq.enqueue(mysg)
+	// Signal to anyone trying to shrink our stack that we're about
+	// to park on a channel. The window between when this G's status
+	// changes and when we set gp.activeStackChans is not safe for
+	// stack shrinking.
+	atomic.Store8(&amp;gp.parkingOnChan, 1)
+    //阻塞住了
+	gopark(chanparkcommit, unsafe.Pointer(&amp;c.lock), waitReasonChanSend, traceEvGoBlockSend, 2)
+	// Ensure the value being sent is kept alive until the
+	// receiver copies it out. The sudog has a pointer to the
+	// stack object, but sudogs aren't considered as roots of the
+	// stack tracer.
+    
+    //这里和接受的方法不一样的是，多了个keepalive
+    //原因是，在接受方法中，ep是一个外部传进来的，数据的目的地址，那么ep在外部一定是被使用的，所以ep一定不会在阻塞的时候被gc回收掉，如果没有使用，那回收了就回收了，问题不大
+    //但是，在这里ep是一个数据源地址，很有可能在发送以后就不存在了，那么阻塞的过程中就很有可能被回收掉，所以要加入一个保活的函数，策略就是，我后面还会用到这个变量，那么gc就不会扫描这个，这样只有被唤醒后，keepalive才会调用，然后ep数据已经发送出去了，回收就无所谓了
+	KeepAlive(ep)
+
+	// someone woke us up.
+    //收尾工作没什么好讲的了
+	if mysg != gp.waiting {
+		throw(&quot;G waiting list is corrupted&quot;)
+	}
+	gp.waiting = nil
+	gp.activeStackChans = false
+	if gp.param == nil {
+		if c.closed == 0 {
+			throw(&quot;chansend: spurious wakeup&quot;)
+		}
+		panic(plainError(&quot;send on closed channel&quot;))
+	}
+	gp.param = nil
+	if mysg.releasetime &gt; 0 {
+		blockevent(mysg.releasetime-t0, 2)
+	}
+	mysg.c = nil
+	releaseSudog(mysg)
+	return true
+}
+</code></pre>
+<p>看看send函数</p>
+<p><code>send(c, sg, ep, func() { unlock(&amp;c.lock) }, 3)</code></p>
+<pre><code class="language-go">// send processes a send operation on an empty channel c.
+// The value ep sent by the sender is copied to the receiver sg.
+// The receiver is then woken up to go on its merry way.
+// Channel c must be empty and locked.  send unlocks c with unlockf.
+// sg must already be dequeued from c.
+// ep must be non-nil and point to the heap or the caller's stack.
+func send(c *hchan, sg *sudog, ep unsafe.Pointer, unlockf func(), skip int) {
+	//前面一大串都是涉及到竞争检测的内容，本次暂时不分析
+	if sg.elem != nil {
+        //看名字就很清楚了，从sg复制到ep
+		sendDirect(c.elemtype, sg, ep)
+		sg.elem = nil
+	}
+    //找到那个等待的g
+	gp := sg.g
+    //解锁
+	unlockf()
+	gp.param = unsafe.Pointer(sg)
+	if sg.releasetime != 0 {
+		sg.releasetime = cputicks()
+	}
+    //唤醒
+	goready(gp, skip+1)
+}
+</code></pre>
+<h2 id="总结">总结</h2>
+<p>主要有两个方面，一个是block参数，为了方便实现select语句，所以是非阻塞的操作，不能执行就不执行了</p>
+<p>另一方面就是gopark和goready函数，通过这两个函数对g进行阻塞，其中发送任务还要用keepalive保活</p>
+<p><s>不愧是每日一问，写了四天好家伙</s></p>
 
       </div>
 
       
       <nav class="post-nav">
         
-        <div class="nav-previous">
-          <a class="post-nav-link-active" title="如何在github上开源自己的包" href="http://blog.zerokirin.online/post/ru-he-zai-github-shang-kai-yuan-zi-ji-de-bao/">上一篇文章</a>
-        </div>
-        
         
         <div class="nav-next">
-          <a class="post-nav-link-active" title="Golang基础语法题" href="http://blog.zerokirin.online/post/golang-ji-chu-yu-fa-ti/">下一篇文章</a>
+          <a class="post-nav-link-active" title="Mysql 并发控制详解（四）——并发一致性错误的解决方式" href="http://blog.zerokirin.online/post/mysql-bing-fa-kong-zhi-xiang-jie-si-bing-fa-yi-zhi-xing-cuo-wu-de-jie-jue-fang-shi/">下一篇文章</a>
           
 
         </div>
@@ -2617,11 +2950,13 @@ m[1] = &amp;j //heap上
 
       <div class="post-tags">
         
+        <a href="http://blog.zerokirin.online/tag/OAbnOVw0j/" rel="tag">每日一问</a>        
+        
         <a href="http://blog.zerokirin.online/tag/FGxA9Oea-/" rel="tag">运行时</a>        
         
-        <a href="http://blog.zerokirin.online/tag/a80OXa5tzp/" rel="tag">变量逃逸</a>        
+        <a href="http://blog.zerokirin.online/tag/OeNZRWzRL/" rel="tag">goroutine</a>        
         
-        <a href="http://blog.zerokirin.online/tag/2n3c2auIY/" rel="tag">golang</a>        
+        <a href="http://blog.zerokirin.online/tag/nRa6ExP4g/" rel="tag">channel</a>        
         
         <a href="http://blog.zerokirin.online/tag/-Ep2xEDPKR/" rel="tag">笔记</a>        
                
