@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>http://blog.zerokirin.online</id>
     <title>Zer0kiriN</title>
-    <updated>2021-06-29T22:09:19.289Z</updated>
+    <updated>2021-06-29T22:14:07.664Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="http://blog.zerokirin.online"/>
     <link rel="self" href="http://blog.zerokirin.online/atom.xml"/>
@@ -19,7 +19,7 @@
         <content type="html"><![CDATA[<blockquote>
 <p>每日一问系列（一）</p>
 </blockquote>
-<p>我们都知道，channel在缓冲区满或者无缓冲的时候，发送数据会阻塞，缓冲区空或无缓冲的实话，接受也会阻塞</p>
+<p>我们都知道，channel在缓冲区满或者无缓冲的时候，发送数据会阻塞，缓冲区空或无缓冲的时候，接受也会阻塞</p>
 <p>那么这个阻塞，是怎么实现的呢？</p>
 <p>之前我们只是粗略的讲解了channel的实现的结构体，这次我们详细的看看发送和接受的源码</p>
 <p>源码位于<code>go 1.15.4 src/runtime/chan.go</code></p>
