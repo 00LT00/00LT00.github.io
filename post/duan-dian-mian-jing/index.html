@@ -1,0 +1,554 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>端点面经 | Zer0kiriN</title>
+
+<link rel="shortcut icon" href="http://blog.zerokirin.online/favicon.ico?v=1626692045005">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="http://blog.zerokirin.online/styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<style>
+    hr {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        border: 0;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-3HHG9VQ3K2"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+    gtag('config', 'G-3HHG9VQ3K2');
+</script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <div class="navbar-brand">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Zer0kiriN
+        </div>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="changeNavbar">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="http://blog.zerokirin.online/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="http://blog.zerokirin.online/post/every-day" class="menu gt-a-link">
+                    Every Day
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1626692045005"
+                action="/search/">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = () => {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    端点面经
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2021-07-19 ·
+                    </time>
+                    
+                        <a href="http://blog.zerokirin.online/tag/-Ep2xEDPKR/" class="post-tags">
+                            # 笔记
+                        </a>
+                    
+                        <a href="http://blog.zerokirin.online/tag/_1938IQJM/" class="post-tags">
+                            # 后端
+                        </a>
+                    
+                        <a href="http://blog.zerokirin.online/tag/ieznrVSNB/" class="post-tags">
+                            # 面经
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h2 id="问题">问题</h2>
+<ul>
+<li>有缓冲的channel 读取的时候是否会阻塞</li>
+<li>如果没有数据还想读取应该怎么办</li>
+<li>如果没有数据select去读会不会阻塞</li>
+<li>函数中对一个slice做append，在没有触发扩容的情况下，函数外部是否会改变</li>
+<li>协程什么时候会切出去</li>
+<li>协程是怎么主动放弃执行权的</li>
+<li>http中path在请求头还是请求体</li>
+<li>http 怎么指定json呢</li>
+<li>http 怎么指定body编码格式</li>
+<li>https 握手流程</li>
+<li>什么是restful api</li>
+<li>客户端怎么保证证书是服务端发来的</li>
+<li>内连接左连接和右连接有什么区别</li>
+<li>什么情况下需要用事务</li>
+<li>事务的隔离级别有哪些</li>
+<li>系统调用的过程是怎样的</li>
+<li>怎么样从用户态切换到内核态</li>
+<li>进程间的内存隔离</li>
+<li>进程间通信方式</li>
+<li>有名管道和匿名管道有什么区别呢</li>
+</ul>
+<h2 id="浅析">浅析</h2>
+<ol>
+<li>
+<p>channel</p>
+<ul>
+<li>有缓冲的channel在读取的时候如果没有数据依然是会阻塞的</li>
+<li>读取channel的函数原型中有个形参叫做block，只有在select语句中，这个block的值是false，它控制了是否会进入自旋或是将读取的goroutine添加到接收队列中，如果是false的话，无法读取数据就直接返回了</li>
+<li>函数的返回值有两个，selected和received
+<ul>
+<li>received控制着是否有数据返回，也就是具体有没有读取到数据</li>
+<li>selected只在select中用来判断是否执行该case</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>slice</p>
+<p>slice的结构已经是老生常谈的话题了，它包括指向了具体是数据地址的<code>unsafe.Pointer</code>，len和cap</p>
+<p>常问的一般是函数外调用及扩容问题，这次的问题是在函数内进行了一次没有扩容的append操作会怎样，首先看看底层实现</p>
+<figure data-type="image" tabindex="1"><img src="http://img.zerokirin.online/blog/4txn95.png" alt="slice" loading="lazy"></figure>
+<ul>
+<li>
+<p>如果是直接传值调用的话，相当于对s做了一次拷贝，结果如图</p>
+<figure data-type="image" tabindex="2"><img src="http://img.zerokirin.online/blog/02ejm3.png" alt="slice2" loading="lazy"></figure>
+</li>
+<li>
+<p>在函数内部，直接修改s1的值的话，可以看到，其指向的地址和原变量s是相同的，因此外部也会跟着变化</p>
+</li>
+<li>
+<p>但是执行append的时候稍有不同，在函数内部，对s1做append，势必会改变len和cap的值，而这两个值存在于新的变量s1中，在原变量s中是没有变化的，也就是说，哪怕数据已经写到了unsafe.Pointer指向的地址中，但是由于s无法看到len和cap的更改，因此他并不知道新的数据进来</p>
+</li>
+<li>
+<p>要想在外部读取到数据，就需要用到unsafe.Pointer</p>
+</li>
+<li>
+<pre><code class="language-go">len := (*int)(unsafe.Pointer(uintptr(unsafe.Pointer(&amp;s)) +uintptr(8)))
+//为什么是+8，因为unsafe.Pointer的最底层也是个int，而go中int的大小不固定，最小是32，随操作系统位数而定，因此不能看做int32的别名，在这里我们通过 fmt.Println(unsafe.Sizeof(s)) 的结果是24，可以推断出，每个int占8个字节，因此后移8位
+*len = 5
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>http</p>
+<ul>
+<li>
+<p>path在哪个部分</p>
+<figure data-type="image" tabindex="3"><img src="http://img.zerokirin.online/blog/jxkhp1.png" alt="url构成" loading="lazy"></figure>
+<p>上面的url转换到http请求中就是如下格式</p>
+<pre><code class="language-http">GET /path/to/myfile.html?key1=value1&amp;key2=value2 HTTP/1.1
+Host: www.example.com
+</code></pre>
+</li>
+<li>
+<p>http协议版本，path和query在请求行中</p>
+</li>
+<li>
+<p>域名（host）在请求头中（host是唯一必备的请求头）</p>
+</li>
+<li>
+<p>锚点不进行http传输，仅仅为浏览器定位页面使用</p>
+</li>
+<li>
+<p>通过Content-Type指定传输的数据格式，常见的有</p>
+<ul>
+<li>text/html 文本方式的html</li>
+<li>text/plain 纯文本</li>
+<li>text/xml 文本方式的xml</li>
+<li>application/x-www-from-urlencoded 表单提交（普通表单，非上传）</li>
+<li>application/json 数据以json形式编码</li>
+<li>application/xml 数据以xml形式编码</li>
+<li>multipart/form-data 表单上传图片、文件类型等附件时必须用该类型</li>
+</ul>
+</li>
+<li>
+<p>编码格式通过Content-Encoding和Content-Type 中的字段charset指定</p>
+<ul>
+<li>charset 设置的是文本具体用什么编码，例如utf-8，gbk</li>
+<li>Content-Encoding 设置的是消息体通过什么编码方式压缩</li>
+</ul>
+</li>
+<li>
+<p>https握手流程，目前tls1.1刚刚被废除，tls1.3还没有普及，tls1.2还是主流，主要分为两种形式，rsa和dh</p>
+<ul>
+<li>
+<p>rsa版本如下</p>
+<ol>
+<li>客户端初始化一个随机数client_random，向服务端发送client hello消息</li>
+<li>服务端返回server hello消息，包括ca证书（ca证书里有服务端公钥）和随机数server_random，数字签名</li>
+<li>客户端根据数字签名验证ca证书，同时生成新的随机数PreMaster，将PreMaster用服务端公钥加密，发送给服务端</li>
+<li>现在双方都有client_random,server_random,PreMaster，通过这三个算出真正的主密钥</li>
+<li>客户端算出来后给服务端发送 finished消息</li>
+<li>服务段收到finished消息后验证是否有误，同时给客户端发送finished</li>
+<li>双方都无误则成功握手</li>
+</ol>
+</li>
+<li>
+<p>dh版本，主要是前面交换key的步骤不同</p>
+<ol>
+<li>客户端初始化随机字符串client_random，向服务器发送client hello消息</li>
+<li>服务端返回server hello，包括随机数server_random，再发送ca证书，server_pubkey</li>
+<li>客户端验证证书及server_pubkey无误后向服务端发送client_pubkey</li>
+<li>因为双方此时都有了下面这些，因此主密钥是可以通过dh算法算出来的（现在更多的用更安全的ECDHE算法）
+<ul>
+<li>server_pubkey和client_pubkey可以生成PreMaster</li>
+<li>client_random和server_random</li>
+</ul>
+</li>
+<li>所以在客户端发送pubkey的时候就可以把自己的finished一起发送出去</li>
+<li>服务端收到后验证是否有误，同时发送finished给客户端</li>
+<li>双方确认无误，成功握手</li>
+</ol>
+</li>
+<li>
+<p>客户端如何保证证书是服务端发来的</p>
+<p>进行签名算法，上一步tls握手阶段的server hello消息会携带双方约定好的加密流程，例如</p>
+<pre><code>Cipher Suite: TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 (0xc02f)
+</code></pre>
+<figure data-type="image" tabindex="4"><img src="http://img.zerokirin.online/blog/image-20210715010753948.png" alt="image-20210715010753948" loading="lazy"></figure>
+<p>可以看到这里密钥交换用了ECDHE方法因此就是dh流程，而身份验证则是RSA算法，这是一种非对称加密方式，而私钥只有服务器才有，所以只要服务端对发送的证书等信息做一次摘要加密（hash）后，再对摘要用私钥加密，然后将密文和摘要同时发送给客户端，客户端收到后，自行计算一次摘要得到hash-1，再用公钥解密服务端发送来的密文得到hash-2，如果两个相同，说明服务器的确有和证书里说的公钥的对应私钥，那么这个证书的来源就是可靠的</p>
+</li>
+</ul>
+</li>
+<li>
+<p>什么是restful api</p>
+<blockquote>
+<p>看Url就知道要什么<br>
+看http method就知道干什么<br>
+看http status code就知道结果如何</p>
+<p>——<a href="https://www.zhihu.com/question/28557115/answer/41267240">怎样用通俗的语言解释REST，以及RESTful？ - 知乎 (zhihu.com)</a></p>
+</blockquote>
+<p>这是我见过最简单，最清楚的描述，也是restful的核心思想，并不应该拘泥于patch，post等方法，重点是将api设计为人类高度可读的形式</p>
+<p>url就是资源，method就是操作方式，code就是结果</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Mysql</p>
+<ul>
+<li>
+<p>左连接和右连接有什么区别</p>
+<ul>
+<li>内连接是指，左右两张表中相同的数据组成的集合</li>
+<li>左连接是内连接和左边全表的并集</li>
+<li>右连接是内连接和右边全表的并集</li>
+</ul>
+</li>
+<li>
+<p>事务的隔离级别有哪些</p>
+<ul>
+<li>读未提交</li>
+<li>读已提交</li>
+<li>可重复读</li>
+<li>可串行化</li>
+</ul>
+</li>
+<li>
+<p>什么时候使用事务</p>
+<p>一次性对多个数据用多条sql语句修改时，在一个事务中，要么都执行，要么都不执行，这是原子性的体现，隔离性保证了多个事务之间互不相关，进而在原子性和隔离性的作用下，保证了数据库整体的一致性（这里的一致性指的是数据库的状态一直都是符合所有约束的）</p>
+</li>
+</ul>
+</li>
+<li>
+<p>OS</p>
+<ul>
+<li>
+<p>系统调用的过程是怎样的，以printf函数为例</p>
+<ol>
+<li>printf调用编写好的系统库函数（api）</li>
+<li>api找到该系统调用的系统调用号，将它还有该调用所需的参数一同放入各个寄存器中</li>
+<li>用int指令，像系统发送软中断，中断号是 0x80</li>
+<li>cpu收到中断，切换到内核态，准备函数运行需要的栈空间，同时保存cpu上下文</li>
+<li>根据系统调用号执行对应的函数</li>
+<li>准备函数返回值，并从内核态中恢复cpu上下文</li>
+<li>执行ret指令切回用户态</li>
+</ol>
+</li>
+<li>
+<p>怎样从用户态切换到内核态</p>
+<ul>
+<li>每个进程在运行的时候会在用户空间和内核空间分别分配栈，将<strong>用户空间的栈指针</strong>保存到<strong>内核空间的栈</strong>中，将<strong>cpu的栈指针寄存器</strong>的值改为<strong>内核空间的栈</strong></li>
+<li>同时修改cpu的特权等级，将ring3（用户态）修改为ring0（内核态）</li>
+</ul>
+</li>
+<li>
+<p>进程间的内存是如何保证相互隔离的</p>
+<p>虚拟内存技术，有如下优点：</p>
+<ul>
+<li>
+<p>保证内存安全，防止用户空间访问内核空间</p>
+</li>
+<li>
+<p>对进程透明，每个进程都有自己独立的内存空间，将进程的内存空间隔离，防止访问其他内存</p>
+</li>
+<li>
+<p>可以灵活分配内存，例如，可以将一段连续的虚拟地址映射到分散的物理地址空间中</p>
+</li>
+<li>
+<p>将部分内存中的数据存入磁盘，该磁盘被称为swap device，这样原内存就空出来了，可以存放更多的新数据，说白了就是强行扩充内存</p>
+</li>
+</ul>
+</li>
+<li>
+<p>进程间通信方式</p>
+<ul>
+<li>管道（匿名管道） pipe</li>
+<li>有名管道 fifo</li>
+<li>信号 signal</li>
+<li>消息队列 message</li>
+<li>信号量 semaphore</li>
+<li>共享内存 share memory</li>
+<li>套接字 socket</li>
+</ul>
+</li>
+<li>
+<p>有名管道和匿名管道的区别（翻译）</p>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><strong>PIPE</strong></th>
+<th><strong>FIFO</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>描述</strong></td>
+<td>无名的IPC对象</td>
+<td>有名的IPC对象</td>
+</tr>
+<tr>
+<td><strong>通信</strong></td>
+<td>PIPE是系统本地的，不能用于网络的通信</td>
+<td>FIFO可以在不同设备和网络间通信</td>
+</tr>
+<tr>
+<td><strong>可见</strong></td>
+<td>不存在于文件系统之中</td>
+<td>在文件系统中存在</td>
+</tr>
+<tr>
+<td><strong>Process</strong></td>
+<td>在子进程和父进程之间通信</td>
+<td>多个进程间，类似于服务器和客户端</td>
+</tr>
+<tr>
+<td><strong>Creation</strong></td>
+<td>PIPE is created by pipe () function.</td>
+<td>FIFO is created by mkfifo () function.</td>
+</tr>
+<tr>
+<td><strong>Read And Write Operation</strong></td>
+<td>读写需要同时进行</td>
+<td>无需同时进行</td>
+</tr>
+<tr>
+<td><strong>Existence</strong></td>
+<td>被关闭或者父子进程退出时，PIPE消亡</td>
+<td>FIFO一直存在，即使进程退出，它仍会存在直到系统重启</td>
+</tr>
+<tr>
+<td><strong>Control Over Ownership And Permissions</strong></td>
+<td>无法控制所有权和权限</td>
+<td>FIFO就像文件一样，你可以控制所有权和他的权限</td>
+</tr>
+<tr>
+<td><strong>流通方向</strong></td>
+<td>PIPE只能单项流通</td>
+<td>FIFO是双向的，同一个FIFO可以被用作读写</td>
+</tr>
+<tr>
+<td><strong>Mode Of Communication</strong></td>
+<td>PIPE 提供简单数据流</td>
+<td>FIFO 提供半双工数据流</td>
+</tr>
+<tr>
+<td><strong>Communication</strong></td>
+<td>具有共同祖先的进程的交流方式</td>
+<td>共同祖先不是必要的</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ol>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="http://blog.zerokirin.online/post/channel-di-ceng-ru-he-shi-xian-zu-sai-de/" class="post-title gt-a-link">
+                    Channel底层如何实现阻塞的
+                </a>
+            </div>
+        
+
+        
+            <span id="/post/duan-dian-mian-jing/" class="leancloud_visitors" data-flag-title="端点面经">
+                <em class="post-meta-item-text">阅读量 </em>
+                <i class="leancloud-visitors-count">0</i>
+            </span>
+        
+
+        
+
+        
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: 'rIYE7O4AV22Nx8QJGNrgbXkd-gzGzoHsz',
+		appKey: 'dME5rqAUTu5n0TFeGj8xJkwt',
+		avatar: '',
+		pageSize: 10,
+		recordIp: false,
+		placeholder: '',
+		visitor: true,
+	});
+</script>
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">记录</div>
+    <div class="social-container">
+        
+            
+                <a href="https://github.com/00LT00" target="_blank">
+                    <i class="fab fa-github gt-c-content-color-first"></i>
+                </a>
+            
+        
+            
+        
+            
+        
+            
+                <a href="https://www.zhihu.com/people/ling-zhu-19-99" target="_blank">
+                    <i class="fab fa-zhihu gt-c-content-color-first"></i>
+                </a>
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        
+    </div>
+    <div>
+        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
+                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="http://blog.zerokirin.online/atom.xml" target="_blank">RSS</a></a>
+    </div>
+</div>
+
+<script>
+  hljs.highlightAll()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

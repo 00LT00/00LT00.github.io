@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>http://blog.zerokirin.online</id>
     <title>Zer0kiriN</title>
-    <updated>2021-07-03T13:13:25.870Z</updated>
+    <updated>2021-07-19T10:54:10.667Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="http://blog.zerokirin.online"/>
     <link rel="self" href="http://blog.zerokirin.online/atom.xml"/>
@@ -10,6 +10,323 @@
     <logo>http://blog.zerokirin.online/images/avatar.png</logo>
     <icon>http://blog.zerokirin.online/favicon.ico</icon>
     <rights>All rights reserved 2021, Zer0kiriN</rights>
+    <entry>
+        <title type="html"><![CDATA[端点面经]]></title>
+        <id>http://blog.zerokirin.online/post/duan-dian-mian-jing/</id>
+        <link href="http://blog.zerokirin.online/post/duan-dian-mian-jing/">
+        </link>
+        <updated>2021-07-19T10:51:11.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="问题">问题</h2>
+<ul>
+<li>有缓冲的channel 读取的时候是否会阻塞</li>
+<li>如果没有数据还想读取应该怎么办</li>
+<li>如果没有数据select去读会不会阻塞</li>
+<li>函数中对一个slice做append，在没有触发扩容的情况下，函数外部是否会改变</li>
+<li>协程什么时候会切出去</li>
+<li>协程是怎么主动放弃执行权的</li>
+<li>http中path在请求头还是请求体</li>
+<li>http 怎么指定json呢</li>
+<li>http 怎么指定body编码格式</li>
+<li>https 握手流程</li>
+<li>什么是restful api</li>
+<li>客户端怎么保证证书是服务端发来的</li>
+<li>内连接左连接和右连接有什么区别</li>
+<li>什么情况下需要用事务</li>
+<li>事务的隔离级别有哪些</li>
+<li>系统调用的过程是怎样的</li>
+<li>怎么样从用户态切换到内核态</li>
+<li>进程间的内存隔离</li>
+<li>进程间通信方式</li>
+<li>有名管道和匿名管道有什么区别呢</li>
+</ul>
+<h2 id="浅析">浅析</h2>
+<ol>
+<li>
+<p>channel</p>
+<ul>
+<li>有缓冲的channel在读取的时候如果没有数据依然是会阻塞的</li>
+<li>读取channel的函数原型中有个形参叫做block，只有在select语句中，这个block的值是false，它控制了是否会进入自旋或是将读取的goroutine添加到接收队列中，如果是false的话，无法读取数据就直接返回了</li>
+<li>函数的返回值有两个，selected和received
+<ul>
+<li>received控制着是否有数据返回，也就是具体有没有读取到数据</li>
+<li>selected只在select中用来判断是否执行该case</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>slice</p>
+<p>slice的结构已经是老生常谈的话题了，它包括指向了具体是数据地址的<code>unsafe.Pointer</code>，len和cap</p>
+<p>常问的一般是函数外调用及扩容问题，这次的问题是在函数内进行了一次没有扩容的append操作会怎样，首先看看底层实现</p>
+<figure data-type="image" tabindex="1"><img src="http://img.zerokirin.online/blog/4txn95.png" alt="slice" loading="lazy"></figure>
+<ul>
+<li>
+<p>如果是直接传值调用的话，相当于对s做了一次拷贝，结果如图</p>
+<figure data-type="image" tabindex="2"><img src="http://img.zerokirin.online/blog/02ejm3.png" alt="slice2" loading="lazy"></figure>
+</li>
+<li>
+<p>在函数内部，直接修改s1的值的话，可以看到，其指向的地址和原变量s是相同的，因此外部也会跟着变化</p>
+</li>
+<li>
+<p>但是执行append的时候稍有不同，在函数内部，对s1做append，势必会改变len和cap的值，而这两个值存在于新的变量s1中，在原变量s中是没有变化的，也就是说，哪怕数据已经写到了unsafe.Pointer指向的地址中，但是由于s无法看到len和cap的更改，因此他并不知道新的数据进来</p>
+</li>
+<li>
+<p>要想在外部读取到数据，就需要用到unsafe.Pointer</p>
+</li>
+<li>
+<pre><code class="language-go">len := (*int)(unsafe.Pointer(uintptr(unsafe.Pointer(&amp;s)) +uintptr(8)))
+//为什么是+8，因为unsafe.Pointer的最底层也是个int，而go中int的大小不固定，最小是32，随操作系统位数而定，因此不能看做int32的别名，在这里我们通过 fmt.Println(unsafe.Sizeof(s)) 的结果是24，可以推断出，每个int占8个字节，因此后移8位
+*len = 5
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>http</p>
+<ul>
+<li>
+<p>path在哪个部分</p>
+<figure data-type="image" tabindex="3"><img src="http://img.zerokirin.online/blog/jxkhp1.png" alt="url构成" loading="lazy"></figure>
+<p>上面的url转换到http请求中就是如下格式</p>
+<pre><code class="language-http">GET /path/to/myfile.html?key1=value1&amp;key2=value2 HTTP/1.1
+Host: www.example.com
+</code></pre>
+</li>
+<li>
+<p>http协议版本，path和query在请求行中</p>
+</li>
+<li>
+<p>域名（host）在请求头中（host是唯一必备的请求头）</p>
+</li>
+<li>
+<p>锚点不进行http传输，仅仅为浏览器定位页面使用</p>
+</li>
+<li>
+<p>通过Content-Type指定传输的数据格式，常见的有</p>
+<ul>
+<li>text/html 文本方式的html</li>
+<li>text/plain 纯文本</li>
+<li>text/xml 文本方式的xml</li>
+<li>application/x-www-from-urlencoded 表单提交（普通表单，非上传）</li>
+<li>application/json 数据以json形式编码</li>
+<li>application/xml 数据以xml形式编码</li>
+<li>multipart/form-data 表单上传图片、文件类型等附件时必须用该类型</li>
+</ul>
+</li>
+<li>
+<p>编码格式通过Content-Encoding和Content-Type 中的字段charset指定</p>
+<ul>
+<li>charset 设置的是文本具体用什么编码，例如utf-8，gbk</li>
+<li>Content-Encoding 设置的是消息体通过什么编码方式压缩</li>
+</ul>
+</li>
+<li>
+<p>https握手流程，目前tls1.1刚刚被废除，tls1.3还没有普及，tls1.2还是主流，主要分为两种形式，rsa和dh</p>
+<ul>
+<li>
+<p>rsa版本如下</p>
+<ol>
+<li>客户端初始化一个随机数client_random，向服务端发送client hello消息</li>
+<li>服务端返回server hello消息，包括ca证书（ca证书里有服务端公钥）和随机数server_random，数字签名</li>
+<li>客户端根据数字签名验证ca证书，同时生成新的随机数PreMaster，将PreMaster用服务端公钥加密，发送给服务端</li>
+<li>现在双方都有client_random,server_random,PreMaster，通过这三个算出真正的主密钥</li>
+<li>客户端算出来后给服务端发送 finished消息</li>
+<li>服务段收到finished消息后验证是否有误，同时给客户端发送finished</li>
+<li>双方都无误则成功握手</li>
+</ol>
+</li>
+<li>
+<p>dh版本，主要是前面交换key的步骤不同</p>
+<ol>
+<li>客户端初始化随机字符串client_random，向服务器发送client hello消息</li>
+<li>服务端返回server hello，包括随机数server_random，再发送ca证书，server_pubkey</li>
+<li>客户端验证证书及server_pubkey无误后向服务端发送client_pubkey</li>
+<li>因为双方此时都有了下面这些，因此主密钥是可以通过dh算法算出来的（现在更多的用更安全的ECDHE算法）
+<ul>
+<li>server_pubkey和client_pubkey可以生成PreMaster</li>
+<li>client_random和server_random</li>
+</ul>
+</li>
+<li>所以在客户端发送pubkey的时候就可以把自己的finished一起发送出去</li>
+<li>服务端收到后验证是否有误，同时发送finished给客户端</li>
+<li>双方确认无误，成功握手</li>
+</ol>
+</li>
+<li>
+<p>客户端如何保证证书是服务端发来的</p>
+<p>进行签名算法，上一步tls握手阶段的server hello消息会携带双方约定好的加密流程，例如</p>
+<pre><code>Cipher Suite: TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 (0xc02f)
+</code></pre>
+<figure data-type="image" tabindex="4"><img src="http://img.zerokirin.online/blog/image-20210715010753948.png" alt="image-20210715010753948" loading="lazy"></figure>
+<p>可以看到这里密钥交换用了ECDHE方法因此就是dh流程，而身份验证则是RSA算法，这是一种非对称加密方式，而私钥只有服务器才有，所以只要服务端对发送的证书等信息做一次摘要加密（hash）后，再对摘要用私钥加密，然后将密文和摘要同时发送给客户端，客户端收到后，自行计算一次摘要得到hash-1，再用公钥解密服务端发送来的密文得到hash-2，如果两个相同，说明服务器的确有和证书里说的公钥的对应私钥，那么这个证书的来源就是可靠的</p>
+</li>
+</ul>
+</li>
+<li>
+<p>什么是restful api</p>
+<blockquote>
+<p>看Url就知道要什么<br>
+看http method就知道干什么<br>
+看http status code就知道结果如何</p>
+<p>——<a href="https://www.zhihu.com/question/28557115/answer/41267240">怎样用通俗的语言解释REST，以及RESTful？ - 知乎 (zhihu.com)</a></p>
+</blockquote>
+<p>这是我见过最简单，最清楚的描述，也是restful的核心思想，并不应该拘泥于patch，post等方法，重点是将api设计为人类高度可读的形式</p>
+<p>url就是资源，method就是操作方式，code就是结果</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Mysql</p>
+<ul>
+<li>
+<p>左连接和右连接有什么区别</p>
+<ul>
+<li>内连接是指，左右两张表中相同的数据组成的集合</li>
+<li>左连接是内连接和左边全表的并集</li>
+<li>右连接是内连接和右边全表的并集</li>
+</ul>
+</li>
+<li>
+<p>事务的隔离级别有哪些</p>
+<ul>
+<li>读未提交</li>
+<li>读已提交</li>
+<li>可重复读</li>
+<li>可串行化</li>
+</ul>
+</li>
+<li>
+<p>什么时候使用事务</p>
+<p>一次性对多个数据用多条sql语句修改时，在一个事务中，要么都执行，要么都不执行，这是原子性的体现，隔离性保证了多个事务之间互不相关，进而在原子性和隔离性的作用下，保证了数据库整体的一致性（这里的一致性指的是数据库的状态一直都是符合所有约束的）</p>
+</li>
+</ul>
+</li>
+<li>
+<p>OS</p>
+<ul>
+<li>
+<p>系统调用的过程是怎样的，以printf函数为例</p>
+<ol>
+<li>printf调用编写好的系统库函数（api）</li>
+<li>api找到该系统调用的系统调用号，将它还有该调用所需的参数一同放入各个寄存器中</li>
+<li>用int指令，像系统发送软中断，中断号是 0x80</li>
+<li>cpu收到中断，切换到内核态，准备函数运行需要的栈空间，同时保存cpu上下文</li>
+<li>根据系统调用号执行对应的函数</li>
+<li>准备函数返回值，并从内核态中恢复cpu上下文</li>
+<li>执行ret指令切回用户态</li>
+</ol>
+</li>
+<li>
+<p>怎样从用户态切换到内核态</p>
+<ul>
+<li>每个进程在运行的时候会在用户空间和内核空间分别分配栈，将<strong>用户空间的栈指针</strong>保存到<strong>内核空间的栈</strong>中，将<strong>cpu的栈指针寄存器</strong>的值改为<strong>内核空间的栈</strong></li>
+<li>同时修改cpu的特权等级，将ring3（用户态）修改为ring0（内核态）</li>
+</ul>
+</li>
+<li>
+<p>进程间的内存是如何保证相互隔离的</p>
+<p>虚拟内存技术，有如下优点：</p>
+<ul>
+<li>
+<p>保证内存安全，防止用户空间访问内核空间</p>
+</li>
+<li>
+<p>对进程透明，每个进程都有自己独立的内存空间，将进程的内存空间隔离，防止访问其他内存</p>
+</li>
+<li>
+<p>可以灵活分配内存，例如，可以将一段连续的虚拟地址映射到分散的物理地址空间中</p>
+</li>
+<li>
+<p>将部分内存中的数据存入磁盘，该磁盘被称为swap device，这样原内存就空出来了，可以存放更多的新数据，说白了就是强行扩充内存</p>
+</li>
+</ul>
+</li>
+<li>
+<p>进程间通信方式</p>
+<ul>
+<li>管道（匿名管道） pipe</li>
+<li>有名管道 fifo</li>
+<li>信号 signal</li>
+<li>消息队列 message</li>
+<li>信号量 semaphore</li>
+<li>共享内存 share memory</li>
+<li>套接字 socket</li>
+</ul>
+</li>
+<li>
+<p>有名管道和匿名管道的区别（翻译）</p>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><strong>PIPE</strong></th>
+<th><strong>FIFO</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>描述</strong></td>
+<td>无名的IPC对象</td>
+<td>有名的IPC对象</td>
+</tr>
+<tr>
+<td><strong>通信</strong></td>
+<td>PIPE是系统本地的，不能用于网络的通信</td>
+<td>FIFO可以在不同设备和网络间通信</td>
+</tr>
+<tr>
+<td><strong>可见</strong></td>
+<td>不存在于文件系统之中</td>
+<td>在文件系统中存在</td>
+</tr>
+<tr>
+<td><strong>Process</strong></td>
+<td>在子进程和父进程之间通信</td>
+<td>多个进程间，类似于服务器和客户端</td>
+</tr>
+<tr>
+<td><strong>Creation</strong></td>
+<td>PIPE is created by pipe () function.</td>
+<td>FIFO is created by mkfifo () function.</td>
+</tr>
+<tr>
+<td><strong>Read And Write Operation</strong></td>
+<td>读写需要同时进行</td>
+<td>无需同时进行</td>
+</tr>
+<tr>
+<td><strong>Existence</strong></td>
+<td>被关闭或者父子进程退出时，PIPE消亡</td>
+<td>FIFO一直存在，即使进程退出，它仍会存在直到系统重启</td>
+</tr>
+<tr>
+<td><strong>Control Over Ownership And Permissions</strong></td>
+<td>无法控制所有权和权限</td>
+<td>FIFO就像文件一样，你可以控制所有权和他的权限</td>
+</tr>
+<tr>
+<td><strong>流通方向</strong></td>
+<td>PIPE只能单项流通</td>
+<td>FIFO是双向的，同一个FIFO可以被用作读写</td>
+</tr>
+<tr>
+<td><strong>Mode Of Communication</strong></td>
+<td>PIPE 提供简单数据流</td>
+<td>FIFO 提供半双工数据流</td>
+</tr>
+<tr>
+<td><strong>Communication</strong></td>
+<td>具有共同祖先的进程的交流方式</td>
+<td>共同祖先不是必要的</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ol>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Channel底层如何实现阻塞的]]></title>
         <id>http://blog.zerokirin.online/post/channel-di-ceng-ru-he-shi-xian-zu-sai-de/</id>
@@ -3421,181 +3738,6 @@ func (p *P) addr2() {
 </li>
 </ol>
 <p>本来以为是个什么考题，结果都是一些基础知识，就当再复习一遍吧</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[一次完整的请求及改进]]></title>
-        <id>http://blog.zerokirin.online/post/yi-ci-wan-zheng-de-qing-qiu-ji-gai-jin/</id>
-        <link href="http://blog.zerokirin.online/post/yi-ci-wan-zheng-de-qing-qiu-ji-gai-jin/">
-        </link>
-        <updated>2021-04-16T11:48:55.000Z</updated>
-        <content type="html"><![CDATA[<h2 id="准备阶段">准备阶段</h2>
-<p>当你通过网线或者是WIFI连接到宿舍路由器时，无论进行何种访问，首当其冲的都是要清楚的知道自己所处的网络位置，因此需要初始化<strong>IP地址，默认网关，子网掩码</strong>，这决定了最基础的，你在当前局域网内的网络位置</p>
-<h3 id="dhcp">DHCP</h3>
-<h4 id="发现服务">发现服务</h4>
-<ol>
-<li><strong>笔记本A</strong>的操作系统首先生成一个<strong>DHCP发现报文</strong></li>
-<li>放入一个UDP报文，目的端口67（DHCP服务器），源端口68（DHCP客户端）</li>
-<li>UDP报文被放入一个IP数据报，目的IP地址为<code>255.255.255.255</code>（广播地址），源IP地址为<code>0.0.0.0</code>，因为此时A还没有有效的IP地址，所以才要获取呀</li>
-<li>IP数据报被放入一个以太网帧，该帧的目的地址是<code>FF:FF:FF:FF:FF:FF</code>（广播地址），源地址是A自己的MAC地址，该帧会被广播到所有与交换机（在这里也就是寝室路由器，它充当了交换机的功能）相连的所有设备</li>
-<li>这个以太网帧是第一个由A发送到交换机的帧，该交换机将在所有的出端口把此帧广播出去，包括路由器（寝室路由器的另一个功能）连接的端口</li>
-<li>路由器收到该广播帧后进行解析，抽出IP数据报，一看目的地址是广播地址，因此进行处理，根据IP报头中的信息确定是UDP协议，然后抽出UDP，根据UDP端口67到达DHCP服务器，DHCP解析得到<strong>DHCP发现报文</strong></li>
-</ol>
-<h4 id="服务提供">服务提供</h4>
-<p>由于一个局域网下可能会有多个路由器，也会有多个提供DHCP服务的服务器，因此不能直接选定，需要由客户机自己选择DHCP服务器，因此返回的<strong>服务提供报文</strong>的</p>
-<ul>
-<li>目的地址是广播地址</li>
-<li>源地址是自身IP地址</li>
-<li>还有DHCP服务号，用于最终选择哪个DHCP服务器</li>
-<li>yiaddr（你的IP地址），指最终分给客户端的IP地址</li>
-<li>其他若干信息，包括租期时间等等</li>
-</ul>
-<h4 id="发起请求">发起请求</h4>
-<ol>
-<li>A生成一个<strong>DHCP请求报文</strong></li>
-<li>目的端口67，源端口68</li>
-<li>目的IP地址依然是广播地址，源地址是<code>0.0.0.0</code></li>
-<li>以太网帧的目的地址依然是广播地址，源地址是A自己的MAC地址</li>
-<li>以太网帧通过交换机广播到所有设备上</li>
-<li>路由器收到广播后解析，最终得到<strong>DHCP请求报文</strong></li>
-</ol>
-<p>以上和发现步骤相同，不同的是<strong>DHCP请求报文</strong>多带了一个DHCP服务号，这样即使由多个DHCP服务器，依然能确定选择哪个获取IP地址</p>
-<ol start="7">
-<li>对应的DHCP服务器将原来已经预分配的yiaddr作为IP地址，将<strong>IP地址，子网掩码，默认网关路由器，DNS服务器</strong>封装为一个DHCP ACK报文</li>
-</ol>
-<h4 id="处理返回">处理返回</h4>
-<p>和服务提供步骤相同，不一样的是<strong>服务提供报文</strong>没有子网掩码等，</p>
-<ol>
-<li>将<strong>DHCP ACK报文</strong>封装进UDP，目的端口是68（客户端）</li>
-<li>放入IP数据报，和服务提供步骤一样，源IP地址是自身IP地址，目的地址是广播地址</li>
-<li>最后放入一个以太网帧，源地址是路由器MAC，目的地址是电脑A</li>
-<li>由于交换机有自学习能力，在发现服务的时候就已经知道对应的MAC地址怎么转发了</li>
-<li>返回到A，A记录并更新自己的状态</li>
-</ol>
-<p>到这里一个设备已经完整的加入到我们的局域网了</p>
-<h2 id="dns和arp">DNS和ARP</h2>
-<p>踏出请求的第一步就是获取对应的IP地址，这就是DNS查询</p>
-<ol>
-<li>
-<p>将<code>google.com</code>放入一个UDP报文，目的端口53，源端口就是大于1024的随机一个</p>
-</li>
-<li>
-<p>包装到IP报文中，目的地址是<strong>DNS服务器的IP地址</strong>，源地址就是自身的IP地址</p>
-</li>
-<li>
-<p>由于路由表上没有直接对DNS服务的记录，因此会转发到默认网关路由器上</p>
-<p>然而A只是知道了默认网关的IP地址，但以太网帧又不知道转到哪，这就需要ARP协议</p>
-<ol>
-<li>A生成一个具有目的IP地址（默认网关）的<strong>ARP查询报文</strong></li>
-<li>把报文放到一个以太网帧中，该帧的目的地址是广播地址，把帧发送给交换机，交换机（一般情况下是路由器的交换部分）将转发给所有设备</li>
-<li>每个设备都会解析报文，如果目的地址和自己的地址符合，就准备一个<strong>ARP回答报文</strong>，包括自己的IP地址和MAC地址</li>
-<li>放到以太网帧中，目的地址是A的地址，通过交换机发送给A</li>
-<li>A收到<strong>回答报文</strong>后将IP地址和MAC地址保存到ARP表中，下次直接调用就好</li>
-</ol>
-<p>这样就有了默认网关的MAC地址</p>
-</li>
-<li>
-<p>将IP报文包装到以太网帧中，目标地址是<strong>默认网关的MAC</strong>，经过交换机转发给默认网关</p>
-</li>
-<li>
-<p>默认网关根据自身的路由表选择将报文转发给下一跳路由器，同时<strong>更新目的地址</strong>，源地址保持不变，最终<strong>目的地址应该就是DNS服务器的MAC地址</strong>，路由表的更新由RIP，OSPF等域内协议以及域间协议BGP维护</p>
-</li>
-<li>
-<p>经过重重转发到了DNS服务器，服务器收到查询报文后找到对应的IP地址，生成一个包括IP地址和<code>google.com</code>的UDP报文</p>
-</li>
-<li>
-<p>然后就是放入IP报文和以太网帧，一路转发回到最初的起点A</p>
-</li>
-</ol>
-<p>至此A终于知道了IP地址开始正式的访问</p>
-<h2 id="tcp和https">TCP和HTTPS</h2>
-<h3 id="建立http连接">建立HTTP连接</h3>
-<h4 id="tcp三次握手">TCP三次握手</h4>
-<ol>
-<li>A生成一个TCP请求报文，四元组（源地址，目的地址，源端口号，目的端口号）填写好，FLAG为SYN</li>
-<li>通过中间的路由器和交换机不断地转发到达目的地，然后被解析，服务端生成一个TCP报文，FLAG为SYN ACK</li>
-<li>A收到报文后就已经进入连接状态了，对于A来说已经建立连接完成了，下一步就是发送数据，但对于服务端来说还处于同步等待状态，不过它会在下一次收到ACK报文的时候进入连接状态，这个报文可能是已经带有数据的</li>
-</ol>
-<p>至此，几乎所有准备工作都已经做完了，终于可以开始请求网页了。</p>
-<h4 id="http请求">HTTP请求</h4>
-<h5 id="请求报文">请求报文</h5>
-<figure data-type="image" tabindex="1"><img src="https://www.runoob.com/wp-content/uploads/2013/11/2012072810301161.png" alt="img" loading="lazy"></figure>
-<ul>
-<li>请求行 回车符和换行符就是<CR><LF></li>
-<li>请求头 除了Host外都是可选的</li>
-<li>空行 除了回车符和换行符以外无其他空格</li>
-<li>数据</li>
-</ul>
-<pre><code class="language-http">GET / HTTP/1.1
-Host: www.google.com
-（注意这里是个空行）
-</code></pre>
-<p>将报文放入一个TCP报文，然后依据建立好的TCP连接发送出去</p>
-<h5 id="响应报文">响应报文</h5>
-<p><code>google.coom</code>服务器收到80端口的请求，生成响应报文，将请求的web页面内容放入响应体。</p>
-<figure data-type="image" tabindex="2"><img src="https://img-blog.csdn.net/20131107163544468" alt="img" loading="lazy"></figure>
-<ul>
-<li>状态行 请求成功的状态码就是200，描述 ok</li>
-<li>响应头</li>
-<li>空行</li>
-<li>响应数据，正文部分</li>
-</ul>
-<pre><code class="language-http">HTTP/1.1 200 OK
-Content-Length: 3059
-Server: GWS/2.0
-Date: Sat, 11 Jan 2003 02:44:04 GMT
-Content-Type: text/html
-Cache-control: private
-Set-Cookie: PREF=ID=73d4aef52e57bae9:TM=1042253044:LM=1042253044:S=SMCc_HRPCQiqy
-X9j; expires=Sun, 17-Jan-2038 19:14:07 GMT; path=/; domain=.google.com
-Connection: keep-alive
-
-&lt;html&gt;
-Hello Google
-&lt;/html&gt;
-</code></pre>
-<p>响应体经过路由器的重重转发，回到了A，A终于拿到了<code>google.com</code>的内容，浏览器将返回来的响应体进行渲染，渲染出了最终的页面。</p>
-<h4 id="tcp四次挥手">TCP四次挥手</h4>
-<p>连接完成后，当A已经不需要继续请求的时候就会开始回收步骤，结束连接</p>
-<ol>
-<li>A发送FIN</li>
-<li>服务器收到FIN，返回ACK，此时A已经不能向服务器发送消息了，服务器将继续把没发完的发掉</li>
-<li>服务器数据发送完毕后，发送FIN</li>
-<li>A收到后返回ACK，等待2MSL后如果没收到服务器的消息则释放连接资源，此次链接结束</li>
-<li>服务器收到ACK，确定A已经关闭，中断连接</li>
-</ol>
-<p>至此，从插入网线开始，一次完整的HTTP请求就结束了</p>
-<h3 id="http的改进">HTTP的改进</h3>
-<h4 id="http11">HTTP/1.1</h4>
-<p>上面讲述的是一次完整的HTTP/1.1请求，它相比1.0改进了几个部分</p>
-<ol>
-<li>长连接，增加了connection报头，通过设置<code>Keep-Alive</code>可以保持HTTP连接不断开，避免了每次请求结束后都要重复释放，重复建立，提高了效率，当客户端像关闭HTTP连接的时候可以再请求头中携带<code>Connction: false</code>来告知服务器关闭请求。</li>
-<li>增加了Host请求头，有时候同一个IP地址上会有不同的主机和或网站，因此可以通过携带不同的Host请求头来区分请求的主机。</li>
-<li>身份认证，状态管理和缓存机制</li>
-<li>断点续传，通过增加range头，请求资源的一部分，响应206</li>
-</ol>
-<h4 id="http20">HTTP/2.0</h4>
-<p>由于1.x版本都是基于文字的，健壮性和性能都受到了挑战，而且长连接并没有解决TCP阻塞问题，于是有了2.0。</p>
-<ol>
-<li>头部压缩 2.0版本是基于二进制的，类似于TCP报头一样，规定好了位数，这样只需要在服务端和客户端同时维护一份静态的数据字典，用来确定请求头，省去了大部分重复字段</li>
-<li>服务端推送，在1.x时代，当网页同时包含了<code>style.css</code>和<code>style.js</code>时，会再重复两次请求去获取两个文件，但是2.0中，服务端可以主动推送相关文件，客户端需要获取的时候就无需重复请求了</li>
-<li>引入了帧和流的概念，实现了多路复用，抽象一点理解：
-<ol>
-<li>每一个帧可看做是一个学生，流可以认为是组（流标识符为帧的属性值），一个班级（一个连接）内学生被分为若干个小组，每一个小组分配不同的具体任务。</li>
-<li>HTTP/1.* 一次请求-响应，建立一个连接，用完关闭；每一个小组任务都需要建立一个班级，多个小组任务多个班级，1:1比例</li>
-<li>HTTP/1.1 Pipeling解决方式为，若干个小组任务排队串行化单线程处理，后面小组任务等待前面小组任务完成才能获得执行机会，一旦有任务处理超时等，后续任务只能被阻塞，毫无办法，也就是人们常说的线头阻塞，因此并未实际使用</li>
-<li>HTTP/2多个小组任务可同时并行（严格意义上是并发）在班级内执行。一旦某个小组任务耗时严重，但不会影响到其它小组任务正常执行</li>
-<li>这样自始至终就只有一个TCP连接，控制权完全在HTTP手中，而且也能最大化利用每个TCP连接可以传输的带宽</li>
-</ol>
-</li>
-</ol>
-<p>HTTP2.0对以前的1.x版本也提供了兼容，只需要经过一个二进制分帧层就可以将文本信息转化为对应的二进制头</p>
-<h4 id="https">HTTPS</h4>
-<p>不管http怎么改进，他始终是明文加密的一种传输方式，因此提出了加密方案——SSL协议，TCP/IP四层协议模型中应该是处于应用层，在OSI七层模型中可以算会话层</p>
-<p>SSL的1.0版本有重大的安全缺陷，因此从未公开过，到3.0版本已经证明是成熟的方案了，于是在1999年，SSL3.0被更名成了TLS（传输层安全），TLS1.0实际上就是SSL3.1，这样，当HTTP经过了SSL/TLS协议加密后再传输的方式就被称为HTTPS</p>
-<p>注：很多教程里说HTTP2.0要求强制使用HTTPS，其实这并不是2.0的要求，它只是规定了HTTP的协议，真正要求HTTPS的是浏览器</p>
-<p>至此，我们的这次请求就由HTTP1.1更换为了HTTPS2.0</p>
-<p>对于TLS的详解，请见下章</p>
 ]]></content>
     </entry>
 </feed>
