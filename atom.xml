@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-    <id>http://blog.zerokirin.online</id>
+    <id>http://www.zerokirin.online</id>
     <title>Zer0kiriN</title>
-    <updated>2021-08-11T15:22:46.108Z</updated>
+    <updated>2021-08-11T15:29:19.119Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
-    <link rel="alternate" href="http://blog.zerokirin.online"/>
-    <link rel="self" href="http://blog.zerokirin.online/atom.xml"/>
+    <link rel="alternate" href="http://www.zerokirin.online"/>
+    <link rel="self" href="http://www.zerokirin.online/atom.xml"/>
     <subtitle>记录</subtitle>
-    <logo>http://blog.zerokirin.online/images/avatar.png</logo>
-    <icon>http://blog.zerokirin.online/favicon.ico</icon>
+    <logo>http://www.zerokirin.online/images/avatar.png</logo>
+    <icon>http://www.zerokirin.online/favicon.ico</icon>
     <rights>All rights reserved 2021, Zer0kiriN</rights>
     <entry>
         <title type="html"><![CDATA[端点面经]]></title>
-        <id>http://blog.zerokirin.online/post/duan-dian-mian-jing/</id>
-        <link href="http://blog.zerokirin.online/post/duan-dian-mian-jing/">
+        <id>http://www.zerokirin.online/post/duan-dian-mian-jing/</id>
+        <link href="http://www.zerokirin.online/post/duan-dian-mian-jing/">
         </link>
         <updated>2021-07-19T10:51:11.000Z</updated>
         <content type="html"><![CDATA[<h2 id="问题">问题</h2>
@@ -329,8 +329,8 @@ Host: www.example.com
     </entry>
     <entry>
         <title type="html"><![CDATA[Channel底层如何实现阻塞的]]></title>
-        <id>http://blog.zerokirin.online/post/channel-di-ceng-ru-he-shi-xian-zu-sai-de/</id>
-        <link href="http://blog.zerokirin.online/post/channel-di-ceng-ru-he-shi-xian-zu-sai-de/">
+        <id>http://www.zerokirin.online/post/channel-di-ceng-ru-he-shi-xian-zu-sai-de/</id>
+        <link href="http://www.zerokirin.online/post/channel-di-ceng-ru-he-shi-xian-zu-sai-de/">
         </link>
         <updated>2021-06-29T06:24:06.000Z</updated>
         <content type="html"><![CDATA[<blockquote>
@@ -848,8 +848,8 @@ func send(c *hchan, sg *sudog, ep unsafe.Pointer, unlockf func(), skip int) {
     </entry>
     <entry>
         <title type="html"><![CDATA[Mysql 并发控制详解（四）——并发一致性错误的解决方式]]></title>
-        <id>http://blog.zerokirin.online/post/mysql-bing-fa-kong-zhi-xiang-jie-si-bing-fa-yi-zhi-xing-cuo-wu-de-jie-jue-fang-shi/</id>
-        <link href="http://blog.zerokirin.online/post/mysql-bing-fa-kong-zhi-xiang-jie-si-bing-fa-yi-zhi-xing-cuo-wu-de-jie-jue-fang-shi/">
+        <id>http://www.zerokirin.online/post/mysql-bing-fa-kong-zhi-xiang-jie-si-bing-fa-yi-zhi-xing-cuo-wu-de-jie-jue-fang-shi/</id>
+        <link href="http://www.zerokirin.online/post/mysql-bing-fa-kong-zhi-xiang-jie-si-bing-fa-yi-zhi-xing-cuo-wu-de-jie-jue-fang-shi/">
         </link>
         <updated>2021-06-07T03:55:15.000Z</updated>
         <content type="html"><![CDATA[<p>至此我们讲完了锁和MVCC，对数据库事务方面的理解应该更深了，还记得第一章我们讲的并发一致性问题吗，现在就让我们逐个分析</p>
@@ -1349,8 +1349,8 @@ mysql&gt; select * from gap;
     </entry>
     <entry>
         <title type="html"><![CDATA[Mysql 并发控制详解（三）——MVCC]]></title>
-        <id>http://blog.zerokirin.online/post/mysql-mvcc-qian-xi/</id>
-        <link href="http://blog.zerokirin.online/post/mysql-mvcc-qian-xi/">
+        <id>http://www.zerokirin.online/post/mysql-mvcc-qian-xi/</id>
+        <link href="http://www.zerokirin.online/post/mysql-mvcc-qian-xi/">
         </link>
         <updated>2021-06-05T11:29:19.000Z</updated>
         <content type="html"><![CDATA[<h2 id="multi-version-concurrency-control">Multi-version concurrency control</h2>
@@ -1442,8 +1442,8 @@ mysql&gt; select * from gap;
     </entry>
     <entry>
         <title type="html"><![CDATA[Mysql 并发控制详解（二）——锁]]></title>
-        <id>http://blog.zerokirin.online/post/mysql-shi-wu-ge-chi-deng-ji-he-suo-xiang-jie-er/</id>
-        <link href="http://blog.zerokirin.online/post/mysql-shi-wu-ge-chi-deng-ji-he-suo-xiang-jie-er/">
+        <id>http://www.zerokirin.online/post/mysql-shi-wu-ge-chi-deng-ji-he-suo-xiang-jie-er/</id>
+        <link href="http://www.zerokirin.online/post/mysql-shi-wu-ge-chi-deng-ji-he-suo-xiang-jie-er/">
         </link>
         <updated>2021-06-01T20:50:18.000Z</updated>
         <content type="html"><![CDATA[<p>书接上回，我们罗列了一下事务隔离等级和并发一致性问题，那么这一章就让我们看看锁是怎么工作的，又是怎么和事务联系起来的</p>
@@ -2201,8 +2201,8 @@ Query OK, 1 row affected (0.01 sec)
     </entry>
     <entry>
         <title type="html"><![CDATA[Mysql 并发控制详解（一）]]></title>
-        <id>http://blog.zerokirin.online/post/mysql-shi-wu-ge-chi-deng-ji-he-suo-xiang-jie-yi/</id>
-        <link href="http://blog.zerokirin.online/post/mysql-shi-wu-ge-chi-deng-ji-he-suo-xiang-jie-yi/">
+        <id>http://www.zerokirin.online/post/mysql-shi-wu-ge-chi-deng-ji-he-suo-xiang-jie-yi/</id>
+        <link href="http://www.zerokirin.online/post/mysql-shi-wu-ge-chi-deng-ji-he-suo-xiang-jie-yi/">
         </link>
         <updated>2021-05-28T19:12:08.000Z</updated>
         <content type="html"><![CDATA[<h2 id="一致性">一致性</h2>
@@ -2516,8 +2516,8 @@ mysql&gt; select * from gap;
     </entry>
     <entry>
         <title type="html"><![CDATA[Mysql基础回顾]]></title>
-        <id>http://blog.zerokirin.online/post/mysql-ji-chu-hui-gu/</id>
-        <link href="http://blog.zerokirin.online/post/mysql-ji-chu-hui-gu/">
+        <id>http://www.zerokirin.online/post/mysql-ji-chu-hui-gu/</id>
+        <link href="http://www.zerokirin.online/post/mysql-ji-chu-hui-gu/">
         </link>
         <updated>2021-05-16T13:32:23.000Z</updated>
         <content type="html"><![CDATA[<p><s>ORM库用起来是真的爽，面试的时候被问sql也是真的爽，人自闭了重新复习吧</s></p>
@@ -3191,8 +3191,8 @@ updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP --更
     </entry>
     <entry>
         <title type="html"><![CDATA[如何在github上开源自己的包]]></title>
-        <id>http://blog.zerokirin.online/post/ru-he-zai-github-shang-kai-yuan-zi-ji-de-bao/</id>
-        <link href="http://blog.zerokirin.online/post/ru-he-zai-github-shang-kai-yuan-zi-ji-de-bao/">
+        <id>http://www.zerokirin.online/post/ru-he-zai-github-shang-kai-yuan-zi-ji-de-bao/</id>
+        <link href="http://www.zerokirin.online/post/ru-he-zai-github-shang-kai-yuan-zi-ji-de-bao/">
         </link>
         <updated>2021-05-07T14:46:53.000Z</updated>
         <content type="html"><![CDATA[<p>由于go没有自带的栈结构，因此我们手写了两种stack方便刷题及日后使用，顺便尝试下开源</p>
@@ -3274,8 +3274,8 @@ go 1.15
     </entry>
     <entry>
         <title type="html"><![CDATA[Golang 运行时（一）]]></title>
-        <id>http://blog.zerokirin.online/post/golang-yun-xing-shi-yi/</id>
-        <link href="http://blog.zerokirin.online/post/golang-yun-xing-shi-yi/">
+        <id>http://www.zerokirin.online/post/golang-yun-xing-shi-yi/</id>
+        <link href="http://www.zerokirin.online/post/golang-yun-xing-shi-yi/">
         </link>
         <updated>2021-04-23T16:36:28.000Z</updated>
         <content type="html"><![CDATA[<h2 id="内存分区">内存分区</h2>
@@ -3391,8 +3391,8 @@ m[1] = &amp;j //heap上
     </entry>
     <entry>
         <title type="html"><![CDATA[Golang基础语法题]]></title>
-        <id>http://blog.zerokirin.online/post/golang-ji-chu-yu-fa-ti/</id>
-        <link href="http://blog.zerokirin.online/post/golang-ji-chu-yu-fa-ti/">
+        <id>http://www.zerokirin.online/post/golang-ji-chu-yu-fa-ti/</id>
+        <link href="http://www.zerokirin.online/post/golang-ji-chu-yu-fa-ti/">
         </link>
         <updated>2021-04-17T12:10:32.000Z</updated>
         <content type="html"><![CDATA[<ol>
