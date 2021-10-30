@@ -1,0 +1,479 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>字节二面面经 | Zer0kiriN</title>
+
+<link rel="shortcut icon" href="http://www.zerokirin.online/favicon.ico?v=1635585413132">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="http://www.zerokirin.online/styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<style>
+    hr {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        border: 0;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-3HHG9VQ3K2"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+    gtag('config', 'G-3HHG9VQ3K2');
+</script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <div class="navbar-brand">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Zer0kiriN
+        </div>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="changeNavbar">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/archives/" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags/" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/every-day/" class="menu gt-a-link">
+                    Every Day
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/about/" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1635585413132"
+                action="/search/">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = () => {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    字节二面面经
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2021-08-31 ·
+                    </time>
+                    
+                        <a href="http://www.zerokirin.online/tag/R7XDc_3FA/" class="post-tags">
+                            # 字节
+                        </a>
+                    
+                        <a href="http://www.zerokirin.online/tag/ieznrVSNB/" class="post-tags">
+                            # 面经
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h2 id="问题">问题</h2>
+<ul>
+<li>dns工作方式</li>
+<li>dns多个ip地址怎么选择</li>
+<li>http长连接怎么控制</li>
+<li>长连接怎么关闭呢</li>
+<li>https是什么</li>
+<li>rsa握手流程</li>
+<li>给证书签名的作用是什么</li>
+<li>tcp传输的可靠性是靠什么保证的</li>
+<li>什么是聚簇索引呢</li>
+<li>myisam是否是聚簇索引，他的索引保存的是什么</li>
+<li>索引是通过什么数据结构保存的</li>
+<li>B+树和B树的优缺点</li>
+<li>有用过事务吗，是什么场景下使用呢</li>
+<li>事务有几个特性</li>
+<li>caid是什么</li>
+<li>原子性是怎么保证的</li>
+<li>undo log 里面有哪些东西</li>
+<li>持久性是怎么保证的</li>
+<li>隔离性是怎么保证的</li>
+<li>mvcc是怎么实现的</li>
+<li>lru怎么实现</li>
+</ul>
+<h2 id="浅析">浅析</h2>
+<h3 id="计网">计网</h3>
+<h4 id="dns">dns</h4>
+<ol>
+<li>
+<p>dns工作方式</p>
+<ul>
+<li>dns可以理解为一个转换域名到ip地址的服务器，默认端口是53，默认使用udp协议</li>
+<li>主要的工作方式有两种，迭代和递归</li>
+<li>迭代就是服务器去一个一个问其他上级dns服务器，直到根域名或者有缓存过的记录</li>
+<li>递归是服务器只管向上级问一次，上级dns再向上级问，对每个服务器来说，只有一次请求，一次返回</li>
+<li>目前常采用迭代方式，也就是向dns服务器发送解析请求，服务器自己挨个向上级查询，然后返回结果</li>
+</ul>
+</li>
+<li>
+<p>dns多个ip地址怎么选择</p>
+<ul>
+<li>随机，我也不知道这有什么好问的，就是随机啊。。。</li>
+</ul>
+</li>
+</ol>
+<h4 id="http长连接">http长连接</h4>
+<p>http/1.0引入了长连接的方式，也就是在一个tcp连接中尽可能地多传输数据，减少tcp握手挥手的性能损耗</p>
+<ul>
+<li>
+<p>http怎么控制长连接</p>
+<pre><code>Connection: keep-alive
+Connection: close
+</code></pre>
+<p>通过在请求头中增加字段，http/1.0 默认是<code>close</code>，到http/1.1时，默认为<code>keep-alive</code></p>
+<ul>
+<li>当设置为keep-alive时，tcp连接不会主动断开，只有超过了服务器设置的超时时间才会主动停止</li>
+<li>close时就断开tcp连接</li>
+</ul>
+</li>
+</ul>
+<h4 id="https是什么">https是什么</h4>
+<p>在http的基础上，增加了tls作为加密协议，将原来的明文通信变成密文通信</p>
+<p>最早是ssl，套接字安全层，ssl3.0完善后成为为tls1.0，传输层安全协议，主要目的就是建立双方的加密通信</p>
+<p>目前主流是1.2版本，1.3去年才刚刚上线，还没有普及</p>
+<ul>
+<li>
+<p>https握手流程怎么样的</p>
+<ul>
+<li>1.2中的握手主要有两类，rsa和dh，但rsa在1.3版本中被废弃，dh的实际实现也换成了安全性更高的ecdh（用椭圆曲线的计算取缔了素数分解问题，效率更高，安全性更高）</li>
+<li>握手流程可以看那篇讲https的文章，不赘述了</li>
+</ul>
+</li>
+<li>
+<p>数字签名的作用</p>
+<ul>
+<li>保证信息完整性，验证信息来源是否真实</li>
+<li>对摘要做一次私钥加密，这样只有公钥才可以解开，再验证一次摘要是否正确，可以保证未被修改</li>
+<li>CA证书的验证也是基于数字签名，每台电脑会内置受信任的CA机构的公钥，对其解密再验证摘要就可以保证CA证书没有被篡改</li>
+</ul>
+</li>
+</ul>
+<h4 id="tcp">TCP</h4>
+<ul>
+<li>tcp传输的可靠性靠什么保证
+<ul>
+<li>确认和重传机制
+<ul>
+<li>建立连接时约定好的起始序列号seq</li>
+<li>确认号ack</li>
+<li>校验和checksum</li>
+<li>丢包时重传</li>
+</ul>
+</li>
+<li>数据排序
+<ul>
+<li>依据滑动窗口接受机制可以确定最后一个正确到达的数据包，定位错误数据</li>
+</ul>
+</li>
+<li>流量控制
+<ul>
+<li>双方通过约定滑动窗口的大小，控制发送速率</li>
+</ul>
+</li>
+<li>拥塞控制
+<ul>
+<li>慢启动</li>
+<li>拥塞避免</li>
+<li>快速重传</li>
+<li>快速恢复</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="mysql">mysql</h4>
+<ul>
+<li>
+<p>什么是聚簇索引呢</p>
+<p>数据和索引放在一起，索引记录的就是数据本身</p>
+</li>
+<li>
+<p>myisam是否是聚簇索引，他的索引保存的是什么</p>
+<p>不是，它里面存放的是数据的文件地址</p>
+</li>
+<li>
+<p>索引是通过什么数据结构保存的</p>
+<p>innoDB和myisam都是B+Tree，也支持hash</p>
+</li>
+<li>
+<p>B+树和B树的优缺点</p>
+<ul>
+<li>B+树的数据都在叶子节点，因此可以将索引放到一起，减少磁盘io更快的定位数据，实现范围查找更加容易</li>
+<li>B树在索引到数据时可以快速返回，无需到达叶子节点，对于单一查询来说性能更好</li>
+</ul>
+</li>
+<li>
+<p>事务有几个特性</p>
+<p>四个，acid</p>
+</li>
+<li>
+<p>caid是什么</p>
+<p>原子性和隔离性保证了一致性，最后可以持久化到磁盘中</p>
+<ul>
+<li>
+<p>原子性</p>
+<p>要么全部成功，要么全部失败</p>
+</li>
+<li>
+<p>隔离性</p>
+<p>A事务的操作对B不可见，B事务的操作也不应该影响到A的正确性</p>
+</li>
+<li>
+<p>一致性</p>
+<p>完整性保持一致（p话）</p>
+<p>其实就是说，没有并发错误，所有的事情都是按照预想的来的，没有破坏任何对完整性的保护</p>
+</li>
+<li>
+<p>持久性</p>
+<p>事务正确结束后，所做的更改就应该永久留在数据库中</p>
+</li>
+</ul>
+</li>
+<li>
+<p>原子性是怎么保证的</p>
+<p>undo log</p>
+</li>
+<li>
+<p>undo log 里面有哪些东西</p>
+<p>事务操作的反向操作，比如：</p>
+<pre><code>insert a
+insert b
+insert c
+
+undo log中应该是：
+delete c
+delete b
+delete a
+</code></pre>
+</li>
+<li>
+<p>持久性是怎么保证的</p>
+<p>redo log，每次先写日志，再写磁盘，这样就算断电，也能保证以重做日志为准进行恢复</p>
+<ul>
+<li>
+<p>为什么是redo log而不是直接写到数据中</p>
+<p>因为磁盘的io，不管你读多少数据，都要从磁盘中找到对应的页块，一般来说是16kb，然后将其整体读入，那每次修改都直接修改磁盘，就会导致整个数据库对于磁盘的io非常依赖，而众所周知，磁盘的读写速度慢得离谱，所以为了保证性能，将所有记录优先记录到日志中，因为日志是连续读写的，没有随机读写所带来的io问题（其实也有，但已经很少了）</p>
+</li>
+</ul>
+</li>
+<li>
+<p>隔离性是怎么保证的</p>
+<p>在mysql中，隔离分为四个级别</p>
+<ul>
+<li>读未提交</li>
+<li>读已提交</li>
+<li>可重复读</li>
+<li>串行化</li>
+</ul>
+<p>真正与隔离性有关的主要是读已提交和可重复读，这里要引入个概念叫做封锁协议，它描述的是加锁时机，实际上可以把它当作一个思想来看</p>
+<p>三级封锁协议：</p>
+<ol>
+<li>任何写操作需要加X锁，直到事务结束</li>
+<li>在一级封锁协议的基础上，读取数据时必须加S锁，<strong>读取完马上</strong>释放S锁</li>
+<li>在一级封锁协议的基础上，读取数据时必须加S锁，<strong>直到事务结束</strong>才释放</li>
+</ol>
+<p>笔者认为可以把2，3级分别看作是读已提交和可重复读的实现思想，而锁和mvcc分别对应着悲观锁和乐观锁的具体实现</p>
+<p>当使用for update 等查询语句时，我们称此次查询为<strong>当前</strong>读，读已提交和可重复读正好对应着封锁协议中的二三级，通过添加对应的行锁（可重复读下有gap和next-key锁）来实现隔离</p>
+<p>若是直接使用select查询，则会在该事务的第一次查询时，创建一个readview，也因此其被称之为<strong>快照读</strong>，同时每个数据行里都额外的保存了三个字段：最后一个对其改动的事务id，行的id（也就是主键，或者是union id），回滚指针，分别为trx，id，roll</p>
+<p>读已提交的readview是每次查询都创建一个新的readview，可重复读是在事务开始的第一次查询创建，分别对应着二三级封锁协议的思想，每次查询时根据readview和隐藏字段的对比，选择出可以展示的数据行</p>
+</li>
+<li>
+<p>mvcc是怎么实现的</p>
+<p>readview中，主要包括了<strong>当前活跃</strong>的所有事务的事务组trxs，以及trxs的最小事务id，最大事务id，创建readview的事务id，我们分别称之为min,max,cur</p>
+<p>数据行的隐藏字段主要是对其更改的事务id，我们称为trx，还有个回滚指针，他们的关系如下图</p>
+<figure data-type="image" tabindex="1"><img src="https://i.loli.net/2021/09/21/pyok36AFfZcONtu.png" alt="image-20210921002134858" loading="lazy"></figure>
+<p>因为min，max是以创建readview时活跃的事务的最大最小来划分的，所以</p>
+<ul>
+<li>绿色的区域代表着创建时，一定是提交了的事务，所以他的提交一定是可以看到的</li>
+<li>红色代表着，创建时还没开始的事务，那么它的任何改动都无法看到</li>
+<li>蓝色区域则表示存在活跃的事务，同时也存在后来才开始的但已提交了的事务，因此蓝色部分的判断为，该trx是否存在于活跃事务组中
+<ul>
+<li>若trx存在于trxs中，则创建时还未提交，因此不能展示</li>
+<li>若不存在，则证明已经提交，所以可以展示</li>
+<li>若trx正好就是cur，那自己对自己做的修改肯定可以看到</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="设计思路">设计思路</h4>
+<ul>
+<li>
+<p>lru是怎么实现的</p>
+<p>首先，lru的意思是，Least Recently Used，最近最少使用，是一种缓存淘汰机制，由于是缓存淘汰机制，因此对性能有很高的要求，要求O(1)的读取速度，O(1)的删除速度，那么符合条件的数据结构就很清楚了</p>
+<p>读取方面使用hashmap，而lru中，每次将读取的数据推后，保证最近最少使用的那个处于队头，这就涉及到空间的转移，那毫无疑问就是链表了</p>
+<p>因此hashmap中存储对应元素项的指针，链表可以使用双向链表，每次使用的时候将该数据存放到队头或队尾，与此同时若长度超过限制则删除队尾或队头的数据</p>
+</li>
+</ul>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="http://www.zerokirin.online/post/zi-jie-yi-mian-mian-jing/" class="post-title gt-a-link">
+                    字节一面面经
+                </a>
+            </div>
+        
+
+        
+            <span id="/post/zi-jie-er-mian-mian-jing/" class="leancloud_visitors" data-flag-title="字节二面面经">
+                <em class="post-meta-item-text">阅读量 </em>
+                <i class="leancloud-visitors-count">0</i>
+            </span>
+        
+
+        
+
+        
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: 'rIYE7O4AV22Nx8QJGNrgbXkd-gzGzoHsz',
+		appKey: 'dME5rqAUTu5n0TFeGj8xJkwt',
+		avatar: '',
+		pageSize: 10,
+		recordIp: false,
+		placeholder: '',
+		visitor: true,
+	});
+</script>
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">记录</div>
+    <div class="social-container">
+        
+            
+                <a href="https://github.com/00LT00" target="_blank">
+                    <i class="fab fa-github gt-c-content-color-first"></i>
+                </a>
+            
+        
+            
+        
+            
+        
+            
+                <a href="https://www.zhihu.com/people/ling-zhu-19-99" target="_blank">
+                    <i class="fab fa-zhihu gt-c-content-color-first"></i>
+                </a>
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        
+    </div>
+    <div>
+        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
+                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="http://www.zerokirin.online/atom.xml" target="_blank">RSS</a></a>
+    </div>
+</div>
+
+<script>
+  hljs.highlightAll()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

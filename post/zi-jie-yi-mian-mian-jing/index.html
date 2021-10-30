@@ -1,10 +1,10 @@
-<html lang="zh">
+<html>
 <head>
     <meta charset="utf-8" />
 <meta name="description" content="" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<title>关于 - Zer0kiriN</title>
+<title>字节一面面经 | Zer0kiriN</title>
 
 <link rel="shortcut icon" href="http://www.zerokirin.online/favicon.ico?v=1635585413132">
 
@@ -45,7 +45,7 @@
     gtag('config', 'G-3HHG9VQ3K2');
 </script>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
 </head>
 <body>
 <div class="main gt-bg-theme-color-first">
@@ -125,22 +125,167 @@
     }
 </script>
     <div class="post-container">
-        <div class="post-detail">
+        <div class="post-detail gt-bg-theme-color-second">
             <article class="gt-post-content">
+                <h2 class="post-title">
+                    字节一面面经
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2021-08-21 ·
+                    </time>
+                    
+                        <a href="http://www.zerokirin.online/tag/R7XDc_3FA/" class="post-tags">
+                            # 字节
+                        </a>
+                    
+                        <a href="http://www.zerokirin.online/tag/ieznrVSNB/" class="post-tags">
+                            # 面经
+                        </a>
+                    
+                </div>
                 <div class="post-content">
-                    <blockquote>
-<p>妈妈说坏人太多😈，不要跟陌生人讲话😣， 富婆除外😏</p>
-</blockquote>
-<blockquote>
-<p>🤜希望坏人没事🙏</p>
-</blockquote>
-<p>常做暴富梦</p>
-<p>脑子不好，记录下学的东西免得忘了</p>
+                    <h2 id="问题">问题</h2>
+<ul>
+<li>进程线程区别</li>
+<li>进程间通信</li>
+<li>线程间通信</li>
+<li>go的channel是怎么实现的</li>
+<li>go的调度模型</li>
+<li>p的大小通常设置为多少，如果是io密集型应用呢</li>
+<li>go的map实现方式</li>
+<li>map退化成链表了怎么办</li>
+<li>tcp的time wait状态</li>
+<li>如果有太多的time wait状态该怎么办</li>
+<li>mysql索引有哪几种</li>
+</ul>
+<h2 id="浅析">浅析</h2>
+<ol>
+<li>
+<p>OS</p>
+<ul>
+<li>进程线程区别？
+<ul>
+<li>线程依赖于进程，比进程更轻量</li>
+<li>进程是资源分配的基本单位</li>
+<li>线程是调度的基本单位</li>
+<li>线程可以共享同一个进程的资源</li>
+<li>进程必须依靠IPC来通信</li>
+</ul>
+</li>
+<li>进程间通信方式
+<ul>
+<li>信号</li>
+<li>信号量</li>
+<li>有名管道</li>
+<li>匿名管道</li>
+<li>共享内存</li>
+<li>消息队列</li>
+<li>套接字</li>
+</ul>
+</li>
+<li>线程间通信
+<ul>
+<li>线程间通信的主要目的是用于多线程同步</li>
+<li>互斥锁，条件变量（casp操作），读写锁，自旋锁</li>
+<li>信号</li>
+<li>信号量</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>go</p>
+<ul>
+<li>channel怎么实现的
+<ul>
+<li>核心是由发送队列，接收队列，和缓冲区组成</li>
+<li>目前是用锁机制保护了先进先出的特性</li>
+<li>发送的时候如果接收队列中有等待的goroutine则直接复制过去</li>
+<li>接收的时候为了保证先进先出，会先从缓冲区复制到当前接收的goroutine，然后再把等待发送的goroutine唤醒，把内容复制到缓冲区，然后把阻塞的发送goroutine放回p队列</li>
+<li>发送的时候还有一个保活操作，因为在阻塞的时候，该数据地址有可能已经没有引用了，gc扫描后会为白色，直接清理掉，因此在唤醒操作的后满做一次无意义的引用，可以使得该地址免于gc扫描</li>
+</ul>
+</li>
+<li>go的调度模型
+<ul>
+<li>其实就是gmp模型，车轱辘话来回说，细节详见后续博文</li>
+<li>P的大小设置为多少，io密集型应用呢？
+<ul>
+<li>默认设置为操作系统线程数量，例如我的4800h就是8核16线程，所以会初始化16个P队列</li>
+<li>在调度过程中如果发生系统调用，P队列会主动与M解绑，由M去等待操作系统的io结束后，再自行寻找P队列进行操作</li>
+<li>但是P和M的解绑是有延迟的，只有每次调度发生的时候才会彻底解绑，因此在io密集型应用中，会有大量的P处于等待状态，等待M的解绑，等待获取新的M</li>
+<li>所以在io密集型应用中，需要将P设置的更大，更多，这样即使有很多很多P都在等待，依然有足够的P和M绑定，能够运行G，压榨cpu</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>map退化成链表后？
+<ul>
+<li>go里通过多个hash函数，每次初始化的时候有个随机的种子，保证最大限度地随机，如果还是这么头铁，那go里面没有任何优化手段，实质上就是在一个bucket列表中挨个查找了</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>tcp time-wait状态</p>
+<ul>
+<li>time-wait太多会怎样？
+<ul>
+<li>占用太多端口</li>
+<li>占用大量无意义的资源，即每次传输的数据远小于一次连接的建立断开所花费的经历</li>
+</ul>
+</li>
+<li>time-wait状态太多，怎么办？
+<ul>
+<li>tcp连接复用，人为在应用层将数据汇总发送，尽量让一个tcp连接承担更多的短数据传输</li>
+<li>使用linux内核参数<code>tcp_tw_reuse</code>，这个参数能够在创建tcp连接的时候随机选一个处于time-wait状态的连接进行复用，此时，之前如果有延迟到来的数据，则会被抛弃，因为相当于开启了一个新的连接</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>mysql</p>
+<ul>
+<li>索引有哪几种
+<ul>
+<li>主键索引</li>
+<li>唯一索引</li>
+<li>联合索引</li>
+<li>普通索引</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h2 id="算法">算法</h2>
+<ol>
+<li>如何判断二叉树是否对称？
+<ul>
+<li>层次遍历同时遍历左右节点就行</li>
+</ul>
+</li>
+</ol>
 
                 </div>
             </article>
         </div>
-        <br>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="http://www.zerokirin.online/post/duan-dian-mian-jing/" class="post-title gt-a-link">
+                    端点面经
+                </a>
+            </div>
+        
+
+        
+            <span id="/post/zi-jie-yi-mian-mian-jing/" class="leancloud_visitors" data-flag-title="字节一面面经">
+                <em class="post-meta-item-text">阅读量 </em>
+                <i class="leancloud-visitors-count">0</i>
+            </span>
+        
+
         
 
         
@@ -171,7 +316,6 @@
 </script>
 
         
-
 
         <div class="site-footer gt-c-content-color-first">
     <div class="slogan gt-c-content-color-first">记录</div>
