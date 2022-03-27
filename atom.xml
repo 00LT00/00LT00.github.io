@@ -2,14 +2,14 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>http://www.zerokirin.online</id>
     <title>Zer0kiriN</title>
-    <updated>2021-10-30T09:21:25.655Z</updated>
+    <updated>2022-03-27T07:48:41.760Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="http://www.zerokirin.online"/>
     <link rel="self" href="http://www.zerokirin.online/atom.xml"/>
     <subtitle>记录</subtitle>
     <logo>http://www.zerokirin.online/images/avatar.png</logo>
     <icon>http://www.zerokirin.online/favicon.ico</icon>
-    <rights>All rights reserved 2021, Zer0kiriN</rights>
+    <rights>All rights reserved 2022, Zer0kiriN</rights>
     <entry>
         <title type="html"><![CDATA[字节二面面经]]></title>
         <id>http://www.zerokirin.online/post/zi-jie-er-mian-mian-jing/</id>
